@@ -187,7 +187,6 @@ public class FrmSignIn extends javax.swing.JFrame {
     private void btnSignInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSignInActionPerformed
         
         new AppLayout().setVisible(true);
-        //comment
         this.dispose();
     }//GEN-LAST:event_btnSignInActionPerformed
 
