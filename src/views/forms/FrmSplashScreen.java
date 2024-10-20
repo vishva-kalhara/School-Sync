@@ -7,7 +7,6 @@ package views.forms;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import java.awt.Color;
-import views.layouts.AppLayout;
 
 /**
  *
@@ -43,7 +42,7 @@ public class FrmSplashScreen extends javax.swing.JFrame {
             public void run() {
                 try{
                     
-                    Thread.sleep(10);
+                    Thread.sleep(5000);
                 }catch (InterruptedException ex){
                     
                 }
