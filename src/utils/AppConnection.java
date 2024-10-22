@@ -4,6 +4,7 @@
  */
 package utils;
 
+import config.Env;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -22,7 +23,7 @@ public class AppConnection {
         if (connection == null) {
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver");
-                connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/members_v2", "root", "Wishva!23");
+                connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/db", "root", Env.MYSQL_PASSWORD);
 
             } catch (SQLException | ClassNotFoundException e) {
 //                FrmSplashScreen.logger.log(Level.WARNING, e.getMessage() ,e);
