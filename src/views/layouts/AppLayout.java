@@ -149,7 +149,6 @@ public class AppLayout extends javax.swing.JFrame {
         pnlPlaceholder = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(1380, 830));
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(204, 204, 255));
@@ -353,8 +352,6 @@ public class AppLayout extends javax.swing.JFrame {
     private void btnSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSettingsActionPerformed
         changeForm(LayoutPage.SETTINGS);
     }//GEN-LAST:event_btnSettingsActionPerformed
-
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdditionalFees;

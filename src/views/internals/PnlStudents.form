@@ -164,9 +164,9 @@
                       <Component id="cboSort" alignment="3" min="-2" pref="54" max="-2" attributes="0"/>
                       <Component id="txtSearch" alignment="3" min="-2" pref="54" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="pnlTable" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="29" max="32767" attributes="0"/>
+                  <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                  <Component id="pnlTable" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -210,8 +210,8 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" min="-2" pref="671" max="-2" attributes="0"/>
-                      <EmptySpace pref="19" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="677" max="32767" attributes="0"/>
+                      <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
