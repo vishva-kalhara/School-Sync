@@ -101,7 +101,7 @@ public class FrmSignIn extends javax.swing.JFrame {
         jLabel5.setForeground(new java.awt.Color(82, 82, 82));
         jLabel5.setText("Password");
 
-        btnSignIn.setBackground(new java.awt.Color(253, 105, 108));
+        btnSignIn.setBackground(new java.awt.Color(229, 29, 84));
         btnSignIn.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
         btnSignIn.setForeground(new java.awt.Color(255, 255, 255));
         btnSignIn.setText("Sign In");

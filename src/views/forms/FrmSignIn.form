@@ -181,7 +181,7 @@
             <Component class="javax.swing.JButton" name="btnSignIn">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="6c" green="69" red="fd" type="rgb"/>
+                  <Color blue="54" green="1d" red="e5" type="rgb"/>
                 </Property>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Segoe UI Semibold" size="16" style="0"/>
