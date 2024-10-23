@@ -111,7 +111,7 @@ public class AppLayout extends javax.swing.JFrame {
         selectedButton.setBackground(new Color(255, 255, 255));
         selectedButton.setForeground(new Color(142,142,142));
 
-        newButton.setBackground(new Color(253, 105, 108));
+        newButton.setBackground(new Color(229,29,84));
         newButton.setForeground(new Color(255, 255, 255));
 
         selectedButton = newButton;
