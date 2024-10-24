@@ -7,12 +7,20 @@ package views.forms;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import java.awt.Color;
+import java.io.IOException;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author vishv
  */
 public class FrmSplashScreen extends javax.swing.JFrame {
+    
+    public static Logger logger = Logger.getLogger("school_sync");
 
     /**
      * Creates new form FrmSplashScreen
@@ -20,9 +28,25 @@ public class FrmSplashScreen extends javax.swing.JFrame {
     public FrmSplashScreen() {
         initComponents();
         
+        setUpLogger();
+        
         formDesign();
         
         waitSeconds();
+    }
+    
+    private void setUpLogger() {
+        try {
+
+            FileHandler handler = new FileHandler("app.log", true);
+            handler.setFormatter(new SimpleFormatter());
+
+            logger.addHandler(handler);
+
+        } catch (IOException | SecurityException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+            e.printStackTrace();
+        }
     }
     
     private void formDesign(){
@@ -43,8 +67,9 @@ public class FrmSplashScreen extends javax.swing.JFrame {
                 try{
                     
                     Thread.sleep(10);
-                }catch (InterruptedException ex){
-                    
+                    throw new Exception("ss");
+                }catch (Exception e){
+                    FrmSplashScreen.logger.log(Level.WARNING, e.getMessage() ,e);
                 }
                 new FrmSignIn().setVisible(true);
                 dispose();

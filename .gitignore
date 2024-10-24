@@ -2,3 +2,5 @@
 /nbproject/private/private.properties
 /src/config/Env.java
 /dist/
+app.log
+app.log.lck
