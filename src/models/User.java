@@ -13,6 +13,20 @@ import java.util.Date;
 public class User {
 
     /**
+     * @return the nic
+     */
+    public String getNic() {
+        return nic;
+    }
+
+    /**
+     * @param nic the nic to set
+     */
+    public void setNic(String nic) {
+        this.nic = nic;
+    }
+
+    /**
      * @return the createdAt
      */
     public Date getCreatedAt() {
@@ -54,19 +68,6 @@ public class User {
         this.fullName = fullName;
     }
 
-    /**
-     * @return the classId
-     */
-    public int getClassId() {
-        return classId;
-    }
-
-    /**
-     * @param classId the classId to set
-     */
-    public void setClassId(int classId) {
-        this.classId = classId;
-    }
 
     /**
      * @return the serviceNumber
@@ -239,7 +240,7 @@ public class User {
     private Date createdAt;
     private String id;
     private String fullName;
-    private int classId;
+    private String nic;
     private String serviceNumber;
     private String address;
     private String mobile1;

@@ -9,6 +9,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
 import views.dialogs.DlgError;
+import views.dialogs.DlgSystemUser;
 import views.layouts.AppLayout;
 
 /**
@@ -205,7 +206,7 @@ public class PnlAuthentication extends javax.swing.JPanel {
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         
-        new DlgError(AppLayout.appLayout, true, "ssss").setVisible(true);
+        new DlgSystemUser(AppLayout.appLayout, true).setVisible(true);
     }//GEN-LAST:event_btnAddActionPerformed
 
 
