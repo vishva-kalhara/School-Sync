@@ -8,7 +8,7 @@ import com.formdev.flatlaf.FlatClientProperties;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
-import views.dialogs.forms.DlgAuth;
+import views.dialogs.DlgError;
 import views.layouts.AppLayout;
 
 /**
@@ -205,7 +205,7 @@ public class PnlAuthentication extends javax.swing.JPanel {
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         
-        new DlgAuth(AppLayout.appLayout, true).setVisible(true);
+        new DlgError(AppLayout.appLayout, true, "ssss").setVisible(true);
     }//GEN-LAST:event_btnAddActionPerformed
 
 
