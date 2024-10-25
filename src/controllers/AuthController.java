@@ -7,6 +7,7 @@ package controllers;
 import java.sql.SQLException;
 import models.User;
 import utils.AppConnection;
+import java.sql.ResultSet;
 
 /**
  *
@@ -38,5 +39,18 @@ public class AuthController {
                 + user.getGenderId() + "', '"
                 + user.getSysUsername() + "', '"
                 + user.getSysPassword() + "')");
+    }
+
+    public boolean signIn(String username, char[] password) throws SQLException {
+
+        ResultSet rs = AppConnection.search(
+                "SELECT * FROM `users` "
+                + "WHERE "
+                + "`sys_username` = '" + username + "' AND "
+                + "`sys_password` = '" + String.valueOf(password) + "' AND "
+                + "`status_id` = '1'"
+        );
+        
+        return rs.next();
     }
 }

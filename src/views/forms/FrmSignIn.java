@@ -5,7 +5,11 @@
 package views.forms;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import controllers.AuthController;
 import java.awt.Color;
+import java.util.logging.Level;
+import utils.ErrorException;
+import views.dialogs.DlgError;
 import views.layouts.AppLayout;
 
 /**
@@ -19,11 +23,11 @@ public class FrmSignIn extends javax.swing.JFrame {
      */
     public FrmSignIn() {
         initComponents();
-        
+
         setDesign();
     }
-    
-    private void setDesign(){
+
+    private void setDesign() {
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_BACKGROUND, new Color(0, 0, 0));
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_FOREGROUND, new Color(0, 0, 0));
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_SHOW_CLOSE, false);
@@ -31,10 +35,10 @@ public class FrmSignIn extends javax.swing.JFrame {
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_SHOW_ICONIFFY, false);
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_SHOW_ICON, false);
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_SHOW_TITLE, false);
-        
+
         txtUsername.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
         txtPassword.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
-        
+
         btnSignIn.putClientProperty("JButton.buttonType", "borderless");
         btnClose.putClientProperty("JButton.buttonType", "borderless");
     }
@@ -180,14 +184,36 @@ public class FrmSignIn extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
-        
+
         this.dispose();
     }//GEN-LAST:event_btnCloseActionPerformed
 
     private void btnSignInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSignInActionPerformed
-        
-        new AppLayout().setVisible(true);
-        this.dispose();
+
+        try {
+
+            if (txtUsername.getText().isBlank()) {
+                throw new ErrorException("Username cannot be empty!");
+            }
+            if (String.valueOf(txtPassword.getPassword()).isBlank()) {
+                throw new ErrorException("Password cannot be empty!");
+            }
+
+            boolean hasAccess = new AuthController().signIn(txtUsername.getText(), txtPassword.getPassword());
+
+            if (!hasAccess) {
+                throw new ErrorException("Username or password is incorrect!");
+            }
+
+            new AppLayout().setVisible(true);
+            this.dispose();
+
+        } catch (ErrorException e) {
+            new DlgError(AppLayout.appLayout, true, e.getMessage(), "Validation Error").setVisible(true);
+        } catch (Exception e) {
+            new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+        }
     }//GEN-LAST:event_btnSignInActionPerformed
 
 
