@@ -14,7 +14,7 @@ import java.awt.Color;
  */
 public class DlgError extends javax.swing.JDialog {
     
-    private DialogType type;
+    private DialogType type = DialogType.ERROR;
 
     /**
      * Creates new form DlgError
@@ -36,6 +36,18 @@ public class DlgError extends javax.swing.JDialog {
         initComponents();
         
         setDesign();
+
+        lblTitle.setText(title);
+        lblMessage.setText("<HTML>" + msg + "</HTML>");
+    }
+
+    public DlgError(java.awt.Frame parent, boolean modal, String msg, String title, DialogType type) {
+        super(parent, modal);
+        initComponents();
+        
+        setDesign();
+        
+        this.type = type;
 
         lblTitle.setText(title);
         lblMessage.setText("<HTML>" + msg + "</HTML>");
