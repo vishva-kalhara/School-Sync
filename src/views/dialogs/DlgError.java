@@ -45,9 +45,10 @@ public class DlgError extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         
+        this.type = type;
+        
         setDesign();
         
-        this.type = type;
 
         lblTitle.setText(title);
         lblMessage.setText("<HTML>" + msg + "</HTML>");
