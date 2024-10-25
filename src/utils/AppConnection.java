@@ -27,7 +27,7 @@ public class AppConnection {
         if (connection == null) {
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver");
-                connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/db", "root", Env.MYSQL_PASSWORD);
+                connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/school_sync_v1", "root", Env.MYSQL_PASSWORD);
 
             } catch (SQLException | ClassNotFoundException e) {
                 FrmSplashScreen.logger.log(Level.WARNING, e.getMessage() ,e);
@@ -35,7 +35,7 @@ public class AppConnection {
         }
     }
 
-    public static ResultSet fetch(String query) {
+    public static ResultSet search(String query) {
 
         if (!query.startsWith("SELECT") && !query.startsWith("CALL")) {
             throw new IllegalArgumentException("Use ResultSet utils.AppConnection.mutate()");
@@ -54,7 +54,7 @@ public class AppConnection {
         }
     }
 
-    public static boolean mutate(String query) throws SQLException {
+    public static boolean iud(String query) throws SQLException {
 
         if (query.startsWith("SELECT")) {
             throw new IllegalArgumentException("Use ResultSet utils.AppConnection.fetch()");
