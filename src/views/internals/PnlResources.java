@@ -8,6 +8,7 @@ import com.formdev.flatlaf.FlatClientProperties;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
+import views.dialogs.DlgClass;
 import views.layouts.AppLayout;
 
 /**
@@ -23,20 +24,20 @@ public class PnlResources extends javax.swing.JPanel {
         initComponents();
         setDsign();
     }
-    
-    private void setDsign(){
+
+    private void setDsign() {
         btnAdd.putClientProperty("JButton.buttonType", "borderless");
         btnReport.putClientProperty("JButton.buttonType", "borderless");
         btnPrint.putClientProperty("JButton.buttonType", "borderless");
         btnRefresh.putClientProperty("JButton.buttonType", "borderless");
         btnLogout.putClientProperty("JButton.buttonType", "borderless");
         btnAccount.putClientProperty("JButton.buttonType", "borderless");
-        
+
         txtSearch.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
         txtSearch.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search by Name");
-        
+
         pnlTable.putClientProperty(FlatClientProperties.STYLE, "arc: 13");
-        
+
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         table.setDefaultRenderer(Object.class, centerRenderer);
@@ -75,6 +76,11 @@ public class PnlResources extends javax.swing.JPanel {
 
         btnAdd.setBackground(new java.awt.Color(35, 34, 50));
         btnAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/plus.png"))); // NOI18N
+        btnAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddActionPerformed(evt);
+            }
+        });
 
         btnReport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/file-text.png"))); // NOI18N
 
@@ -196,6 +202,11 @@ public class PnlResources extends javax.swing.JPanel {
 
         AppLayout.appLayout.dispose();
     }//GEN-LAST:event_btnLogoutActionPerformed
+
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+
+        new DlgClass(AppLayout.appLayout, true).setVisible(true);
+    }//GEN-LAST:event_btnAddActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
