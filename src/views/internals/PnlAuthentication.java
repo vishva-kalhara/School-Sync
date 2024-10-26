@@ -5,11 +5,19 @@
 package views.internals;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import controllers.UserController;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import java.sql.ResultSet;
+import java.util.Vector;
+import java.util.logging.Level;
+import models.User;
+import utils.AppConnection;
 import views.dialogs.DlgError;
 import views.dialogs.DlgSystemUser;
+import views.forms.FrmSplashScreen;
 import views.layouts.AppLayout;
 
 /**
@@ -24,21 +32,69 @@ public class PnlAuthentication extends javax.swing.JPanel {
     public PnlAuthentication() {
         initComponents();
         setDsign();
+
+        fetchData();
     }
-    
-    private void setDsign(){
+
+    private void fetchData() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                loadTableData("");
+            }
+        }).start();
+    }
+
+    private void loadTableData(String constraints) {
+
+        try {
+
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+            model.setRowCount(0);
+
+            ResultSet rs = AppConnection.search(
+                    "SELECT "
+                    + "users.id, "
+                    + "users.full_name, "
+                    + "mobile1, "
+                    + "status.value AS status_value, "
+                    + "user_roles.value AS role_value "
+                    + "FROM school_sync_v1.users "
+                    + "INNER JOIN `status` ON `users`.`status_id` = `status`.`id` "
+                    + "INNER JOIN `user_roles` ON `users`.`user_roles_id` = `user_roles`.`id` "
+                    + constraints
+            );
+            while (rs.next()) {
+
+                Vector<String> data = new Vector<>();
+                data.add(rs.getString("id"));
+                data.add(rs.getString("full_name"));
+                data.add(rs.getString("mobile1"));
+                data.add(rs.getString("status_value"));
+                data.add(rs.getString("role_value"));
+                model.addRow(data);
+            }
+
+        } catch (Exception e) {
+            new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+        }
+    }
+
+    private void setDsign() {
         btnAdd.putClientProperty("JButton.buttonType", "borderless");
         btnReport.putClientProperty("JButton.buttonType", "borderless");
         btnPrint.putClientProperty("JButton.buttonType", "borderless");
         btnRefresh.putClientProperty("JButton.buttonType", "borderless");
         btnLogout.putClientProperty("JButton.buttonType", "borderless");
         btnAccount.putClientProperty("JButton.buttonType", "borderless");
-        
+
         txtSearch.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
         txtSearch.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search by Name");
-        
+
         pnlTable.putClientProperty(FlatClientProperties.STYLE, "arc: 13");
-        
+
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         table.setDefaultRenderer(Object.class, centerRenderer);
@@ -88,6 +144,11 @@ public class PnlAuthentication extends javax.swing.JPanel {
         btnPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/printer.png"))); // NOI18N
 
         btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/refresh-cw.png"))); // NOI18N
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefreshActionPerformed(evt);
+            }
+        });
 
         btnLogout.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/log-out.png"))); // NOI18N
         btnLogout.addActionListener(new java.awt.event.ActionListener() {
@@ -142,16 +203,32 @@ public class PnlAuthentication extends javax.swing.JPanel {
 
         table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "auth", "Title 2", "Title 3", "Title 4"
+                "Id", "Full Name", "Mobile 1", "Role", "Status"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        table.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(table);
+        if (table.getColumnModel().getColumnCount() > 0) {
+            table.getColumnModel().getColumn(0).setMaxWidth(70);
+        }
 
         javax.swing.GroupLayout pnlTableLayout = new javax.swing.GroupLayout(pnlTable);
         pnlTable.setLayout(pnlTableLayout);
@@ -205,9 +282,44 @@ public class PnlAuthentication extends javax.swing.JPanel {
     }//GEN-LAST:event_btnLogoutActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        
+
         new DlgSystemUser(AppLayout.appLayout, true).setVisible(true);
     }//GEN-LAST:event_btnAddActionPerformed
+
+    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
+
+        fetchData();
+    }//GEN-LAST:event_btnRefreshActionPerformed
+
+    private void tableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableMouseClicked
+
+        if (evt.getClickCount() != 2) {
+            return;
+        }
+
+        int selectedRow = table.getSelectedRow();
+
+        try {
+
+            System.out.println(table.getValueAt(selectedRow, 0));
+
+            String usrId = String.valueOf(table.getValueAt(selectedRow, 0));
+
+            User user = new UserController().getSystemUser(usrId);
+            if (user == null) {
+
+                new DlgError(AppLayout.appLayout, true, "Please refresh the table!", "Not Found").setVisible(true);
+                return;
+            }
+
+            new DlgSystemUser(AppLayout.appLayout, true, user, usrId).setVisible(true);
+
+        } catch (Exception e) {
+            new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+        }
+
+    }//GEN-LAST:event_tableMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
