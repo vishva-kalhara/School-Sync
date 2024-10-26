@@ -243,7 +243,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
-                          <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                          <Component id="lblTitle" min="-2" max="-2" attributes="0"/>
                           <EmptySpace pref="311" max="32767" attributes="0"/>
                           <Component id="btnClose" min="-2" pref="41" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
@@ -256,7 +256,7 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jLabel1" pref="38" max="32767" attributes="0"/>
+                              <Component id="lblTitle" pref="38" max="32767" attributes="0"/>
                               <Component id="btnClose" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
@@ -266,7 +266,7 @@
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JLabel" name="jLabel1">
+                <Component class="javax.swing.JLabel" name="lblTitle">
                   <Properties>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Segoe UI Semibold" size="24" style="0"/>
@@ -482,9 +482,9 @@
                       <Group type="103" groupAlignment="1" max="-2" attributes="0">
                           <Component id="jSeparator2" min="-2" pref="558" max="-2" attributes="0"/>
                           <Group type="102" attributes="0">
-                              <Component id="btnReset" min="-2" pref="62" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="btnEdit" min="-2" pref="62" max="-2" attributes="0"/>
+                              <Component id="btnReset" min="-2" pref="54" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <Component id="btnEdit" min="-2" pref="54" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
                               <Component id="btnSubmit" min="-2" pref="162" max="-2" attributes="0"/>
                           </Group>
@@ -535,6 +535,9 @@
                   <Image iconType="3" name="/assets/icons/remove-formatting.png"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnResetActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="btnEdit">
               <Properties>
@@ -542,6 +545,9 @@
                   <Image iconType="3" name="/assets/icons/pen-line.png"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnEditActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
