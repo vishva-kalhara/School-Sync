@@ -111,34 +111,6 @@ public class Student {
     }
 
     /**
-     * @return the email
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * @param email the email to set
-     */
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    /**
-     * @return the classId
-     */
-    public int getClassId() {
-        return classId;
-    }
-
-    /**
-     * @param classId the classId to set
-     */
-    public void setClassId(int classId) {
-        this.classId = classId;
-    }
-
-    /**
      * @return the genderId
      */
     public int getGenderId() {
@@ -165,7 +137,21 @@ public class Student {
     public void setGenderValue(String genderValue) {
         this.genderValue = genderValue;
     }
-    
+
+    /**
+     * @return the email
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * @param email the email to set
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     private String id;
     private String fullName;
     private Date createdAt;
@@ -174,9 +160,8 @@ public class Student {
     private String mobile1;
     private String mobile2;
     private String email;
-    private int classId;
-        
+
     private int genderId;
     private String genderValue;
-    
+
 }

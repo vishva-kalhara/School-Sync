@@ -23,7 +23,7 @@ public class FrmSignIn extends javax.swing.JFrame {
      */
     public FrmSignIn() {
         initComponents();
-
+        
         setDesign();
     }
 
