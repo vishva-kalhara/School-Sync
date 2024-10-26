@@ -6,6 +6,8 @@ package views.dialogs;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import controllers.AuthController;
+import controllers.UserController;
+import enums.DialogAction;
 import enums.DialogType;
 import java.awt.Color;
 import utils.AppConnection;
@@ -25,12 +27,18 @@ import views.layouts.AppLayout;
  */
 public class DlgSystemUser extends javax.swing.JDialog {
 
-    HashMap<String, Integer> statusMap = new HashMap();
-    HashMap<String, Integer> gendersMap = new HashMap();
-    HashMap<String, Integer> rolesMap = new HashMap();
+    private HashMap<String, Integer> statusMap = new HashMap();
+    private HashMap<String, Integer> gendersMap = new HashMap();
+    private HashMap<String, Integer> rolesMap = new HashMap();
+
+    private DialogType type = DialogType.CREATE;
+    private String id;
 
     /**
      * Creates new form DlgSystemUser
+     *
+     * @param parent
+     * @param modal
      */
     public DlgSystemUser(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -43,6 +51,36 @@ public class DlgSystemUser extends javax.swing.JDialog {
         loadStatus();
         loadGenders();
         loadRoles();
+
+        btnEdit.setEnabled(false);
+    }
+
+    /**
+     * Creates new form DlgSystemUser
+     *
+     * @param parent
+     * @param modal
+     * @param user
+     * @param id
+     */
+    public DlgSystemUser(java.awt.Frame parent, boolean modal, User user, String id) {
+
+        this(parent, modal);
+
+        type = DialogType.UPDATE;
+        loadUser(user);
+        this.id = id;
+
+        lblTitle.setText("System User Details");
+        btnSubmit.setText("Save Changes");
+
+        changeEnabledStatus(false);
+
+        btnEdit.setEnabled(true);
+        btnReset.setEnabled(false);
+
+        btnEdit.grabFocus();
+        btnSubmit.setEnabled(false);
     }
 
     private void loadStatus() {
@@ -114,6 +152,22 @@ public class DlgSystemUser extends javax.swing.JDialog {
         }
     }
 
+    private void loadUser(User user) {
+
+        txtNIC.setText(user.getNic());
+        txtFullName.setText(user.getFullName());
+        txtMobile1.setText(user.getMobile1());
+        txtMobile2.setText(user.getMobile2());
+        txtAddress.setText(user.getAddress());
+        txtUsername.setText(user.getSysUsername());
+        txtPassword.setText(user.getSysPassword());
+
+        cboGender.setSelectedItem(user.getGenderValue());
+        cboRole.setSelectedItem(user.getUserRoleValue());
+        cboStatus.setSelectedItem(user.getStatusValue());
+
+    }
+
     private void setDesign() {
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_BACKGROUND, new Color(0, 0, 0));
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_FOREGROUND, new Color(0, 0, 0));
@@ -148,7 +202,7 @@ public class DlgSystemUser extends javax.swing.JDialog {
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        lblTitle = new javax.swing.JLabel();
         btnClose = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         jLabel2 = new javax.swing.JLabel();
@@ -200,8 +254,8 @@ public class DlgSystemUser extends javax.swing.JDialog {
         jPanel2.setMinimumSize(new java.awt.Dimension(80, 80));
         jPanel2.setPreferredSize(new java.awt.Dimension(409, 80));
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI Semibold", 0, 24)); // NOI18N
-        jLabel1.setText("Create System User");
+        lblTitle.setFont(new java.awt.Font("Segoe UI Semibold", 0, 24)); // NOI18N
+        lblTitle.setText("Create System User");
 
         btnClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/x.png"))); // NOI18N
         btnClose.addActionListener(new java.awt.event.ActionListener() {
@@ -216,7 +270,7 @@ public class DlgSystemUser extends javax.swing.JDialog {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(28, 28, 28)
-                .addComponent(jLabel1)
+                .addComponent(lblTitle)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 311, Short.MAX_VALUE)
                 .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(28, 28, 28))
@@ -227,7 +281,7 @@ public class DlgSystemUser extends javax.swing.JDialog {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+                    .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
                     .addComponent(btnClose, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(24, 24, 24)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 3, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -406,8 +460,18 @@ public class DlgSystemUser extends javax.swing.JDialog {
         });
 
         btnReset.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/remove-formatting.png"))); // NOI18N
+        btnReset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnResetActionPerformed(evt);
+            }
+        });
 
         btnEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/pen-line.png"))); // NOI18N
+        btnEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -418,9 +482,9 @@ public class DlgSystemUser extends javax.swing.JDialog {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 558, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(29, 29, 29))
@@ -467,16 +531,76 @@ public class DlgSystemUser extends javax.swing.JDialog {
         try {
 
             User user = loadFormData();
-            new AuthController().createUser(user);
-            new DlgError(AppLayout.appLayout, true, "System user created!", "Success", DialogType.SUCCESS).setVisible(true);
+
+            if (null == type) {
+                new DlgError(AppLayout.appLayout, true, "Please contact the vendor!").setVisible(true);
+                FrmSplashScreen.logger.log(Level.WARNING, "DlgSystemUser.java --> line 541");
+            } else switch (type) {
+                case CREATE:
+                    new AuthController().createUser(user);
+                    new DlgError(AppLayout.appLayout, true, "System user created!", "Success", DialogType.SUCCESS).setVisible(true);
+                    this.dispose();
+                    break;
+                case UPDATE:
+                    new UserController().updateUser(user, this.id);
+                    new DlgError(AppLayout.appLayout, true, "System user updated!", "Success", DialogType.SUCCESS).setVisible(true);
+                    this.dispose();
+                    break;
+                default:
+                    new DlgError(AppLayout.appLayout, true, "Please contact the vendor!").setVisible(true);
+                    FrmSplashScreen.logger.log(Level.WARNING, "DlgSystemUser.java --> line 541");
+                    break;
+            }
+
         } catch (ErrorException e) {
             new DlgError(AppLayout.appLayout, true, e.getMessage(), "Validation Error").setVisible(true);
         } catch (Exception e) {
             new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
             FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
-
-        }
+        } 
     }//GEN-LAST:event_btnSubmitActionPerformed
+
+
+    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
+
+        changeEnabledStatus(true);
+        btnEdit.setEnabled(false);
+        btnReset.setEnabled(true);
+        btnSubmit.setEnabled(true);
+        txtFullName.grabFocus();
+    }//GEN-LAST:event_btnEditActionPerformed
+
+    private void changeEnabledStatus(boolean state) {
+
+        txtNIC.setEnabled(false);
+        txtFullName.setEnabled(state);
+        txtMobile1.setEnabled(state);
+        txtMobile2.setEnabled(state);
+        txtAddress.setEnabled(state);
+        txtUsername.setEnabled(state);
+        txtPassword.setEnabled(state);
+        cboGender.setEnabled(false);
+        cboRole.setEnabled(state);
+        cboStatus.setEnabled(state);
+    }
+
+    private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
+
+        if (type == DialogType.CREATE) {
+            txtNIC.setText("");
+        }
+        txtFullName.setText("");
+        txtMobile1.setText("");
+        txtMobile2.setText("");
+        txtAddress.setText("");
+        txtUsername.setText("");
+        txtPassword.setText("");
+        if (type == DialogType.CREATE) {
+            cboGender.setSelectedIndex(0);
+        }
+        cboRole.setSelectedIndex(0);
+        cboStatus.setSelectedIndex(0);
+    }//GEN-LAST:event_btnResetActionPerformed
 
     private User loadFormData() throws ErrorException {
 
@@ -594,7 +718,6 @@ public class DlgSystemUser extends javax.swing.JDialog {
     private javax.swing.JComboBox<String> cboGender;
     private javax.swing.JComboBox<String> cboRole;
     private javax.swing.JComboBox<String> cboStatus;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
@@ -612,6 +735,7 @@ public class DlgSystemUser extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JLabel lblTitle;
     private javax.swing.JTextField txtAddress;
     private javax.swing.JTextField txtFullName;
     private javax.swing.JTextField txtMobile1;
