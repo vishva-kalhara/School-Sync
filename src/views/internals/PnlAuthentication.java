@@ -11,8 +11,10 @@ import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.sql.ResultSet;
+import java.util.HashMap;
 import java.util.Vector;
 import java.util.logging.Level;
+import javax.swing.DefaultComboBoxModel;
 import models.User;
 import utils.AppConnection;
 import views.dialogs.DlgError;
@@ -26,6 +28,9 @@ import views.layouts.AppLayout;
  */
 public class PnlAuthentication extends javax.swing.JPanel {
 
+    private HashMap<String, Integer> statusMap = new HashMap();
+    private HashMap<String, Integer> rolesMap = new HashMap();
+
     /**
      * Creates new form PnlAuthentication
      */
@@ -33,15 +38,22 @@ public class PnlAuthentication extends javax.swing.JPanel {
         initComponents();
         setDsign();
 
-        fetchData();
+        loadRoles();
+        loadStatus();
+
+        fetchData("");
     }
 
-    private void fetchData() {
+    private void fetchData(String constraints) {
+
+        jScrollPane1.setViewportView(new PnlFetching());
+        btnPrint.setEnabled(false);
+        btnReport.setEnabled(false);
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-                loadTableData("");
+                loadTableData(constraints);
             }
         }).start();
     }
@@ -76,6 +88,14 @@ public class PnlAuthentication extends javax.swing.JPanel {
                 model.addRow(data);
             }
 
+            if (model.getRowCount() == 0) {
+                jScrollPane1.setViewportView(new PnlNotFound());
+            } else {
+                jScrollPane1.setViewportView(this.table);
+                btnPrint.setEnabled(true);
+                btnReport.setEnabled(true);
+            }
+
         } catch (Exception e) {
             new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
             FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
@@ -103,6 +123,98 @@ public class PnlAuthentication extends javax.swing.JPanel {
         scroll.setBorder(BorderFactory.createEmptyBorder());
     }
 
+    private void loadRoles() {
+
+        try {
+
+            ResultSet rs = AppConnection.search("SELECT * FROM `user_roles`");
+
+            Vector<String> data = new Vector();
+            data.add("All Roles");
+
+            while (rs.next()) {
+
+                rolesMap.put(rs.getString("value"), rs.getInt("id"));
+                data.add(rs.getString("value"));
+            }
+
+            DefaultComboBoxModel model = new DefaultComboBoxModel(data);
+            cboRole.setModel(model);
+
+        } catch (Exception e) {
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+        }
+    }
+
+    private void loadStatus() {
+
+        try {
+
+            ResultSet rs = AppConnection.search("SELECT * FROM `status`");
+
+            Vector<String> data = new Vector();
+            data.add("All Statuses");
+
+            while (rs.next()) {
+
+                statusMap.put(rs.getString("value"), rs.getInt("id"));
+                data.add(rs.getString("value"));
+            }
+
+            DefaultComboBoxModel model = new DefaultComboBoxModel(data);
+            cboStatus.setModel(model);
+
+        } catch (Exception e) {
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+        }
+    }
+
+    private void filterData() {
+
+        StringBuilder constraints = new StringBuilder();
+
+        boolean hasSearch = !txtSearch.getText().isBlank();
+        boolean hasStatus = cboStatus.getSelectedIndex() != 0;
+        boolean hasRole = cboRole.getSelectedIndex() != 0;
+
+        if (hasSearch || hasStatus || hasRole) {
+            constraints.append(" WHERE ");
+        }
+
+        if (hasSearch) {
+            constraints
+                    .append(" `full_name` LIKE '%")
+                    .append(txtSearch.getText())
+                    .append("%' ");
+        }
+
+        if (hasStatus) {
+
+            if (hasSearch) {
+                constraints.append(" AND ");
+            }
+
+            constraints
+                    .append(" `status_id` = '")
+                    .append(statusMap.get(String.valueOf(cboStatus.getSelectedItem())))
+                    .append("' ");
+        }
+
+        if (hasRole) {
+
+            if (hasSearch || hasStatus) {
+                constraints.append(" AND ");
+            }
+
+            constraints
+                    .append(" `user_roles_id` = '")
+                    .append(rolesMap.get(String.valueOf(cboRole.getSelectedItem())))
+                    .append("' ");
+        }
+
+        fetchData(constraints.toString());
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -120,11 +232,12 @@ public class PnlAuthentication extends javax.swing.JPanel {
         btnLogout = new javax.swing.JButton();
         btnAccount = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
-        cboSort = new javax.swing.JComboBox<>();
+        cboStatus = new javax.swing.JComboBox<>();
         txtSearch = new javax.swing.JTextField();
         pnlTable = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
+        cboRole = new javax.swing.JComboBox<>();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -197,7 +310,23 @@ public class PnlAuthentication extends javax.swing.JPanel {
 
         jPanel2.setBackground(new java.awt.Color(247, 247, 247));
 
-        cboSort.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cboStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cboStatus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboStatusActionPerformed(evt);
+            }
+        });
+
+        txtSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtSearchActionPerformed(evt);
+            }
+        });
+        txtSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtSearchKeyReleased(evt);
+            }
+        });
 
         pnlTable.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -236,7 +365,7 @@ public class PnlAuthentication extends javax.swing.JPanel {
             pnlTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlTableLayout.createSequentialGroup()
                 .addGap(19, 19, 19)
-                .addComponent(jScrollPane1)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 844, Short.MAX_VALUE)
                 .addGap(24, 24, 24))
         );
         pnlTableLayout.setVerticalGroup(
@@ -247,6 +376,13 @@ public class PnlAuthentication extends javax.swing.JPanel {
                 .addGap(19, 19, 19))
         );
 
+        cboRole.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cboRole.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboRoleActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -256,9 +392,11 @@ public class PnlAuthentication extends javax.swing.JPanel {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(pnlTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 283, Short.MAX_VALUE)
-                        .addComponent(cboSort, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cboRole, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cboStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(24, 24, 24))
         );
         jPanel2Layout.setVerticalGroup(
@@ -266,8 +404,9 @@ public class PnlAuthentication extends javax.swing.JPanel {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(24, 24, 24)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cboSort, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cboStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cboRole, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(pnlTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(24, 24, 24))
@@ -288,7 +427,7 @@ public class PnlAuthentication extends javax.swing.JPanel {
 
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
 
-        fetchData();
+        filterData();
     }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void tableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableMouseClicked
@@ -321,6 +460,26 @@ public class PnlAuthentication extends javax.swing.JPanel {
 
     }//GEN-LAST:event_tableMouseClicked
 
+    private void txtSearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyReleased
+
+
+    }//GEN-LAST:event_txtSearchKeyReleased
+
+    private void cboRoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboRoleActionPerformed
+
+        filterData();
+    }//GEN-LAST:event_cboRoleActionPerformed
+
+    private void cboStatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboStatusActionPerformed
+
+        filterData();
+    }//GEN-LAST:event_cboStatusActionPerformed
+
+    private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
+
+        filterData();
+    }//GEN-LAST:event_txtSearchActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAccount;
@@ -329,7 +488,8 @@ public class PnlAuthentication extends javax.swing.JPanel {
     private javax.swing.JButton btnPrint;
     private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnReport;
-    private javax.swing.JComboBox<String> cboSort;
+    private javax.swing.JComboBox<String> cboRole;
+    private javax.swing.JComboBox<String> cboStatus;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
