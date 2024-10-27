@@ -163,5 +163,67 @@ public class Student {
 
     private int genderId;
     private String genderValue;
+    
+    private int statusId;
+    private String statusValue;
+    
+    private int gradeId;
+    private String classValue;
+
+    /**
+     * @return the statusId
+     */
+    public int getStatusId() {
+        return statusId;
+    }
+
+    /**
+     * @param statusId the statusId to set
+     */
+    public void setStatusId(int statusId) {
+        this.statusId = statusId;
+    }
+
+    /**
+     * @return the statusValue
+     */
+    public String getStatusValue() {
+        return statusValue;
+    }
+
+    /**
+     * @param statusValue the statusValue to set
+     */
+    public void setStatusValue(String statusValue) {
+        this.statusValue = statusValue;
+    }
+
+    /**
+     * @return the gradeId
+     */
+    public int getGradeId() {
+        return gradeId;
+    }
+
+    /**
+     * @param gradeId the gradeId to set
+     */
+    public void setGradeId(int gradeId) {
+        this.gradeId = gradeId;
+    }
+
+    /**
+     * @return the classValue
+     */
+    public String getClassValue() {
+        return classValue;
+    }
+
+    /**
+     * @param classValue the classValue to set
+     */
+    public void setClassValue(String classValue) {
+        this.classValue = classValue;
+    }
 
 }
