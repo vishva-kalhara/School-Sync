@@ -135,10 +135,10 @@ DROP TABLE IF EXISTS `decipline_records`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `decipline_records` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `description` varchar(250) NOT NULL,
+  `description` text NOT NULL,
   `title` varchar(45) NOT NULL,
   `grades_has_classes_id` int NOT NULL,
-  `issued_at` datetime NOT NULL,
+  `issued_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `users_id` varchar(10) NOT NULL,
   `student_id` varchar(10) NOT NULL,
   `status_id` int NOT NULL,
@@ -151,7 +151,7 @@ CREATE TABLE `decipline_records` (
   CONSTRAINT `fk_decipline_records_status1` FOREIGN KEY (`status_id`) REFERENCES `status` (`id`),
   CONSTRAINT `fk_decipline_records_student1` FOREIGN KEY (`student_id`) REFERENCES `student` (`id`),
   CONSTRAINT `fk_decipline_records_users1` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -160,6 +160,7 @@ CREATE TABLE `decipline_records` (
 
 LOCK TABLES `decipline_records` WRITE;
 /*!40000 ALTER TABLE `decipline_records` DISABLE KEYS */;
+INSERT INTO `decipline_records` VALUES (1,'The student was repeatedly disruptive during class, causing interruptions and not following the teacher\'s instructions. Despite multiple warnings, the behavior continued, affecting the learning environment for other students.','Disruptive Behavior',3,'2024-10-28 11:09:29','usr-1','stu-15',1),(2,'The student consistently failed to complete and submit homework assignments on time, despite multiple reminders. This behavior has impacted their progress and disrupted class activities.','Incomplete Homework',2,'2024-10-28 11:12:21','usr-1','stu-17',1),(3,'The student was repeatedly disruptive during class, causing interruptions and not following the teacher\'s instructions. Despite multiple warnings, the behavior continued, affecting the learning environment for other students.','Disruptive Behavior',1,'2024-10-28 11:19:46','usr-1','stu-19',1);
 /*!40000 ALTER TABLE `decipline_records` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -235,7 +236,7 @@ CREATE TABLE `grades_has_classes` (
 
 LOCK TABLES `grades_has_classes` WRITE;
 /*!40000 ALTER TABLE `grades_has_classes` DISABLE KEYS */;
-INSERT INTO `grades_has_classes` VALUES (1,2,1,'A'),(2,3,1,'A'),(3,1,1,'B'),(5,3,1,'D'),(6,3,1,'B');
+INSERT INTO `grades_has_classes` VALUES (1,2,1,'A'),(2,3,1,'A'),(3,1,1,'B'),(4,2,1,'B'),(5,3,1,'D'),(6,3,1,'B');
 /*!40000 ALTER TABLE `grades_has_classes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -385,8 +386,33 @@ CREATE TABLE `student` (
 
 LOCK TABLES `student` WRITE;
 /*!40000 ALTER TABLE `student` DISABLE KEYS */;
+INSERT INTO `student` VALUES ('stu-1','Kasun Perera','2024-10-28 09:53:16','Sunil Perera','Nimal Perera','0712345678','0709876543',1,'kasun.perera@example.com',1,1),('stu-10','Rashmi Karunaratne','2024-10-28 09:53:16','Janaka Karunaratne','Anoma Karunaratne','0710234567','0790123456',2,'rashmi.karunaratne@example.com',1,1),('stu-11','Suresh Liyanage','2024-10-28 09:53:16','Bandara Liyanage','Sumana Liyanage','0721345678','0710234567',1,'suresh.liyanage@example.com',2,2),('stu-12','Dilani Hettiarachchi','2024-10-28 09:53:16','Gamini Hettiarachchi','Soma Hettiarachchi','0732456789','0721345678',2,'dilani.hettiarachchi@example.com',3,1),('stu-13','Madushan Ranatunga','2024-10-28 09:53:16','Jagath Ranatunga','Indrani Ranatunga','0743567890','0732456789',1,'madushan.ranatunga@example.com',1,3),('stu-14','Lakmini Rajapaksha','2024-10-28 09:53:16','Ajith Rajapaksha','Swarnalatha Rajapaksha','0754678901','0743567890',2,'lakmini.rajapaksha@example.com',2,1),('stu-15','Nuwan Wijesinghe','2024-10-28 09:53:16','Wimal Wijesinghe','Padma Wijesinghe','0765789012','0754678901',1,'nuwan.wijesinghe@example.com',3,2),('stu-16','Thushari Gunawardena','2024-10-28 09:53:16','Ravi Gunawardena','Geetha Gunawardena','0776890123','0765789012',2,'thushari.gunawardena@example.com',1,1),('stu-17','Samantha De Alwis','2024-10-28 09:53:16','Kusal De Alwis','Ranjani De Alwis','0787901234','0776890123',1,'samantha.dealwis@example.com',2,3),('stu-18','Isuru Rajakaruna','2024-10-28 09:53:16','Sanath Rajakaruna','Nadeeka Rajakaruna','0798012345','0787901234',2,'isuru.rajakaruna@example.com',3,1),('stu-19','Kasuni Amarasinghe','2024-10-28 09:53:16','Indika Amarasinghe','Vimukthi Amarasinghe','0719123456','0798012345',1,'kasuni.amarasinghe@example.com',1,2),('stu-2','Nimali Silva','2024-10-28 09:53:16','Ranjith Silva','Kumari Silva','0723456789','0712345678',2,'nimali.silva@example.com',2,1),('stu-20','Shanika Abeysinghe','2024-10-28 09:53:16','Gayan Abeysinghe','Sujeewa Abeysinghe','0720234567','0719123456',2,'shanika.abeysinghe@example.com',2,1),('stu-21','Chamara Rathnayake','2024-10-28 09:53:16','Priyan Rathnayake','Wasantha Rathnayake','0731345678','0720234567',1,'chamara.rathnayake@example.com',3,1),('stu-22','Kavindi Weerasinghe','2024-10-28 09:53:16','Lalith Weerasinghe','Chandrani Weerasinghe','0742456789','0731345678',2,'kavindi.weerasinghe@example.com',1,3),('stu-23','Kusal Tennakoon','2024-10-28 09:53:16','Kamal Tennakoon','Nirmala Tennakoon','0753567890','0742456789',1,'kusal.tennakoon@example.com',2,2),('stu-24','Maleesha Rathnayake','2024-10-28 09:53:16','Keerthi Rathnayake','Anoma Rathnayake','0764678901','0753567890',2,'maleesha.rathnayake@example.com',3,1),('stu-25','Nishan Peris','2024-10-28 09:53:16','Amal Peris','Kumudu Peris','0775789012','0764678901',1,'nishan.peris@example.com',1,2),('stu-3','Ruwan Fernando','2024-10-28 09:53:16','Kamal Fernando','Chandra Fernando','0734567890','0723456789',1,'ruwan.fernando@example.com',3,2),('stu-4','Anjali De Silva','2024-10-28 09:53:16','Mahesh De Silva','Subha De Silva','0745678901','0734567890',2,'anjali.desilva@example.com',1,1),('stu-5','Chathura Jayasinghe','2024-10-28 09:53:16','Sunil Jayasinghe','Indrani Jayasinghe','0756789012','0745678901',1,'chathura.jayasinghe@example.com',2,3),('stu-6','Sanduni Wickramasinghe','2024-10-28 09:53:16','Ruwan Wickramasinghe','Mangalika Wickramasinghe','0767890123','0756789012',2,'sanduni.wickramasinghe@example.com',3,1),('stu-7','Pradeep Dissanayake','2024-10-28 09:53:16','Nimal Dissanayake','Chithra Dissanayake','0778901234','0767890123',1,'pradeep.dissanayake@example.com',1,2),('stu-8','Tharushi Bandara','2024-10-28 09:53:16','Priyantha Bandara','Hemali Bandara','0789012345','0778901234',2,'tharushi.bandara@example.com',2,1),('stu-9','Lakshan Senanayake','2024-10-28 09:53:16','Sarath Senanayake','Deepika Senanayake','0790123456','0789012345',1,'lakshan.senanayake@example.com',3,3);
 /*!40000 ALTER TABLE `student` ENABLE KEYS */;
 UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `before_create_student` BEFORE INSERT ON `student` FOR EACH ROW BEGIN
+
+    DECLARE newId INT;
+    
+    SELECT count(*) INTO newId FROM school_sync_v1.student;
+    
+    SET NEW.id = CONCAT('stu-', newId + 1);
+    SET NEW.created_at = NOW();
+
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `user_roles`
@@ -449,7 +475,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('usr-1','S. A. Wishva Kalhara',1,'2024-10-25 16:29:11',6,'200330010764','Negombo rd, Dankotuwa','0766801652','0766801653',1,'wishva','123456789',NULL);
+INSERT INTO `users` VALUES ('usr-1','S. A. Wishva Kalhara',1,'2024-10-25 16:29:11',4,'200330010764','Dankotuwa','0766801652','0766801620',1,'wishva','123456789',NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -515,4 +541,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-10-25 20:33:05
+-- Dump completed on 2024-10-28 11:32:12
