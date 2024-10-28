@@ -8,6 +8,7 @@ import com.formdev.flatlaf.FlatClientProperties;
 import controllers.AuthController;
 import java.awt.Color;
 import java.util.logging.Level;
+import models.User;
 import utils.ErrorException;
 import views.dialogs.DlgError;
 import views.layouts.AppLayout;
@@ -25,6 +26,9 @@ public class FrmSignIn extends javax.swing.JFrame {
         initComponents();
         
         setDesign();
+        
+        txtUsername.setText("");
+        txtPassword.setText("");
     }
 
     private void setDesign() {
@@ -199,13 +203,9 @@ public class FrmSignIn extends javax.swing.JFrame {
                 throw new ErrorException("Password cannot be empty!");
             }
 
-            boolean hasAccess = new AuthController().signIn(txtUsername.getText(), txtPassword.getPassword());
+            String userId = new AuthController().signIn(txtUsername.getText(), txtPassword.getPassword());
 
-            if (!hasAccess) {
-                throw new ErrorException("Username or password is incorrect!");
-            }
-
-            new AppLayout().setVisible(true);
+            new AppLayout(userId).setVisible(true);
             this.dispose();
 
         } catch (ErrorException e) {
