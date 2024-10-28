@@ -5,98 +5,39 @@
 package views.internals;
 
 import com.formdev.flatlaf.FlatClientProperties;
-import controllers.StudentContoller;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import utils.AppConnection;
-import views.dialogs.DlgStudent;
+import views.dialogs.DlgDisciplineRecord;
 import views.layouts.AppLayout;
-import java.sql.ResultSet;
-import java.util.Vector;
-import java.util.logging.Level;
-import models.Student;
-import views.dialogs.DlgError;
-import views.forms.FrmSplashScreen;
 
 /**
  *
  * @author vishv
  */
-public class PnlStudents extends javax.swing.JPanel {
+public class PnlDisciplineRecords extends javax.swing.JPanel {
 
     /**
-     * Creates new form PnlStudents
+     * Creates new form PnlDisciplineRecords
      */
-    public PnlStudents() {
+    public PnlDisciplineRecords() {
         initComponents();
-        setDsign();
-
-        fetchData();
+      setDsign();
     }
-
-    private void fetchData() {
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                loadTableData("");
-            }
-        }).start();
-    }
-
-    private void loadTableData(String constraints) {
-        try {
-            DefaultTableModel model = (DefaultTableModel) table.getModel();
-            model.setRowCount(0);
-
-            ResultSet rs = AppConnection.search("SELECT "
-                    + "student.id, "
-                    + "student.full_name, "
-                    + "student.guardian_1_full_name, "
-                    + "student.mobile1, "
-                    + "CONCAT(grades.value, '-', grades_has_classes.class) AS grade_class "
-                    + "FROM school_sync_v1.student "
-                    + "INNER JOIN school_sync_v1.grades_has_classes "
-                    + "ON student.grades_has_classes_id = grades_has_classes.id "
-                    + "INNER JOIN school_sync_v1.grades "
-                    + "ON grades_has_classes.grades_id = grades.id "
-                    + constraints
-                    + " ORDER BY CAST(SUBSTRING(student.id, 5) AS UNSIGNED);"
-            );
-
-            while (rs.next()) {
-                Vector<String> data = new Vector<>();
-                data.add(rs.getString("id"));
-                data.add(rs.getString("full_name"));
-                data.add(rs.getString("guardian_1_full_name"));
-                data.add(rs.getString("mobile1"));
-                data.add(rs.getString("grade_class"));
-
-                model.addRow(data);
-            }
-
-        } catch (Exception e) {
-            new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
-            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
-        }
-
-    }
-
-    private void setDsign() {
+    
+    private void setDsign(){
         btnAdd.putClientProperty("JButton.buttonType", "borderless");
         btnReport.putClientProperty("JButton.buttonType", "borderless");
         btnPrint.putClientProperty("JButton.buttonType", "borderless");
         btnRefresh.putClientProperty("JButton.buttonType", "borderless");
         btnLogout.putClientProperty("JButton.buttonType", "borderless");
         btnAccount.putClientProperty("JButton.buttonType", "borderless");
-
+        
         txtSearch.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
         txtSearch.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search by Name");
-
+        
         pnlTable.putClientProperty(FlatClientProperties.STYLE, "arc: 13");
-
+        
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         table.setDefaultRenderer(Object.class, centerRenderer);
@@ -128,7 +69,6 @@ public class PnlStudents extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
 
-        setPreferredSize(new java.awt.Dimension(1100, 830));
         setLayout(new java.awt.BorderLayout());
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -147,11 +87,6 @@ public class PnlStudents extends javax.swing.JPanel {
         btnPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/printer.png"))); // NOI18N
 
         btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/refresh-cw.png"))); // NOI18N
-        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRefreshActionPerformed(evt);
-            }
-        });
 
         btnLogout.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/log-out.png"))); // NOI18N
         btnLogout.addActionListener(new java.awt.event.ActionListener() {
@@ -189,7 +124,7 @@ public class PnlStudents extends javax.swing.JPanel {
                 .addComponent(btnPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 434, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 313, Short.MAX_VALUE)
                 .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnAccount, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -206,28 +141,15 @@ public class PnlStudents extends javax.swing.JPanel {
 
         table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Id", "Full Name", "Guardian", "Mobile", "Class"
+                "Discipline Records", "Title 2", "Title 3", "Title 4"
             }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        table.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tableMouseClicked(evt);
-            }
-        });
+        ));
         jScrollPane1.setViewportView(table);
 
         javax.swing.GroupLayout pnlTableLayout = new javax.swing.GroupLayout(pnlTable);
@@ -241,10 +163,10 @@ public class PnlStudents extends javax.swing.JPanel {
         );
         pnlTableLayout.setVerticalGroup(
             pnlTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlTableLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlTableLayout.createSequentialGroup()
                 .addGap(15, 15, 15)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 677, Short.MAX_VALUE)
-                .addGap(19, 19, 19))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 556, Short.MAX_VALUE)
+                .addGap(17, 17, 17))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -257,7 +179,7 @@ public class PnlStudents extends javax.swing.JPanel {
                     .addComponent(pnlTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 344, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 176, Short.MAX_VALUE)
                         .addComponent(cboSort, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(24, 24, 24))
         );
@@ -270,7 +192,7 @@ public class PnlStudents extends javax.swing.JPanel {
                     .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(pnlTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(23, 23, 23))
+                .addGap(25, 25, 25))
         );
 
         add(jPanel2, java.awt.BorderLayout.CENTER);
@@ -282,38 +204,11 @@ public class PnlStudents extends javax.swing.JPanel {
     }//GEN-LAST:event_btnLogoutActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        new DlgStudent(AppLayout.appLayout, true).setVisible(true);
+        
+        new DlgDisciplineRecord(AppLayout.appLayout, true).setVisible(true);
+        
     }//GEN-LAST:event_btnAddActionPerformed
 
-    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-        fetchData();
-    }//GEN-LAST:event_btnRefreshActionPerformed
-
-    private void tableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableMouseClicked
-        if (evt.getClickCount() != 2) {
-            return;
-        }
-
-        int selectedRow = table.getSelectedRow();
-
-        try {
-
-            String stuId = String.valueOf(table.getValueAt(selectedRow, 0));
-
-            Student student = new StudentContoller().getStudent(stuId);
-            if (student == null) {
-                new DlgError(AppLayout.appLayout, true, "Please refresh the table!", "Not Found").setVisible(true);
-                return;
-            }
-            
-            new DlgStudent(AppLayout.appLayout, true,student, stuId).setVisible(true);
-
-        } catch (Exception e) {
-            new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
-            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
-        }
-
-    }//GEN-LAST:event_tableMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAccount;

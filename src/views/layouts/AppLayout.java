@@ -9,10 +9,12 @@ import enums.LayoutPage;
 import java.awt.Color;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import models.User;
 import views.internals.PnlAdditionalFees;
 import views.internals.PnlAttendance;
 import views.internals.PnlAuthentication;
 import views.internals.PnlDashboard;
+import views.internals.PnlDisciplineRecords;
 import views.internals.PnlResources;
 import views.internals.PnlSMSEmail;
 import views.internals.PnlSettings;
@@ -27,13 +29,17 @@ public class AppLayout extends javax.swing.JFrame {
     
     public static AppLayout appLayout;
     private JButton selectedButton;
+    public static String loggedUserId;
 
     /**
      * Creates new form AppLayout
+     * @param userId
      */
-    public AppLayout() {
+    public AppLayout(String userId) {
         initComponents();
         
+        loggedUserId = userId;
+                
         appLayout = this;
         this.selectedButton = btnDashboard;
         
@@ -81,6 +87,10 @@ public class AppLayout extends javax.swing.JFrame {
                 showForm(new PnlSettings());
                 changeSideButton(btnSettings);
                 break;
+            case DISCIPLINE_RECORDS:
+                showForm(new PnlDisciplineRecords());
+                changeSideButton(btnDisciplineRecords);
+                break;
             default:
                 throw new AssertionError();
         }
@@ -104,6 +114,7 @@ public class AppLayout extends javax.swing.JFrame {
         btnResources.putClientProperty("JButton.buttonType", "borderless");
         btnAuth.putClientProperty("JButton.buttonType", "borderless");
         btnSettings.putClientProperty("JButton.buttonType", "borderless");
+        btnDisciplineRecords.putClientProperty("JButton.buttonType", "borderless");
     }
     
     private void changeSideButton(JButton newButton){
@@ -146,6 +157,7 @@ public class AppLayout extends javax.swing.JFrame {
         btnResources = new javax.swing.JButton();
         btnAuth = new javax.swing.JButton();
         btnSettings = new javax.swing.JButton();
+        btnDisciplineRecords = new javax.swing.JButton();
         pnlPlaceholder = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -251,6 +263,16 @@ public class AppLayout extends javax.swing.JFrame {
             }
         });
 
+        btnDisciplineRecords.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
+        btnDisciplineRecords.setForeground(new java.awt.Color(142, 142, 142));
+        btnDisciplineRecords.setText("Discipline Records");
+        btnDisciplineRecords.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
+        btnDisciplineRecords.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDisciplineRecordsActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlSideBarLayout = new javax.swing.GroupLayout(pnlSideBar);
         pnlSideBar.setLayout(pnlSideBarLayout);
         pnlSideBarLayout.setHorizontalGroup(
@@ -267,7 +289,8 @@ public class AppLayout extends javax.swing.JFrame {
                     .addComponent(btnStudents, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnResources, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnAuth, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnDisciplineRecords, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(26, Short.MAX_VALUE))
         );
         pnlSideBarLayout.setVerticalGroup(
@@ -286,6 +309,8 @@ public class AppLayout extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnAdditionalFees, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnDisciplineRecords, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnStudents, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnResources, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -293,7 +318,7 @@ public class AppLayout extends javax.swing.JFrame {
                 .addComponent(btnAuth, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(140, Short.MAX_VALUE))
+                .addContainerGap(80, Short.MAX_VALUE))
         );
 
         jPanel1.add(pnlSideBar, java.awt.BorderLayout.WEST);
@@ -353,11 +378,17 @@ public class AppLayout extends javax.swing.JFrame {
         changeForm(LayoutPage.SETTINGS);
     }//GEN-LAST:event_btnSettingsActionPerformed
 
+    private void btnDisciplineRecordsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDisciplineRecordsActionPerformed
+        
+        changeForm(LayoutPage.DISCIPLINE_RECORDS);
+    }//GEN-LAST:event_btnDisciplineRecordsActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdditionalFees;
     private javax.swing.JButton btnAttendance;
     private javax.swing.JButton btnAuth;
     private javax.swing.JButton btnDashboard;
+    private javax.swing.JButton btnDisciplineRecords;
     private javax.swing.JButton btnResources;
     private javax.swing.JButton btnSettings;
     private javax.swing.JButton btnSmsEmail;

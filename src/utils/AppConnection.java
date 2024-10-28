@@ -38,7 +38,7 @@ public class AppConnection {
     public static ResultSet search(String query) {
 
         if (!query.startsWith("SELECT") && !query.startsWith("CALL")) {
-            throw new IllegalArgumentException("Use ResultSet utils.AppConnection.mutate()");
+            throw new IllegalArgumentException("Use ResultSet utils.AppConnection.iud()");
         }
 
         if (connection == null) {
@@ -57,7 +57,7 @@ public class AppConnection {
     public static boolean iud(String query) throws SQLException {
 
         if (query.startsWith("SELECT")) {
-            throw new IllegalArgumentException("Use ResultSet utils.AppConnection.fetch()");
+            throw new IllegalArgumentException("Use ResultSet utils.AppConnection.search()");
         }
 
         if (connection == null) {

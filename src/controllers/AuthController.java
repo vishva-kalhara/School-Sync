@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import models.User;
 import utils.AppConnection;
 import java.sql.ResultSet;
+import utils.ErrorException;
 
 /**
  *
@@ -41,7 +42,7 @@ public class AuthController {
                 + user.getSysPassword() + "')");
     }
 
-    public boolean signIn(String username, char[] password) throws SQLException {
+    public String signIn(String username, char[] password) throws SQLException, ErrorException {
 
         ResultSet rs = AppConnection.search(
                 "SELECT * FROM `users` "
@@ -51,6 +52,12 @@ public class AuthController {
                 + "`status_id` = '1'"
         );
         
-        return rs.next();
+        if(rs.next()){
+            
+            return rs.getString("id");
+        } else {
+            throw new ErrorException("Username or password is incorrect!");
+        }
+        
     }
 }
