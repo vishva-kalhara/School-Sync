@@ -8,6 +8,8 @@ import com.formdev.flatlaf.FlatClientProperties;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
+import views.dialogs.DlgStudent;
+import views.dialogs.DlgVisitor;
 import views.layouts.AppLayout;
 
 /**
@@ -22,6 +24,7 @@ public class PnlVisitors extends javax.swing.JPanel {
     public PnlVisitors() {
         initComponents();
         setDsign();
+        
     }
     
     private void setDsign(){
@@ -75,6 +78,11 @@ public class PnlVisitors extends javax.swing.JPanel {
 
         btnAdd.setBackground(new java.awt.Color(35, 34, 50));
         btnAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/plus.png"))); // NOI18N
+        btnAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddActionPerformed(evt);
+            }
+        });
 
         btnReport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/file-text.png"))); // NOI18N
 
@@ -196,6 +204,12 @@ public class PnlVisitors extends javax.swing.JPanel {
 
         AppLayout.appLayout.dispose();
     }//GEN-LAST:event_btnLogoutActionPerformed
+
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+        // TODO add your handling code here:
+                new DlgVisitor(AppLayout.appLayout, true).setVisible(true);
+
+    }//GEN-LAST:event_btnAddActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
