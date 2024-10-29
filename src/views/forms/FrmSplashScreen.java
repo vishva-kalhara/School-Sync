@@ -72,7 +72,7 @@ public class FrmSplashScreen extends javax.swing.JFrame {
                 }catch (InterruptedException e){
                     FrmSplashScreen.logger.log(Level.WARNING, e.getMessage() ,e);
                 }
-                new FrmSignIn().setVisible(true);
+                new FrmAttendance().setVisible(true);
                 dispose();
             }
         }).start();
