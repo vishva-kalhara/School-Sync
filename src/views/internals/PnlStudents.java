@@ -14,8 +14,10 @@ import utils.AppConnection;
 import views.dialogs.DlgStudent;
 import views.layouts.AppLayout;
 import java.sql.ResultSet;
+import java.util.HashMap;
 import java.util.Vector;
 import java.util.logging.Level;
+import javax.swing.DefaultComboBoxModel;
 import models.Student;
 import views.dialogs.DlgError;
 import views.forms.FrmSplashScreen;
@@ -25,6 +27,9 @@ import views.forms.FrmSplashScreen;
  * @author vishv
  */
 public class PnlStudents extends javax.swing.JPanel {
+    
+    private HashMap<String, Integer> gradeMap = new HashMap();
+    private HashMap<String, String> classesMap = new HashMap();
 
     /**
      * Creates new form PnlStudents
@@ -32,18 +37,126 @@ public class PnlStudents extends javax.swing.JPanel {
     public PnlStudents() {
         initComponents();
         setDsign();
+        
+        loadGrades();
 
-        fetchData();
+        fetchData("");
+    }
+    
+    private void loadGrades() {
+
+        try {
+
+            ResultSet rs = AppConnection.search("SELECT * FROM `grades`");
+
+            Vector<String> data = new Vector();
+            data.add("All Grades");
+
+            while (rs.next()) {
+
+                gradeMap.put("Grade " + rs.getString("value"), rs.getInt("id"));
+                data.add("Grade " + rs.getString("value"));
+            }
+
+            DefaultComboBoxModel model = new DefaultComboBoxModel(data);
+            cboGrade.setModel(model);
+
+        } catch (Exception e) {
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+        }
     }
 
-    private void fetchData() {
+    private void loadClasses(int gradeId) {
 
+        try {
+
+            ResultSet rs = AppConnection.search("SELECT * FROM `grades_has_classes` WHERE `grades_id` = '" + gradeId + "'");
+
+            Vector<String> data = new Vector();
+            data.add("All Classes");
+
+            while (rs.next()) {
+
+                classesMap.put("Class " + rs.getString("class"), rs.getString("class"));
+                data.add("Class " + rs.getString("class"));
+            }
+
+            if (data.size() == 1) {
+                data.remove(0);
+                data.add("No Classes");
+                cboClass.setEnabled(false);
+            } else {
+//                cboGrade.setEnabled(false);
+                cboClass.setEnabled(true);
+                cboClass.grabFocus();
+            }
+
+            DefaultComboBoxModel model = new DefaultComboBoxModel(data);
+            cboClass.setModel(model);
+
+        } catch (Exception e) {
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+        }
+    }
+
+    private void fetchData(String constraints) {
+
+        jScrollPane1.setViewportView(new PnlFetching());
+        btnPrint.setEnabled(false);
+        btnReport.setEnabled(false);
+        
         new Thread(new Runnable() {
             @Override
             public void run() {
-                loadTableData("");
+                loadTableData(constraints);
             }
         }).start();
+    }
+    
+    private void filterData() {
+
+        StringBuilder constraints = new StringBuilder("");
+
+        boolean hasSearch = !txtSearch.getText().isBlank();
+        boolean hasGrade = cboGrade.getSelectedIndex() != 0;
+        boolean hasClass = cboClass.getSelectedIndex() != 0;
+
+        if (hasSearch || hasGrade || hasClass) {
+            constraints.append(" WHERE ");
+        }
+
+        if (hasSearch) {
+            constraints
+                    .append(" `student`.`full_name` LIKE '%")
+                    .append(txtSearch.getText())
+                    .append("%' ");
+        }
+
+        if (hasGrade) {
+
+            if (hasSearch) {
+                constraints.append(" AND ");
+            }
+
+            constraints
+                    .append(" `grades`.`value` = '")
+                    .append(gradeMap.get(String.valueOf(cboGrade.getSelectedItem())))
+                    .append("' ");
+        }
+
+        if (hasGrade && hasClass) {
+
+            if (hasSearch || hasGrade) {
+                constraints.append(" AND ");
+            }
+
+            constraints
+                    .append(" `grades_has_classes`.`class`  = '")
+                    .append(classesMap.get(String.valueOf(cboClass.getSelectedItem())))
+                    .append("' ");
+        }
+
+        fetchData(constraints.toString());
     }
 
     private void loadTableData(String constraints) {
@@ -51,30 +164,38 @@ public class PnlStudents extends javax.swing.JPanel {
             DefaultTableModel model = (DefaultTableModel) table.getModel();
             model.setRowCount(0);
 
-            ResultSet rs = AppConnection.search("SELECT "
-                    + "student.id, "
-                    + "student.full_name, "
-                    + "student.guardian_1_full_name, "
-                    + "student.mobile1, "
-                    + "CONCAT(grades.value, '-', grades_has_classes.class) AS grade_class "
-                    + "FROM school_sync_v1.student "
-                    + "INNER JOIN school_sync_v1.grades_has_classes "
-                    + "ON student.grades_has_classes_id = grades_has_classes.id "
-                    + "INNER JOIN school_sync_v1.grades "
-                    + "ON grades_has_classes.grades_id = grades.id "
-                    + constraints
-                    + " ORDER BY CAST(SUBSTRING(student.id, 5) AS UNSIGNED);"
+            ResultSet rs = AppConnection.search(
+                    "SELECT "
+                            + "`student`.`id` AS `student_id`, "
+                            + "`student`.`full_name` AS `student_name`, "
+                            + "`student`.`mobile1` AS `mobile1`, "
+                            + "`genders`.`value` AS `gender`, "
+                            + "CONCAT(`grades`.`value`, ' - ', `grades_has_classes`.`class`) AS `class` "
+                            + "FROM school_sync_v1.student "
+                            + "INNER JOIN `grades_has_classes` ON `student`.`grades_has_classes_id` = `grades_has_classes`.`id` "
+                            + "INNER JOIN `grades` ON `grades_has_classes`.`grades_id` = `grades`.`id` "
+                            + "INNER JOIN `genders` ON `student`.`genders_id` = `genders`.`id` "
+                            + constraints
+                            + " ORDER BY CAST(SUBSTRING(student.id, 5) AS UNSIGNED);"
             );
 
             while (rs.next()) {
                 Vector<String> data = new Vector<>();
-                data.add(rs.getString("id"));
-                data.add(rs.getString("full_name"));
-                data.add(rs.getString("guardian_1_full_name"));
+                data.add(rs.getString("student_id"));
+                data.add(rs.getString("student_name"));
                 data.add(rs.getString("mobile1"));
-                data.add(rs.getString("grade_class"));
+                data.add(rs.getString("gender"));
+                data.add(rs.getString("class"));
 
                 model.addRow(data);
+            }
+            
+            if (model.getRowCount() == 0) {
+                jScrollPane1.setViewportView(new PnlNotFound());
+            } else {
+                jScrollPane1.setViewportView(this.table);
+                btnPrint.setEnabled(true);
+                btnReport.setEnabled(true);
             }
 
         } catch (Exception e) {
@@ -122,11 +243,12 @@ public class PnlStudents extends javax.swing.JPanel {
         btnLogout = new javax.swing.JButton();
         btnAccount = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
-        cboSort = new javax.swing.JComboBox<>();
+        cboClass = new javax.swing.JComboBox<>();
         txtSearch = new javax.swing.JTextField();
         pnlTable = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
+        cboGrade = new javax.swing.JComboBox<>();
 
         setPreferredSize(new java.awt.Dimension(1100, 830));
         setLayout(new java.awt.BorderLayout());
@@ -200,7 +322,19 @@ public class PnlStudents extends javax.swing.JPanel {
 
         jPanel2.setBackground(new java.awt.Color(247, 247, 247));
 
-        cboSort.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cboClass.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cboClass.setEnabled(false);
+        cboClass.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboClassActionPerformed(evt);
+            }
+        });
+
+        txtSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtSearchActionPerformed(evt);
+            }
+        });
 
         pnlTable.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -212,7 +346,7 @@ public class PnlStudents extends javax.swing.JPanel {
                 {null, null, null, null, null}
             },
             new String [] {
-                "Id", "Full Name", "Guardian", "Mobile", "Class"
+                "Id", "Full Name", "Mobile 1", "Gender", "Class"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -229,6 +363,9 @@ public class PnlStudents extends javax.swing.JPanel {
             }
         });
         jScrollPane1.setViewportView(table);
+        if (table.getColumnModel().getColumnCount() > 0) {
+            table.getColumnModel().getColumn(0).setMaxWidth(65);
+        }
 
         javax.swing.GroupLayout pnlTableLayout = new javax.swing.GroupLayout(pnlTable);
         pnlTable.setLayout(pnlTableLayout);
@@ -236,7 +373,7 @@ public class PnlStudents extends javax.swing.JPanel {
             pnlTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlTableLayout.createSequentialGroup()
                 .addGap(19, 19, 19)
-                .addComponent(jScrollPane1)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 905, Short.MAX_VALUE)
                 .addGap(24, 24, 24))
         );
         pnlTableLayout.setVerticalGroup(
@@ -246,6 +383,13 @@ public class PnlStudents extends javax.swing.JPanel {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 677, Short.MAX_VALUE)
                 .addGap(19, 19, 19))
         );
+
+        cboGrade.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cboGrade.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboGradeActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -257,8 +401,10 @@ public class PnlStudents extends javax.swing.JPanel {
                     .addComponent(pnlTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 344, Short.MAX_VALUE)
-                        .addComponent(cboSort, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cboGrade, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cboClass, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(24, 24, 24))
         );
         jPanel2Layout.setVerticalGroup(
@@ -266,8 +412,9 @@ public class PnlStudents extends javax.swing.JPanel {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(24, 24, 24)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cboSort, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cboClass, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cboGrade, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(pnlTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(23, 23, 23))
@@ -286,7 +433,7 @@ public class PnlStudents extends javax.swing.JPanel {
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-        fetchData();
+        fetchData("");
     }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void tableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableMouseClicked
@@ -315,6 +462,27 @@ public class PnlStudents extends javax.swing.JPanel {
 
     }//GEN-LAST:event_tableMouseClicked
 
+    private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
+        
+        filterData();
+    }//GEN-LAST:event_txtSearchActionPerformed
+
+    private void cboGradeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboGradeActionPerformed
+        
+        if(cboGrade.getSelectedIndex() == 0) {
+            cboClass.setSelectedIndex(0);
+            cboClass.setEnabled(false);
+        }
+        
+        loadClasses(gradeMap.get(String.valueOf(cboGrade.getSelectedItem())));
+        filterData();
+    }//GEN-LAST:event_cboGradeActionPerformed
+
+    private void cboClassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboClassActionPerformed
+        
+        filterData();
+    }//GEN-LAST:event_cboClassActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAccount;
     private javax.swing.JButton btnAdd;
@@ -322,7 +490,8 @@ public class PnlStudents extends javax.swing.JPanel {
     private javax.swing.JButton btnPrint;
     private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnReport;
-    private javax.swing.JComboBox<String> cboSort;
+    private javax.swing.JComboBox<String> cboClass;
+    private javax.swing.JComboBox<String> cboGrade;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
