@@ -5,11 +5,20 @@
 package views.internals;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import controllers.UserController;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import views.dialogs.DlgClass;
 import views.layouts.AppLayout;
+import java.sql.ResultSet;
+import java.util.Vector;
+import java.util.logging.Level;
+import utils.AppConnection;
+import views.dialogs.DlgError;
+import views.dialogs.DlgUpdateClass;
+import views.forms.FrmSplashScreen;
 
 /**
  *
@@ -23,6 +32,7 @@ public class PnlResources extends javax.swing.JPanel {
     public PnlResources() {
         initComponents();
         setDsign();
+        fetchData("");
     }
 
     private void setDsign() {
@@ -44,6 +54,57 @@ public class PnlResources extends javax.swing.JPanel {
 
         javax.swing.JScrollPane scroll = (javax.swing.JScrollPane) table.getParent().getParent();
         scroll.setBorder(BorderFactory.createEmptyBorder());
+    }
+
+    private void fetchData(String constraints) {
+        jScrollPane1.setViewportView(new PnlFetching());
+        btnPrint.setEnabled(false);
+        btnReport.setEnabled(false);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                loadData(constraints);
+            }
+        }).start();
+    }
+
+    private void loadData(String constraints) {
+        try {
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+            model.setRowCount(0);
+
+            ResultSet rs = AppConnection.search(
+                    "SELECT grades.value AS grade_value, "
+                    + "COUNT(student.id) AS student_count, "
+                    + "IFNULL(GROUP_CONCAT(DISTINCT grades_has_classes.class ORDER BY grades_has_classes.class ASC), '-') AS active_classes "
+                    + "FROM grades "
+                    + "LEFT JOIN grades_has_classes ON grades.id = grades_has_classes.grades_id AND grades_has_classes.is_active = '1' "
+                    + "LEFT JOIN student ON student.grades_has_classes_id = grades_has_classes.id "
+                    + "GROUP BY grades.value"
+            );
+
+            while (rs.next()) {
+                Vector<String> data = new Vector<>();
+                data.add(rs.getString("grade_value"));
+                data.add(rs.getString("active_classes"));
+                data.add(rs.getString("student_count"));
+
+                model.addRow(data);
+            }
+
+            if (model.getRowCount() == 0) {
+                jScrollPane1.setViewportView(new PnlNotFound());
+            } else {
+                jScrollPane1.setViewportView(this.table);
+                btnPrint.setEnabled(true);
+                btnReport.setEnabled(true);
+            }
+
+        } catch (Exception e) {
+            new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+        }
     }
 
     /**
@@ -87,6 +148,11 @@ public class PnlResources extends javax.swing.JPanel {
         btnPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/printer.png"))); // NOI18N
 
         btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/refresh-cw.png"))); // NOI18N
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefreshActionPerformed(evt);
+            }
+        });
 
         btnLogout.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/log-out.png"))); // NOI18N
         btnLogout.addActionListener(new java.awt.event.ActionListener() {
@@ -141,15 +207,28 @@ public class PnlResources extends javax.swing.JPanel {
 
         table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "Grades", "Title 2", "Title 3", "Title 4"
+                "Grades", "Active Classes", "Student Count"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        table.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(table);
 
         javax.swing.GroupLayout pnlTableLayout = new javax.swing.GroupLayout(pnlTable);
@@ -207,6 +286,45 @@ public class PnlResources extends javax.swing.JPanel {
 
         new DlgClass(AppLayout.appLayout, true).setVisible(true);
     }//GEN-LAST:event_btnAddActionPerformed
+
+    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
+        fetchData("");
+    }//GEN-LAST:event_btnRefreshActionPerformed
+
+    private void tableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableMouseClicked
+        if (evt.getClickCount() != 2) {
+            return;
+        }
+
+        int selectedRow = table.getSelectedRow();
+
+        try {
+
+            String grade = String.valueOf(table.getValueAt(selectedRow, 0));
+            boolean isGradeFound = false;
+
+            ResultSet rs = AppConnection.search("SELECT `value` FROM `grades`");
+
+            while (rs.next()) {
+                if (rs.getString("value").equals(grade)) {
+                    isGradeFound = true;
+                    break;
+                }
+            }
+
+            if (!isGradeFound) {
+                new DlgError(AppLayout.appLayout, true, "Please refresh the table!", "Not Found").setVisible(true);
+                return;
+            }
+
+            new DlgUpdateClass(AppLayout.appLayout, true, grade).setVisible(true);
+            fetchData("");
+
+        } catch (Exception e) {
+            new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+        }
+    }//GEN-LAST:event_tableMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

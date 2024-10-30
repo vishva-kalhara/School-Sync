@@ -154,7 +154,6 @@ public class DlgStudent extends javax.swing.JDialog {
             Vector<String> data = new Vector<>();
             data.add("Select");
 
-            // Populate classMap with available classes for the selected grade
             while (rs.next()) {
                 classMap.put(rs.getString("class"), rs.getInt("id"));
                 data.add(rs.getString("class"));

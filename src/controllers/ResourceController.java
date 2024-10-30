@@ -14,12 +14,28 @@ import utils.ErrorException;
  * @author vishv
  */
 public class ResourceController {
-    
+
     public void createClass(int grade, String className) throws SQLException, ErrorException {
-        
-        ResultSet rs = AppConnection.search("SELECT * FROM `grades_has_classes` WHERE `grades_id` = '"+ grade +"' AND `class` = '"+ className +"'");
-        if(rs.next()) throw new ErrorException("There is already a class");
-        
-        AppConnection.iud("INSERT INTO `grades_has_classes` (`grades_id`, `class`, `is_active`) VALUES ('"+ grade +"', '"+ className +"', '1')");
+
+        ResultSet rs = AppConnection.search("SELECT * FROM `grades_has_classes` WHERE `grades_id` = '" + grade + "' AND `class` = '" + className + "'");
+        if (rs.next()) {
+            throw new ErrorException("There is already a class");
+        }
+
+        AppConnection.iud("INSERT INTO `grades_has_classes` (`grades_id`, `class`, `is_active`) VALUES ('" + grade + "', '" + className + "', '1')");
     }
+
+    public void updateClass(int grade, String selectedClass, int status, String newClassName) {
+        try {
+
+            AppConnection.iud("UPDATE `grades_has_classes` SET"
+                    + "`is_active` = '" + status + "',"
+                    + "`class` = '" + newClassName + "'"
+                    + "WHERE `class` = '" + selectedClass + "' AND `grades_id` = '" + grade + "' ");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
