@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Vector;
 import java.util.logging.Level;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.table.DefaultTableModel;
 import utils.AppConnection;
 import utils.ErrorException;
 import views.forms.FrmSplashScreen;
