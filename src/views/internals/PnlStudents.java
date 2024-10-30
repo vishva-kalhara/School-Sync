@@ -454,7 +454,7 @@ public class PnlStudents extends javax.swing.JPanel {
             }
             
             new DlgStudent(AppLayout.appLayout, true,student, stuId).setVisible(true);
-            fetchData();
+            fetchData("");
 
         } catch (Exception e) {
             new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
