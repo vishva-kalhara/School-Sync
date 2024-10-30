@@ -5,7 +5,14 @@
 package views.forms;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import controllers.AttendanceController;
+import enums.DialogType;
 import java.awt.Color;
+import java.sql.ResultSet;
+import java.util.logging.Level;
+import utils.AppConnection;
+import views.dialogs.DlgError;
+import views.layouts.AppLayout;
 
 /**
  *
@@ -18,11 +25,11 @@ public class FrmAttendance extends javax.swing.JFrame {
      */
     public FrmAttendance() {
         initComponents();
-        
+
         formDesign();
     }
-    
-        private void formDesign(){
+
+    private void formDesign() {
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_BACKGROUND, new Color(0, 0, 0));
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_FOREGROUND, new Color(0, 0, 0));
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_SHOW_CLOSE, false);
@@ -30,7 +37,7 @@ public class FrmAttendance extends javax.swing.JFrame {
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_SHOW_ICONIFFY, false);
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_SHOW_ICON, false);
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_SHOW_TITLE, false);
-        
+
         txtCardId.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
 
         btnSignIn.putClientProperty("JButton.buttonType", "borderless");
@@ -75,6 +82,11 @@ public class FrmAttendance extends javax.swing.JFrame {
         txtCardId.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtCardIdActionPerformed(evt);
+            }
+        });
+        txtCardId.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtCardIdKeyReleased(evt);
             }
         });
 
@@ -191,18 +203,51 @@ public class FrmAttendance extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSignInActionPerformed
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
-        
+
         this.dispose();
     }//GEN-LAST:event_btnCloseActionPerformed
 
     private void txtCardIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCardIdActionPerformed
-        
-        if(!txtCardId.getText().startsWith("stu-")){
+
+        if (!txtCardId.getText().startsWith("stu-")) {
             txtCardId.setText("stu-" + txtCardId.getText());
         }
-        
-//        Dinithi write from here
+        String stuid = txtCardId.getText().trim();
+
+        // Basic validation to ensure the ID format is correct
+        if (stuid.isEmpty() || !stuid.matches("stu-\\d+")) {
+            new DlgError(AppLayout.appLayout, true, "Please enter a valid student ID", "Validation Error").setVisible(true);
+            txtCardId.setText("");
+            return;
+        }
+        try {
+            // Query the database for the student ID
+            ResultSet rs = AppConnection.search("SELECT * FROM student WHERE id = '" + stuid + "'");
+
+            if (rs.next()) { // If a matching record is found
+
+                new AttendanceController().markAttendance(stuid);
+
+                txtCardId.setText("");
+                new DlgError(AppLayout.appLayout, true, "Attendance Marked Succesfully", "Success", DialogType.SUCCESS).setVisible(true);
+
+            } else { // If no record is found
+                new DlgError(AppLayout.appLayout, true, "Student ID not found", "Validation Error").setVisible(true);
+                txtCardId.setText("");
+
+            }
+
+        } catch (Exception e) {
+            FrmSplashScreen.logger.log(Level.WARNING, "Unexpected error: " + e.getMessage(), e);
+
+        }
+
+
     }//GEN-LAST:event_txtCardIdActionPerformed
+
+    private void txtCardIdKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCardIdKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCardIdKeyReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
