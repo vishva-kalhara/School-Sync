@@ -27,8 +27,8 @@ public class FrmSignIn extends javax.swing.JFrame {
         
         setDesign();
         
-        txtUsername.setText("");
-        txtPassword.setText("");
+        txtUsername.setText("Chamod");
+        txtPassword.setText("chamo123");
     }
 
     private void setDesign() {

@@ -5,11 +5,20 @@
 package views.internals;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import controllers.DisciplineRecordController;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import views.dialogs.DlgDisciplineRecord;
 import views.layouts.AppLayout;
+import java.sql.ResultSet;
+import java.util.Vector;
+import java.util.logging.Level;
+import models.DescplineRecord;
+import utils.AppConnection;
+import views.dialogs.DlgError;
+import views.forms.FrmSplashScreen;
 
 /**
  *
@@ -22,28 +31,87 @@ public class PnlDisciplineRecords extends javax.swing.JPanel {
      */
     public PnlDisciplineRecords() {
         initComponents();
-      setDsign();
+        setDsign();
+        fetchData("");
     }
-    
-    private void setDsign(){
+
+    private void setDsign() {
         btnAdd.putClientProperty("JButton.buttonType", "borderless");
         btnReport.putClientProperty("JButton.buttonType", "borderless");
         btnPrint.putClientProperty("JButton.buttonType", "borderless");
         btnRefresh.putClientProperty("JButton.buttonType", "borderless");
         btnLogout.putClientProperty("JButton.buttonType", "borderless");
         btnAccount.putClientProperty("JButton.buttonType", "borderless");
-        
+
         txtSearch.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
         txtSearch.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search by Name");
-        
+
         pnlTable.putClientProperty(FlatClientProperties.STYLE, "arc: 13");
-        
+
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         table.setDefaultRenderer(Object.class, centerRenderer);
 
         javax.swing.JScrollPane scroll = (javax.swing.JScrollPane) table.getParent().getParent();
         scroll.setBorder(BorderFactory.createEmptyBorder());
+    }
+
+    private void fetchData(String constraints) {
+
+        jScrollPane1.setViewportView(new PnlFetching());
+        btnPrint.setEnabled(false);
+        btnReport.setEnabled(false);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                loadTableData(constraints);
+            }
+        }).start();
+    }
+
+    private void loadTableData(String constraints) {
+        try {
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+            model.setRowCount(0);
+
+            ResultSet rs = AppConnection.search("SELECT "
+                    + "decipline_records.student_id AS stu_id,"
+                    + "decipline_records.description AS discription,"
+                    + "decipline_records.title AS title,"
+                    + "DATE(decipline_records.issued_at) AS recorded_date,"
+                    + "CONCAT(grades.value, ' - ', grades_has_classes.class) AS class, "
+                    + "CONCAT(users.full_name, ' (', user_roles.value, ')') AS recorded_officer "
+                    + "FROM school_sync_v1.decipline_records "
+                    + "INNER JOIN grades_has_classes ON decipline_records.grades_has_classes_id = grades_has_classes.id "
+                    + "INNER JOIN grades ON grades_has_classes.grades_id = grades.id "
+                    + "INNER JOIN users ON decipline_records.users_id = users.id "
+                    + "INNER JOIN user_roles ON users.user_roles_id = user_roles.id;"
+            );
+
+            while (rs.next()) {
+                Vector<String> data = new Vector<>();
+                data.add(rs.getString("stu_id"));
+                data.add(rs.getString("class"));
+                data.add(rs.getString("title"));
+                data.add(rs.getString("discription"));
+                data.add(rs.getString("recorded_date"));
+                data.add(rs.getString("recorded_officer"));
+
+                model.addRow(data);
+            }
+            if (model.getRowCount() == 0) {
+                jScrollPane1.setViewportView(new PnlNotFound());
+            } else {
+                jScrollPane1.setViewportView(this.table);
+                btnPrint.setEnabled(true);
+                btnReport.setEnabled(true);
+            }
+
+        } catch (Exception e) {
+            new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+        }
     }
 
     /**
@@ -87,6 +155,11 @@ public class PnlDisciplineRecords extends javax.swing.JPanel {
         btnPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/printer.png"))); // NOI18N
 
         btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/refresh-cw.png"))); // NOI18N
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefreshActionPerformed(evt);
+            }
+        });
 
         btnLogout.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/log-out.png"))); // NOI18N
         btnLogout.addActionListener(new java.awt.event.ActionListener() {
@@ -141,16 +214,34 @@ public class PnlDisciplineRecords extends javax.swing.JPanel {
 
         table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "Discipline Records", "Title 2", "Title 3", "Title 4"
+                "Stu Id", "Grade", "Title", "Description", "Recorded Date", "Recorded Officer"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        table.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(table);
+        if (table.getColumnModel().getColumnCount() > 0) {
+            table.getColumnModel().getColumn(0).setMaxWidth(65);
+            table.getColumnModel().getColumn(1).setMaxWidth(70);
+            table.getColumnModel().getColumn(3).setPreferredWidth(200);
+        }
 
         javax.swing.GroupLayout pnlTableLayout = new javax.swing.GroupLayout(pnlTable);
         pnlTable.setLayout(pnlTableLayout);
@@ -204,10 +295,40 @@ public class PnlDisciplineRecords extends javax.swing.JPanel {
     }//GEN-LAST:event_btnLogoutActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        
+
         new DlgDisciplineRecord(AppLayout.appLayout, true).setVisible(true);
-        
+
     }//GEN-LAST:event_btnAddActionPerformed
+
+    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
+        fetchData("");
+    }//GEN-LAST:event_btnRefreshActionPerformed
+
+    private void tableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableMouseClicked
+        if (evt.getClickCount() != 2) {
+            return;
+        }
+
+        int selectedRow = table.getSelectedRow();
+
+        try {
+
+            String stuId = String.valueOf(table.getValueAt(selectedRow, 0));
+
+            DescplineRecord descplineRecord = new DisciplineRecordController().getRecord(stuId);
+            if (descplineRecord == null) {
+
+                new DlgError(AppLayout.appLayout, true, "Please refresh the table!", "Not Found").setVisible(true);
+                return;
+            }
+
+            new DlgDisciplineRecord(AppLayout.appLayout, true, descplineRecord, stuId).setVisible(true);
+
+        } catch (Exception e) {
+            new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+        }
+    }//GEN-LAST:event_tableMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

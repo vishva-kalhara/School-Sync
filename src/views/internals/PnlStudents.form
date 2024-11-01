@@ -246,7 +246,7 @@
                       <Table columnCount="5" rowCount="4">
                         <Column editable="false" title="Id" type="java.lang.Object"/>
                         <Column editable="false" title="Full Name" type="java.lang.Object"/>
-                        <Column editable="false" title="Mobile 1" type="java.lang.Object"/>
+                        <Column editable="false" title="Mobile " type="java.lang.Object"/>
                         <Column editable="false" title="Gender" type="java.lang.Object"/>
                         <Column editable="false" title="Class" type="java.lang.Object"/>
                       </Table>

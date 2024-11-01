@@ -80,7 +80,7 @@ public class StudentContoller {
         student.setEmail(rs.getString("email"));
         student.setStatusId(rs.getInt("status_id"));
         student.setStatusValue(rs.getString("status.value"));
-        student.setGradeId(rs.getInt("grades_has_classes.grades_id"));
+        student.setGradeValue(rs.getString("grades_has_classes.grades_id"));
         student.setClassValue(rs.getString("grades_has_classes.class"));
 
         return student;

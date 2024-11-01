@@ -174,8 +174,9 @@ public class DlgStudent extends javax.swing.JDialog {
         txtGuardian2.setText(student.getGuardian2FullName());
         txtMobile1.setText(student.getMobile1());
         txtMobile2.setText(student.getMobile2());
+        
         cboGender.setSelectedItem(student.getGenderValue());
-        cboGrade.setSelectedItem(student.getGradeId());
+        cboGrade.setSelectedItem(student.getGradeValue());
         cboClass.setSelectedItem(student.getClassValue());
         cboStatus.setSelectedItem(student.getStatusValue());
     }

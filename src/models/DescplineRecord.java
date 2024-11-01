@@ -117,4 +117,50 @@ public class DescplineRecord {
     private Date issuedAt;
     private String userId;
     private String studentId;
+    private String sName;
+    private String className;
+    private String gradeValue;
+
+    /**
+     * @return the sName
+     */
+    public String getsName() {
+        return sName;
+    }
+
+    /**
+     * @param sName the sName to set
+     */
+    public void setsName(String sName) {
+        this.sName = sName;
+    }
+
+
+    /**
+     * @return the className
+     */
+    public String getClassName() {
+        return className;
+    }
+
+    /**
+     * @param className the className to set
+     */
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    /**
+     * @return the gradeValue
+     */
+    public String getGradeValue() {
+        return gradeValue;
+    }
+
+    /**
+     * @param gradeValue the gradeValue to set
+     */
+    public void setGradeValue(String gradeValue) {
+        this.gradeValue = gradeValue;
+    }
 }

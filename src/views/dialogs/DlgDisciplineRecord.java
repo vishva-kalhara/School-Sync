@@ -29,6 +29,9 @@ public class DlgDisciplineRecord extends javax.swing.JDialog {
     private HashMap<String, Integer> classesMap = new HashMap();
     private HashMap<String, String> studentsMap = new HashMap();
 
+    private DialogType type = DialogType.CREATE;
+    private String id;
+
     /**
      * Creates new form DlgDisciplineRecord
      *
@@ -44,6 +47,35 @@ public class DlgDisciplineRecord extends javax.swing.JDialog {
         loadGrades();
 
         cboGrade.grabFocus();
+        btnEdit.setEnabled(false);
+    }
+
+    public DlgDisciplineRecord(java.awt.Frame parent, boolean modal, DescplineRecord descplineRecord, String stuId) {
+
+        this(parent, modal);
+
+        type = DialogType.UPDATE;
+        loadRecord(descplineRecord);
+        this.id = id;
+
+        lblTitle.setText("Descpline Record Details");
+        btnSubmit.setText("Save Changes");
+
+        btnEdit.setEnabled(true);
+        btnEdit.grabFocus();
+
+        cboGrade.setEnabled(true);
+        cboClass.setEditable(true);
+    }
+
+    private void loadRecord(DescplineRecord descplineRecord) {
+        cboGrade.setSelectedItem(descplineRecord.getGradeValue());
+        cboClass.setSelectedItem(descplineRecord.getClassName());
+        cboStudent.setSelectedItem(descplineRecord.getsName());
+
+        txtTitle.setText(descplineRecord.getTitle());
+        txtDetails.setText(descplineRecord.getDescription());
+
     }
 
     private void setDesign() {
@@ -209,7 +241,7 @@ public class DlgDisciplineRecord extends javax.swing.JDialog {
         btnEdit = new javax.swing.JButton();
         btnReset = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        lblTitle = new javax.swing.JLabel();
         btnClose = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
 
@@ -270,6 +302,11 @@ public class DlgDisciplineRecord extends javax.swing.JDialog {
         jLabel6.setText("Details:");
 
         txtDetails.setEnabled(false);
+        txtDetails.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtDetailsActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -324,8 +361,8 @@ public class DlgDisciplineRecord extends javax.swing.JDialog {
                 .addGap(24, 24, 24)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtDetails, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addComponent(txtDetails, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -336,7 +373,7 @@ public class DlgDisciplineRecord extends javax.swing.JDialog {
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 494, Short.MAX_VALUE)
         );
 
         jPanel1.add(jPanel2, java.awt.BorderLayout.CENTER);
@@ -404,8 +441,8 @@ public class DlgDisciplineRecord extends javax.swing.JDialog {
         jPanel5.setMinimumSize(new java.awt.Dimension(80, 80));
         jPanel5.setPreferredSize(new java.awt.Dimension(409, 90));
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI Semibold", 0, 24)); // NOI18N
-        jLabel1.setText("Issue Discipline Record");
+        lblTitle.setFont(new java.awt.Font("Segoe UI Semibold", 0, 24)); // NOI18N
+        lblTitle.setText("Issue Discipline Record");
 
         btnClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/x.png"))); // NOI18N
         btnClose.addActionListener(new java.awt.event.ActionListener() {
@@ -420,7 +457,7 @@ public class DlgDisciplineRecord extends javax.swing.JDialog {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(28, 28, 28)
-                .addComponent(jLabel1)
+                .addComponent(lblTitle)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 84, Short.MAX_VALUE)
                 .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(28, 28, 28))
@@ -432,7 +469,7 @@ public class DlgDisciplineRecord extends javax.swing.JDialog {
                 .addGap(21, 21, 21)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(24, 24, 24))
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -450,7 +487,7 @@ public class DlgDisciplineRecord extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 624, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 704, Short.MAX_VALUE)
         );
 
         pack();
@@ -460,12 +497,30 @@ public class DlgDisciplineRecord extends javax.swing.JDialog {
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
 
         try {
+
             DescplineRecord record = getFormData();
 
-            new DisciplineRecordController().issueRecord(record);
-
-            new DlgError(AppLayout.appLayout, true, "Discipline Record issued!", "Success", DialogType.SUCCESS).setVisible(true);
-            this.dispose();
+            if (null == type) {
+                new DlgError(AppLayout.appLayout, true, "Please contact the vendor!").setVisible(true);
+                FrmSplashScreen.logger.log(Level.WARNING, "DlgSystemUser.java --> line 541");
+            } else {
+                switch (type) {
+                    case CREATE:
+                        new DisciplineRecordController().issueRecord(record);
+                        new DlgError(AppLayout.appLayout, true, "New record created!", "Success", DialogType.SUCCESS).setVisible(true);
+                        this.dispose();
+                        break;
+                    case UPDATE:
+                        new DisciplineRecordController().updateRecord(record);
+                        new DlgError(AppLayout.appLayout, true, "Descpline record updated!", "Success", DialogType.SUCCESS).setVisible(true);
+                        this.dispose();
+                        break;
+                    default:
+                        new DlgError(AppLayout.appLayout, true, "Please contact the vendor!").setVisible(true);
+                        FrmSplashScreen.logger.log(Level.WARNING, "DlgSystemUser.java --> line 541");
+                        break;
+                }
+            }
 
         } catch (ErrorException e) {
             new DlgError(AppLayout.appLayout, true, e.getMessage(), "Validation Error").setVisible(true);
@@ -487,7 +542,6 @@ public class DlgDisciplineRecord extends javax.swing.JDialog {
         }
 
         loadClasses(gradeMap.get(String.valueOf(cboGrade.getSelectedItem())));
-
 
     }//GEN-LAST:event_cboGradeActionPerformed
 
@@ -533,6 +587,10 @@ public class DlgDisciplineRecord extends javax.swing.JDialog {
         txtDetails.setEnabled(false);
     }//GEN-LAST:event_btnResetActionPerformed
 
+    private void txtDetailsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDetailsActionPerformed
+
+    }//GEN-LAST:event_txtDetailsActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClose;
@@ -542,7 +600,6 @@ public class DlgDisciplineRecord extends javax.swing.JDialog {
     private javax.swing.JComboBox<String> cboClass;
     private javax.swing.JComboBox<String> cboGrade;
     private javax.swing.JComboBox<String> cboStudent;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -555,6 +612,7 @@ public class DlgDisciplineRecord extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JLabel lblTitle;
     private javax.swing.JTextField txtDetails;
     private javax.swing.JTextField txtTitle;
     // End of variables declaration//GEN-END:variables
