@@ -168,6 +168,7 @@ public class Student {
     private String statusValue;
     
     private int gradeId;
+    private String gradeValue;
     private String classValue;
 
     /**
@@ -224,6 +225,20 @@ public class Student {
      */
     public void setClassValue(String classValue) {
         this.classValue = classValue;
+    }
+
+    /**
+     * @return the gradeValue
+     */
+    public String getGradeValue() {
+        return gradeValue;
+    }
+
+    /**
+     * @param gradeValue the gradeValue to set
+     */
+    public void setGradeValue(String gradeValue) {
+        this.gradeValue = gradeValue;
     }
 
 }

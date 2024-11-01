@@ -346,7 +346,7 @@ public class PnlStudents extends javax.swing.JPanel {
                 {null, null, null, null, null}
             },
             new String [] {
-                "Id", "Full Name", "Mobile 1", "Gender", "Class"
+                "Id", "Full Name", "Mobile ", "Gender", "Class"
             }
         ) {
             boolean[] canEdit = new boolean [] {
