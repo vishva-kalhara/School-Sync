@@ -502,7 +502,7 @@ public class DlgDisciplineRecord extends javax.swing.JDialog {
 
             if (null == type) {
                 new DlgError(AppLayout.appLayout, true, "Please contact the vendor!").setVisible(true);
-                FrmSplashScreen.logger.log(Level.WARNING, "DlgSystemUser.java --> line 541");
+                FrmSplashScreen.logger.log(Level.WARNING, "DlgDisciplineRecord --> line 505");
             } else {
                 switch (type) {
                     case CREATE:
