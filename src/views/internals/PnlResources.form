@@ -43,6 +43,7 @@
                       <Component id="btnRefresh" alignment="1" min="-2" pref="54" max="-2" attributes="0"/>
                       <Component id="btnLogout" alignment="1" min="-2" pref="54" max="-2" attributes="0"/>
                       <Component id="btnAccount" alignment="1" min="-2" pref="54" max="-2" attributes="0"/>
+                      <Component id="btnCard" alignment="1" min="-2" pref="54" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="24" pref="24" max="-2" attributes="0"/>
               </Group>
@@ -59,7 +60,9 @@
                   <Component id="btnPrint" min="-2" pref="54" max="-2" attributes="0"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Component id="btnRefresh" min="-2" pref="54" max="-2" attributes="0"/>
-                  <EmptySpace pref="449" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <Component id="btnCard" min="-2" pref="54" max="-2" attributes="0"/>
+                  <EmptySpace pref="389" max="32767" attributes="0"/>
                   <Component id="btnLogout" min="-2" pref="54" max="-2" attributes="0"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Component id="btnAccount" min="-2" pref="54" max="-2" attributes="0"/>
@@ -125,6 +128,17 @@
               <Image iconType="3" name="/assets/icons/user.png"/>
             </Property>
           </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnCard">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/assets/icons/id-card_new.png"/>
+            </Property>
+            <Property name="toolTipText" type="java.lang.String" value="Student Card Front"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCardActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
