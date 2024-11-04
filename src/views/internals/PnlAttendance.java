@@ -120,6 +120,8 @@ public class PnlAttendance extends javax.swing.JPanel {
         jScrollPane1.setViewportView(new PnlFetching());
         btnPrint.setEnabled(false);
         btnReport.setEnabled(false);
+        btnRefresh.setEnabled(false);
+        btnClearFilter.setEnabled(false);
 
         new Thread(new Runnable() {
             @Override
@@ -202,6 +204,8 @@ public class PnlAttendance extends javax.swing.JPanel {
                 jScrollPane1.setViewportView(this.table);
                 btnPrint.setEnabled(true);
                 btnReport.setEnabled(true);
+                btnRefresh.setEnabled(true);
+                btnClearFilter.setEnabled(true);
             }
 
         } catch (Exception e) {
@@ -398,11 +402,11 @@ public class PnlAttendance extends javax.swing.JPanel {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(24, 24, 24)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(cboClass, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(cboGrade, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(cboGrade, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(pnlTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(24, 24, 24))
