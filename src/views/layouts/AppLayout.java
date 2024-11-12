@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import models.User;
 import views.internals.PnlAdditionalFees;
+import views.internals.PnlAppointments;
 import views.internals.PnlAttendance;
 import views.internals.PnlAuthentication;
 import views.internals.PnlDashboard;
@@ -48,7 +49,7 @@ public class AppLayout extends javax.swing.JFrame {
         changeForm(LayoutPage.STUDENTS);
     }
     
-    private void changeForm(LayoutPage page){
+    public void changeForm(LayoutPage page){
         
         switch (page) {
             case DASHBOARD:
@@ -91,6 +92,10 @@ public class AppLayout extends javax.swing.JFrame {
                 showForm(new PnlDisciplineRecords());
                 changeSideButton(btnDisciplineRecords);
                 break;
+            case APPOINTMENTS:
+                showForm(new PnlAppointments());
+                changeSideButton(btnAppointments);
+                break;
             default:
                 throw new AssertionError();
         }
@@ -115,6 +120,7 @@ public class AppLayout extends javax.swing.JFrame {
         btnAuth.putClientProperty("JButton.buttonType", "borderless");
         btnSettings.putClientProperty("JButton.buttonType", "borderless");
         btnDisciplineRecords.putClientProperty("JButton.buttonType", "borderless");
+        btnAppointments.putClientProperty("JButton.buttonType", "borderless");
     }
     
     private void changeSideButton(JButton newButton){
@@ -158,6 +164,7 @@ public class AppLayout extends javax.swing.JFrame {
         btnAuth = new javax.swing.JButton();
         btnSettings = new javax.swing.JButton();
         btnDisciplineRecords = new javax.swing.JButton();
+        btnAppointments = new javax.swing.JButton();
         pnlPlaceholder = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -273,6 +280,16 @@ public class AppLayout extends javax.swing.JFrame {
             }
         });
 
+        btnAppointments.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
+        btnAppointments.setForeground(new java.awt.Color(142, 142, 142));
+        btnAppointments.setText("Appointments");
+        btnAppointments.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
+        btnAppointments.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAppointmentsActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlSideBarLayout = new javax.swing.GroupLayout(pnlSideBar);
         pnlSideBar.setLayout(pnlSideBarLayout);
         pnlSideBarLayout.setHorizontalGroup(
@@ -290,7 +307,8 @@ public class AppLayout extends javax.swing.JFrame {
                     .addComponent(btnResources, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnAuth, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnDisciplineRecords, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnDisciplineRecords, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAppointments, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(26, Short.MAX_VALUE))
         );
         pnlSideBarLayout.setVerticalGroup(
@@ -309,6 +327,8 @@ public class AppLayout extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnAdditionalFees, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnAppointments, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnDisciplineRecords, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnStudents, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -318,7 +338,7 @@ public class AppLayout extends javax.swing.JFrame {
                 .addComponent(btnAuth, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(80, Short.MAX_VALUE))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
 
         jPanel1.add(pnlSideBar, java.awt.BorderLayout.WEST);
@@ -383,8 +403,14 @@ public class AppLayout extends javax.swing.JFrame {
         changeForm(LayoutPage.DISCIPLINE_RECORDS);
     }//GEN-LAST:event_btnDisciplineRecordsActionPerformed
 
+    private void btnAppointmentsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAppointmentsActionPerformed
+        
+        changeForm(LayoutPage.APPOINTMENTS);
+    }//GEN-LAST:event_btnAppointmentsActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdditionalFees;
+    private javax.swing.JButton btnAppointments;
     private javax.swing.JButton btnAttendance;
     private javax.swing.JButton btnAuth;
     private javax.swing.JButton btnDashboard;
