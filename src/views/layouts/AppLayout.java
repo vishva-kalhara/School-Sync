@@ -46,7 +46,7 @@ public class AppLayout extends javax.swing.JFrame {
         
         formDesign();
         
-        changeForm(LayoutPage.STUDENTS);
+        changeForm(LayoutPage.DASHBOARD);
     }
     
     public void changeForm(LayoutPage page){
