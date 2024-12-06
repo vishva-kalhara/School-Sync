@@ -212,7 +212,7 @@ public class AppLayout extends javax.swing.JFrame {
 
         btnSmsEmail.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
         btnSmsEmail.setForeground(new java.awt.Color(142, 142, 142));
-        btnSmsEmail.setText("SMS / Email");
+        btnSmsEmail.setText("Notices");
         btnSmsEmail.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
         btnSmsEmail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

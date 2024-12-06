@@ -376,7 +376,7 @@ public class PnlAttendance extends javax.swing.JPanel {
             }
         });
 
-        cboClass.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cboClass.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Class" }));
         cboClass.setEnabled(false);
         cboClass.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

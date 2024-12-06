@@ -178,7 +178,7 @@
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="8e" green="8e" red="8e" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="SMS / Email"/>
+                <Property name="text" type="java.lang.String" value="Notices"/>
                 <Property name="horizontalAlignment" type="int" value="10"/>
               </Properties>
               <Events>
