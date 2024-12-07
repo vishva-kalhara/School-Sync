@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.util.logging.Level;
 import models.User;
 import utils.ErrorException;
+import validation.AuthValidator;
 import views.dialogs.DlgError;
 import views.layouts.AppLayout;
 
@@ -195,14 +196,13 @@ public class FrmSignIn extends javax.swing.JFrame {
     private void btnSignInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSignInActionPerformed
 
         try {
-
-            if (txtUsername.getText().isBlank()) {
-                throw new ErrorException("Username cannot be empty!");
-            }
-            if (String.valueOf(txtPassword.getPassword()).isBlank()) {
-                throw new ErrorException("Password cannot be empty!");
-            }
-
+            
+            User user = new User();
+            user.setSysUsername(txtUsername.getText());
+            user.setSysPassword(String.valueOf(txtPassword.getPassword()));
+            
+            new AuthValidator().validateSignIn(user);
+            
             String userId = new AuthController().signIn(txtUsername.getText(), txtPassword.getPassword());
 
             new AppLayout(userId).setVisible(true);
