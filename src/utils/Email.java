@@ -43,6 +43,5 @@ public class Email {
         email.setText(message);
 
         Transport.send(email);
-        System.out.println("Email sent successfully!");
     }
 }

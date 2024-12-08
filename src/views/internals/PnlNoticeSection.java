@@ -5,6 +5,13 @@
 package views.internals;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import java.sql.ResultSet;
+import java.util.HashMap;
+import java.util.Vector;
+import java.util.logging.Level;
+import javax.swing.DefaultComboBoxModel;
+import utils.AppConnection;
+import views.forms.FrmSplashScreen;
 
 /**
  *
@@ -12,12 +19,15 @@ import com.formdev.flatlaf.FlatClientProperties;
  */
 public class PnlNoticeSection extends javax.swing.JPanel {
 
+    private HashMap<String, Integer> gradesMap = new HashMap<>();
+
     /**
      * Creates new form PnlNoticeSection
      */
     public PnlNoticeSection() {
         initComponents();
-           setDesign();
+        setDesign();
+        loadGrades();
     }
 
     private void setDesign() {
@@ -26,6 +36,27 @@ public class PnlNoticeSection extends javax.swing.JPanel {
         txtDetails.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
         btnSubmit.putClientProperty("JButton.buttonType", "borderless");
 
+    }
+
+    private void loadGrades() {
+        try {
+            ResultSet rs = AppConnection.search(
+                    "SELECT id, CONCAT('Grade ', value) AS grade_name FROM grades ORDER BY id ASC"
+            );
+
+            Vector<String> data = new Vector<>();
+            data.add("Select");
+
+            while (rs.next()) {
+                gradesMap.put(rs.getString("grade_name"), rs.getInt("id"));
+                data.add(rs.getString("grade_name"));
+            }
+
+            DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(data);
+            cboClass.setModel(model);
+        } catch (Exception e) {
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+        }
     }
 
     /**
@@ -83,17 +114,18 @@ public class PnlNoticeSection extends javax.swing.JPanel {
                     .addComponent(jSeparator2)
                     .addComponent(txtHeading)
                     .addComponent(txtDetails, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(0, 158, Short.MAX_VALUE)
-                        .addComponent(btnSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(cboClass, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(cboClass, javax.swing.GroupLayout.Alignment.LEADING, 0, 337, Short.MAX_VALUE))
                 .addGap(32, 32, 32))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -112,9 +144,9 @@ public class PnlNoticeSection extends javax.swing.JPanel {
                 .addComponent(txtDetails, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(33, 33, 33)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
+                .addGap(29, 29, 29)
                 .addComponent(btnSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(33, Short.MAX_VALUE))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

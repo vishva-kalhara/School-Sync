@@ -5,12 +5,21 @@
 package views.internals;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import java.sql.ResultSet;
+import java.util.HashMap;
+import java.util.Vector;
+import java.util.logging.Level;
+import javax.swing.DefaultComboBoxModel;
+import utils.AppConnection;
+import views.forms.FrmSplashScreen;
 
 /**
  *
  * @author vishv
  */
 public class PnlNoticeClass extends javax.swing.JPanel {
+
+    private HashMap<String, Integer> classesMap = new HashMap<>();
 
     /**
      * Creates new form PnlNoticeClass
@@ -19,6 +28,7 @@ public class PnlNoticeClass extends javax.swing.JPanel {
         initComponents();
 
         setDesign();
+        loadClasses();
     }
 
     private void setDesign() {
@@ -27,6 +37,33 @@ public class PnlNoticeClass extends javax.swing.JPanel {
         txtDetails.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
         btnSubmit.putClientProperty("JButton.buttonType", "borderless");
 
+    }
+
+    private void loadClasses() {
+
+        try {
+
+            ResultSet rs = AppConnection.search("SELECT grades_has_classes.id AS Id, "
+                    + "CONCAT(grades.value, '-', grades_has_classes.class) AS grade_class "
+                    + "FROM school_sync_v1.grades_has_classes "
+                    + "INNER JOIN grades ON grades_has_classes.grades_id = grades.id "
+                    + "ORDER BY grades.value ASC, grades_has_classes.class ASC");
+
+            Vector<String> data = new Vector();
+            data.add("Select");
+
+            while (rs.next()) {
+
+                classesMap.put(rs.getString("grade_class"), rs.getInt("Id"));
+                data.add(rs.getString("grade_class"));
+            }
+
+            DefaultComboBoxModel model = new DefaultComboBoxModel(data);
+            cboClass.setModel(model);
+
+        } catch (Exception e) {
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+        }
     }
 
     /**

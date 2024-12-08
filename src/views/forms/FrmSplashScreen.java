@@ -21,7 +21,7 @@ import utils.AppConnection;
  * @author vishv
  */
 public class FrmSplashScreen extends javax.swing.JFrame {
-    
+
     public static Logger logger = Logger.getLogger("school_sync");
 
     /**
@@ -29,14 +29,14 @@ public class FrmSplashScreen extends javax.swing.JFrame {
      */
     public FrmSplashScreen() {
         initComponents();
-        
+
         setUpLogger();
-        
+       
         formDesign();
         
         waitSeconds();
     }
-    
+
     private void setUpLogger() {
         try {
 
@@ -50,7 +50,7 @@ public class FrmSplashScreen extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
-    
+
     private void formDesign(){
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_BACKGROUND, new Color(0, 0, 0));
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_FOREGROUND, new Color(0, 0, 0));
@@ -60,14 +60,14 @@ public class FrmSplashScreen extends javax.swing.JFrame {
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_SHOW_ICON, false);
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_SHOW_TITLE, false);
     }
-    
+
     private void waitSeconds(){
-        
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try{
-                    
+
                     Thread.sleep(10);
                 }catch (InterruptedException e){
                     FrmSplashScreen.logger.log(Level.WARNING, e.getMessage() ,e);

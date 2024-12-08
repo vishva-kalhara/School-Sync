@@ -5,7 +5,23 @@
 package views.internals;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import com.formdev.flatlaf.util.SwingUtils;
+import controllers.NoticesController;
+import enums.DialogType;
 import java.awt.Color;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Vector;
+import java.util.logging.Level;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JDialog;
+import javax.swing.SwingUtilities;
+import utils.AppConnection;
+import utils.ErrorException;
+import views.dialogs.DlgError;
+import views.forms.FrmSplashScreen;
+import views.layouts.AppLayout;
 
 /**
  *
@@ -13,20 +29,73 @@ import java.awt.Color;
  */
 public class PnlNoticeStudent extends javax.swing.JPanel {
 
+    private HashMap<String, Integer> classesMap = new HashMap();
+    private JDialog parent;
+
     /**
      * Creates new form PnlNoticeStudent
      */
-    public PnlNoticeStudent() {
+    public PnlNoticeStudent(JDialog parent) {
         initComponents();
         setDesign();
+        loadClasses();
+        
+        this.parent = parent;
     }
-    
+
     private void setDesign() {
 
         txtHeading.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
         txtDetails.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
         btnSubmit.putClientProperty("JButton.buttonType", "borderless");
 
+    }
+
+    private void loadClasses() {
+
+        try {
+
+            ResultSet rs = AppConnection.search("SELECT grades_has_classes.id AS Id, "
+                    + "CONCAT(grades.value, '-', grades_has_classes.class) AS grade_class "
+                    + "FROM school_sync_v1.grades_has_classes INNER JOIN grades "
+                    + "ON grades_has_classes.grades_id = grades.id "
+                    + "ORDER BY grades.value ASC, grades_has_classes.class ASC");
+
+            Vector<String> data = new Vector();
+            data.add("Select");
+
+            while (rs.next()) {
+
+                classesMap.put(rs.getString("grade_class"), rs.getInt("Id"));
+                data.add(rs.getString("grade_class"));
+            }
+
+            DefaultComboBoxModel model = new DefaultComboBoxModel(data);
+            cboClass.setModel(model);
+
+        } catch (Exception e) {
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+        }
+    }
+
+    private void loadStudents(int classId) {
+        try {
+            DefaultComboBoxModel<String> studentModel = new DefaultComboBoxModel<>();
+            studentModel.addElement("Select");
+
+            String query = "SELECT id, full_name FROM student WHERE grades_has_classes_id = " + classId + " ORDER BY id ASC";
+
+            ResultSet rs = AppConnection.search(query);
+
+            while (rs.next()) {
+                studentModel.addElement(rs.getString("full_name"));
+            }
+
+            cboStudent.setModel(studentModel);
+            cboStudent.setEnabled(true);
+        } catch (Exception e) {
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+        }
     }
 
     /**
@@ -60,6 +129,11 @@ public class PnlNoticeStudent extends javax.swing.JPanel {
         jLabel4.setText("Student:");
 
         cboClass.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1 - E" }));
+        cboClass.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboClassActionPerformed(evt);
+            }
+        });
 
         jLabel3.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(153, 153, 153));
@@ -152,9 +226,43 @@ public class PnlNoticeStudent extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
+        try {
+            String selectedStudent = (String) cboStudent.getSelectedItem();
+            String selectedClass = (String) cboClass.getSelectedItem();
+            String heading = txtHeading.getText().trim();
+            String details = txtDetails.getText().trim();
 
-        //        new AppointmentController().createAppointment(classId, studentId, appointment);
+            if (selectedClass == null || selectedStudent == null || heading.isEmpty() || details.isEmpty()) {
+                throw new ErrorException("All fields are required.");
+            }
+            
+            NoticesController emailController = new NoticesController();
+            emailController.sendNotice(selectedStudent, heading, details);
+            
+            new DlgError(AppLayout.appLayout, true, "Email sent!", "Email Successfully sent", DialogType.SUCCESS).setVisible(true);
+            
+            parent.dispose();
+            
+        } catch (ErrorException e) {
+            new DlgError(AppLayout.appLayout, true, e.getMessage(), "Validation Error").setVisible(true);
+        } catch (Exception e) {
+            new DlgError(AppLayout.appLayout, true, "Failed to send Invalid Email!").setVisible(true);
+            FrmSplashScreen.logger.log(Level.SEVERE, e.getMessage(), e);
+        }
+
     }//GEN-LAST:event_btnSubmitActionPerformed
+
+    private void cboClassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboClassActionPerformed
+        if (cboClass.getSelectedIndex() == 0) {
+            cboStudent.setEnabled(false);
+            cboStudent.setModel(new DefaultComboBoxModel<>(new String[]{"Select"}));
+            return;
+        }
+
+        int classId = classesMap.get(String.valueOf(cboClass.getSelectedItem()));
+
+        loadStudents(classId);
+    }//GEN-LAST:event_cboClassActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
