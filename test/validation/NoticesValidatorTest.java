@@ -60,14 +60,64 @@ public class NoticesValidatorTest {
         }
     }
     
-    
+    @Test
+    public void validateEmailData_EmailSubjectCannotBeNull() {
 
-    /*
+        String validateEmailData = "valid_ref";
+        String emailSubject = null;
+        String emailBody = "email_body";
+
+        try {
+            validator.validateEmailData(validateEmailData, emailSubject, emailBody);
+            Assert.fail("Expected an ErrorException to be thrown.");
+        } catch (ErrorException e) {
+            Assert.assertEquals("Email subject is required!", e.getMessage());
+        }
+    }
     
-    3. emailSubject cannot be null
-    4. emailSubject cannot be empty
-    5. emailBody cannot be null
-    6. emailBody cannot be empty
+    @Test
+    public void validateEmailData_EmailSubjectCannotBeEmpty() {
+
+        String validateEmailData = "valid_ref";
+        String emailSubject = "";
+        String emailBody = "email_body";
+
+        try {
+            validator.validateEmailData(validateEmailData, emailSubject, emailBody);
+            Assert.fail("Expected an ErrorException to be thrown.");
+        } catch (ErrorException e) {
+            Assert.assertEquals("Email subject is required!", e.getMessage());
+        }
+    }
     
-     */
+    @Test
+    public void validateEmailData_EmailBodyCannotBeNull() {
+
+        String validateEmailData = "valid_ref";
+        String emailSubject = "email_subject";
+        String emailBody = null;
+
+        try {
+            validator.validateEmailData(validateEmailData, emailSubject, emailBody);
+            Assert.fail("Expected an ErrorException to be thrown.");
+        } catch (ErrorException e) {
+            Assert.assertEquals("Email Body is required!", e.getMessage());
+        }
+    }
+    
+    @Test
+    public void validateEmailData_EmailBodyCannotBeEmpty() {
+
+        String validateEmailData = "valid_ref";
+        String emailSubject = "email_subject";
+        String emailBody = "";
+
+        try {
+            validator.validateEmailData(validateEmailData, emailSubject, emailBody);
+            Assert.fail("Expected an ErrorException to be thrown.");
+        } catch (ErrorException e) {
+            Assert.assertEquals("Email Body is required!", e.getMessage());
+        }
+    }
+    
 }
