@@ -36,7 +36,7 @@ public class DlgNotices extends javax.swing.JDialog {
         setDesign();
 
         btnStudent.grabFocus();
-        
+
         changeContent(NoticeType.STUDENT);
     }
 
@@ -106,10 +106,11 @@ public class DlgNotices extends javax.swing.JDialog {
 
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
-        btnStudent = new javax.swing.JButton();
-        btnClass = new javax.swing.JButton();
-        btnSection = new javax.swing.JButton();
         pnlContent = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel();
+        btnSection = new javax.swing.JButton();
+        btnClass = new javax.swing.JButton();
+        btnStudent = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         btnClose = new javax.swing.JButton();
@@ -122,14 +123,19 @@ public class DlgNotices extends javax.swing.JDialog {
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setPreferredSize(new java.awt.Dimension(350, 100));
+        jPanel2.setLayout(new java.awt.BorderLayout());
 
-        btnStudent.setBackground(new java.awt.Color(229, 29, 84));
-        btnStudent.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
-        btnStudent.setForeground(new java.awt.Color(255, 255, 255));
-        btnStudent.setText("Student");
-        btnStudent.addActionListener(new java.awt.event.ActionListener() {
+        pnlContent.setBackground(new java.awt.Color(255, 255, 255));
+        pnlContent.setLayout(new java.awt.BorderLayout());
+        jPanel2.add(pnlContent, java.awt.BorderLayout.CENTER);
+
+        jPanel4.setBackground(new java.awt.Color(255, 255, 255));
+
+        btnSection.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
+        btnSection.setText("Section");
+        btnSection.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnStudentActionPerformed(evt);
+                btnSectionActionPerformed(evt);
             }
         });
 
@@ -141,42 +147,41 @@ public class DlgNotices extends javax.swing.JDialog {
             }
         });
 
-        btnSection.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
-        btnSection.setText("Section");
-        btnSection.addActionListener(new java.awt.event.ActionListener() {
+        btnStudent.setBackground(new java.awt.Color(229, 29, 84));
+        btnStudent.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
+        btnStudent.setForeground(new java.awt.Color(255, 255, 255));
+        btnStudent.setText("Student");
+        btnStudent.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSectionActionPerformed(evt);
+                btnStudentActionPerformed(evt);
             }
         });
 
-        pnlContent.setBackground(new java.awt.Color(255, 255, 255));
-        pnlContent.setLayout(new java.awt.BorderLayout());
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(29, 29, 29)
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(23, 23, 23)
                 .addComponent(btnStudent)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnClass)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSection)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(pnlContent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addContainerGap(30, Short.MAX_VALUE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnStudent, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnClass, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSection, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(pnlContent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18))
         );
+
+        jPanel2.add(jPanel4, java.awt.BorderLayout.PAGE_START);
 
         jPanel1.add(jPanel2, java.awt.BorderLayout.CENTER);
 
@@ -265,6 +270,7 @@ public class DlgNotices extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JPanel pnlContent;

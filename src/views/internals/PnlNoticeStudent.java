@@ -5,21 +5,18 @@
 package views.internals;
 
 import com.formdev.flatlaf.FlatClientProperties;
-import com.formdev.flatlaf.util.SwingUtils;
 import controllers.NoticesController;
 import enums.DialogType;
-import java.awt.Color;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Vector;
 import java.util.logging.Level;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JDialog;
-import javax.swing.SwingUtilities;
 import utils.AppConnection;
 import utils.ErrorException;
 import views.dialogs.DlgError;
+import views.dialogs.DlgNotices;
 import views.forms.FrmSplashScreen;
 import views.layouts.AppLayout;
 
@@ -29,17 +26,20 @@ import views.layouts.AppLayout;
  */
 public class PnlNoticeStudent extends javax.swing.JPanel {
 
-    private HashMap<String, Integer> classesMap = new HashMap();
-    private JDialog parent;
+    private final HashMap<String, Integer> classesMap = new HashMap();
+    private final HashMap<String, String> studentMap = new HashMap<>();
+    private DlgNotices parent;
 
     /**
      * Creates new form PnlNoticeStudent
+     *
+     * @param parent
      */
-    public PnlNoticeStudent(JDialog parent) {
+    public PnlNoticeStudent(DlgNotices parent) {
         initComponents();
         setDesign();
         loadClasses();
-        
+
         this.parent = parent;
     }
 
@@ -89,6 +89,7 @@ public class PnlNoticeStudent extends javax.swing.JPanel {
 
             while (rs.next()) {
                 studentModel.addElement(rs.getString("full_name"));
+                studentMap.put(rs.getString("full_name"), rs.getString("id"));
             }
 
             cboStudent.setModel(studentModel);
@@ -118,6 +119,8 @@ public class PnlNoticeStudent extends javax.swing.JPanel {
         jLabel5 = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
         btnSubmit = new javax.swing.JButton();
+
+        setLayout(new java.awt.BorderLayout());
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -213,36 +216,25 @@ public class PnlNoticeStudent extends javax.swing.JPanel {
                 .addContainerGap(40, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+        add(jPanel3, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
+
         try {
-            String selectedStudent = (String) cboStudent.getSelectedItem();
-            String selectedClass = (String) cboClass.getSelectedItem();
+            String studentId = studentMap.get((String) cboStudent.getSelectedItem());
             String heading = txtHeading.getText().trim();
             String details = txtDetails.getText().trim();
 
-            if (selectedClass == null || selectedStudent == null || heading.isEmpty() || details.isEmpty()) {
+            if (studentId == null || heading.isEmpty() || details.isEmpty()) {
                 throw new ErrorException("All fields are required.");
             }
-            
+
             NoticesController emailController = new NoticesController();
-            emailController.sendNotice(selectedStudent, heading, details);
-            
+            emailController.sendNotice(studentId, heading, details);
+
             new DlgError(AppLayout.appLayout, true, "Email sent!", "Email Successfully sent", DialogType.SUCCESS).setVisible(true);
-            
             parent.dispose();
-            
         } catch (ErrorException e) {
             new DlgError(AppLayout.appLayout, true, e.getMessage(), "Validation Error").setVisible(true);
         } catch (Exception e) {

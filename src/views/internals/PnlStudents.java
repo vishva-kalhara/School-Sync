@@ -105,7 +105,7 @@ public class PnlStudents extends javax.swing.JPanel {
         btnPrint.setEnabled(false);
         btnReport.setEnabled(false);
         
-        new Thread(new Runnable() {
+        new Thread(new Runnable() { 
             @Override
             public void run() {
                 loadTableData(constraints);

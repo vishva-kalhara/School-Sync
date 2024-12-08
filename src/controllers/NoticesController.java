@@ -9,8 +9,10 @@ import utils.Email;
 import utils.ErrorException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
 import utils.AppConnection;
 import views.dialogs.DlgError;
+import views.forms.FrmSplashScreen;
 import views.layouts.AppLayout;
 
 /**
@@ -19,16 +21,15 @@ import views.layouts.AppLayout;
  */
 public class NoticesController {
 
-    public void sendNotice(String studentName, String heading, String details) throws ErrorException, SQLException {
+    public void sendNotice(String studentId, String heading, String details) throws ErrorException, SQLException {
 
-        ResultSet rs = AppConnection.search("SELECT email, id  FROM `student` WHERE `full_name` = '" + studentName + "'");
+        ResultSet rs = AppConnection.search("SELECT `email` FROM `student` WHERE `id` = '" + studentId + "'");
 
         if (!rs.next()) {
             new DlgError(AppLayout.appLayout, true, "Invalid Email").setVisible(true);
         }
 
         String studentEmail = rs.getString("email");
-        String studentId = rs.getString("id");
 
         if (studentEmail == null || studentEmail.isEmpty()) {
             throw new ErrorException("Student does not have a valid email address.");
@@ -46,7 +47,7 @@ public class NoticesController {
                     + heading + "', '" + details + "', '" + 1 + "', '" + studentId + "', '" + userId + "', NOW())");
 
         } catch (Exception e) {
-            e.printStackTrace();
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
             throw new ErrorException("Failed to send the email. Please try again.");
         }
 
