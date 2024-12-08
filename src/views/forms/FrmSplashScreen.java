@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import javax.swing.JOptionPane;
 import utils.AppConnection;
+import utils.Email;
 
 /**
  *

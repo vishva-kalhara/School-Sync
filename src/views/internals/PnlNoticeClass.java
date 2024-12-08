@@ -5,13 +5,19 @@
 package views.internals;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import controllers.NoticesController;
 import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Vector;
 import java.util.logging.Level;
 import javax.swing.DefaultComboBoxModel;
 import utils.AppConnection;
+import utils.ErrorException;
+import validation.NoticesValidator;
+import views.dialogs.DlgError;
+import views.dialogs.DlgNotices;
 import views.forms.FrmSplashScreen;
+import views.layouts.AppLayout;
 
 /**
  *
@@ -19,16 +25,21 @@ import views.forms.FrmSplashScreen;
  */
 public class PnlNoticeClass extends javax.swing.JPanel {
 
-    private HashMap<String, Integer> classesMap = new HashMap<>();
+    private HashMap<String, String> classesMap = new HashMap<>();
+    private DlgNotices parent;
 
     /**
      * Creates new form PnlNoticeClass
+     *
+     * @param parent
      */
-    public PnlNoticeClass() {
+    public PnlNoticeClass(DlgNotices parent) {
         initComponents();
 
         setDesign();
         loadClasses();
+
+        this.parent = parent;
     }
 
     private void setDesign() {
@@ -54,7 +65,7 @@ public class PnlNoticeClass extends javax.swing.JPanel {
 
             while (rs.next()) {
 
-                classesMap.put(rs.getString("grade_class"), rs.getInt("Id"));
+                classesMap.put(rs.getString("grade_class"), rs.getString("Id"));
                 data.add(rs.getString("grade_class"));
             }
 
@@ -96,6 +107,10 @@ public class PnlNoticeClass extends javax.swing.JPanel {
         jLabel2.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(153, 153, 153));
         jLabel2.setText("Heading:");
+
+        txtHeading.setText("Heading");
+
+        txtDetails.setText("Email Body");
 
         jLabel5.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(153, 153, 153));
@@ -169,7 +184,24 @@ public class PnlNoticeClass extends javax.swing.JPanel {
 
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
 
-        //        new AppointmentController().createAppointment(classId, studentId, appointment);
+        System.out.println(cboClass.getSelectedItem());
+
+        String toRef = classesMap.get((String) cboClass.getSelectedItem());
+        String subject = txtHeading.getText();
+        String body = txtDetails.getText();
+
+        try {
+
+            new NoticesValidator().validateEmailData(toRef, subject, body);
+
+            new NoticesController().sendToClass(toRef, subject, body);
+
+        } catch (ErrorException e) {
+            new DlgError(AppLayout.appLayout, true, e.getMessage(), "Validation Error").setVisible(true);
+        } catch (Exception e) {
+            new DlgError(AppLayout.appLayout, true, "Couldn't send notices").setVisible(true);
+            FrmSplashScreen.logger.log(Level.SEVERE, e.getMessage(), e);
+        }
     }//GEN-LAST:event_btnSubmitActionPerformed
 
 

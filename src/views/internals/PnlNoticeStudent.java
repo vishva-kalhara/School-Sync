@@ -213,7 +213,7 @@ public class PnlNoticeStudent extends javax.swing.JPanel {
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
                 .addComponent(btnSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(40, Short.MAX_VALUE))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
 
         add(jPanel3, java.awt.BorderLayout.CENTER);
@@ -231,7 +231,7 @@ public class PnlNoticeStudent extends javax.swing.JPanel {
             }
 
             NoticesController emailController = new NoticesController();
-            emailController.sendNotice(studentId, heading, details);
+            emailController.sendNoticeToStudent(studentId, heading, details);
 
             new DlgError(AppLayout.appLayout, true, "Email sent!", "Email Successfully sent", DialogType.SUCCESS).setVisible(true);
             parent.dispose();

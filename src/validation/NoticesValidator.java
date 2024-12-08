@@ -4,17 +4,20 @@
  */
 package validation;
 
+import utils.ErrorException;
+
 /**
  *
  * @author vishv
  */
 public class NoticesValidator {
     
-    public void validateForStudent(String studentId ){
+    public void validateEmailData(String toRef, String emailSubject, String emailBody) throws ErrorException {
         
-    }
-    
-    private void validateEmailData(){
+        if(toRef == null || toRef.isBlank()) throw new ErrorException("Select the to address!");
         
+        if(emailSubject == null || emailSubject.isBlank()) throw new ErrorException("Email subject is required!");
+        
+        if(emailBody == null || emailBody.isBlank()) throw new ErrorException("Email Body is required!");
     }
 }

@@ -48,7 +48,6 @@ public class PnlDashboard extends javax.swing.JPanel {
     private int getProgressWidth(int percentage){
               
         int output = (int) (3.76 * percentage);
-        System.out.println(output);
         return output;
     } 
 
