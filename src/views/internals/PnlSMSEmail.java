@@ -5,10 +5,20 @@
 package views.internals;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Date;
+import java.util.Vector;
+import java.util.logging.Level;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import utils.AppConnection;
+import views.dialogs.DlgError;
 import views.dialogs.DlgNotices;
+import views.forms.FrmSplashScreen;
 import views.layouts.AppLayout;
 
 /**
@@ -23,27 +33,157 @@ public class PnlSMSEmail extends javax.swing.JPanel {
     public PnlSMSEmail() {
         initComponents();
         setDsign();
+        fetchData("");
     }
-    
-    private void setDsign(){
+
+    private void setDsign() {
         btnAdd.putClientProperty("JButton.buttonType", "borderless");
         btnReport.putClientProperty("JButton.buttonType", "borderless");
         btnPrint.putClientProperty("JButton.buttonType", "borderless");
         btnRefresh.putClientProperty("JButton.buttonType", "borderless");
         btnLogout.putClientProperty("JButton.buttonType", "borderless");
         btnAccount.putClientProperty("JButton.buttonType", "borderless");
-        
+
         txtSearch.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
         txtSearch.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search by Name");
-        
+
         pnlTable.putClientProperty(FlatClientProperties.STYLE, "arc: 13");
-        
+
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         table.setDefaultRenderer(Object.class, centerRenderer);
 
         javax.swing.JScrollPane scroll = (javax.swing.JScrollPane) table.getParent().getParent();
         scroll.setBorder(BorderFactory.createEmptyBorder());
+    }
+
+    private void fetchData(String constraints) {
+
+        jScrollPane1.setViewportView(new PnlFetching());
+        btnPrint.setEnabled(false);
+        btnReport.setEnabled(false);
+//        btnRefresh.setEnabled(false);
+//        btnClearFilter.setEnabled(false);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                loadTableData(constraints);
+            }
+        }).start();
+    }
+
+    private void filterData() {
+        StringBuilder constraints = new StringBuilder("");
+
+        boolean hasSearch = !txtSearch.getText().isBlank();
+        boolean hasTime = cboTime.getSelectedIndex() != 0;
+
+        if (hasSearch || hasTime) {
+            constraints.append(" WHERE ");
+        }
+
+        if (hasSearch) {
+            constraints
+                    .append(" student.full_name LIKE '%")
+                    .append(txtSearch.getText())
+                    .append("%' ");
+        }
+
+        if (hasTime) {
+            if (hasSearch) {
+                constraints.append(" AND ");
+            }
+
+            String value = "";
+            switch (cboTime.getSelectedItem().toString()) {
+                case "Next 7 days":
+                    value = " STR_TO_DATE(notices.created_at, '%Y-%m-%d') >= '"
+                            + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
+                            + "' AND STR_TO_DATE(notices.created_at, '%Y-%m-%d') <= '"
+                            + LocalDate.now().plusDays(7) + "' ";
+                    break;
+                case "Tommorrow":
+                    value = "STR_TO_DATE(notices.created_at, '%Y-%m-%d') = '" + LocalDate.now().plusDays(1) + "'";
+                    break;
+                case "Today":
+                    value = " STR_TO_DATE(notices.created_at, '%Y-%m-%d') = '"
+                            + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + "'";
+                    break;
+                case "Yesterday":
+                    value = "STR_TO_DATE(notices.created_at, '%Y-%m-%d') = '" + LocalDate.now().minusDays(1) + "'";
+                    break;
+                case "Past 7 days":
+                    value = " STR_TO_DATE(notices.created_at, '%Y-%m-%d') <= '"
+                            + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
+                            + "' AND STR_TO_DATE(notices.created_at, '%Y-%m-%d') >= '"
+                            + LocalDate.now().minusDays(7) + "' ";
+                    break;
+                case "Past 14 days":
+                    value = " STR_TO_DATE(notices.created_at, '%Y-%m-%d') <= '"
+                            + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
+                            + "' AND STR_TO_DATE(notices.created_at, '%Y-%m-%d') >= '"
+                            + LocalDate.now().minusDays(14) + "' ";
+                    break;
+                case "Past 30 days":
+                    value = " STR_TO_DATE(notices.created_at, '%Y-%m-%d') <= '"
+                            + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
+                            + "' AND STR_TO_DATE(notices.created_at, '%Y-%m-%d') >= '"
+                            + LocalDate.now().minusDays(30) + "' ";
+                    break;
+            }
+            constraints.append(value);
+        }
+
+        String selectedSortOrder = String.valueOf(cboSort.getSelectedItem()).trim();
+        if ("ASC".equalsIgnoreCase(selectedSortOrder) || "DESC".equalsIgnoreCase(selectedSortOrder)) {
+            constraints.append(" ORDER BY notices.created_at ").append(" ").append(selectedSortOrder);
+        }
+
+        System.out.println("Generated Query: SELECT * FROM notices " + constraints.toString()); // Debugging
+        fetchData(constraints.toString());
+    }
+
+    private void loadTableData(String constraints) {
+        try {
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+            model.setRowCount(0);
+
+            ResultSet rs = utils.AppConnection.search("SELECT "
+                    + " `notices`.`student_id` AS `Stu_id`,"
+                    + "`student`.`full_name` AS `student_name`,"
+                    //  + "DATE(`notices`.`created_at`) AS `Send_At` ,"
+                    + "`notices`.`created_at` AS `time`,"
+                    + "`notices`.`subject` AS `Subject`"
+                    + " FROM `school_sync_v1`.`notices`"
+                    + " INNER JOIN `student` ON `notices`.`student_id`=`student`.`id`"
+                    + constraints
+            );
+
+            while (rs.next()) {
+                Vector<String> data = new Vector<>();
+                data.add(rs.getString("time"));
+                data.add(rs.getString("Stu_id"));
+                data.add(rs.getString("student_name"));
+                data.add(rs.getString("Subject"));
+
+                model.addRow(data);
+            }
+
+            if (model.getRowCount() == 0) {
+                jScrollPane1.setViewportView(new PnlNotFound());
+            } else {
+                jScrollPane1.setViewportView(this.table);
+                btnPrint.setEnabled(true);
+                btnReport.setEnabled(true);
+                btnRefresh.setEnabled(true);
+            }
+
+        } catch (Exception e) {
+            new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+        }
+
     }
 
     /**
@@ -68,6 +208,7 @@ public class PnlSMSEmail extends javax.swing.JPanel {
         pnlTable = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
+        cboTime = new javax.swing.JComboBox<>();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -87,6 +228,11 @@ public class PnlSMSEmail extends javax.swing.JPanel {
         btnPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/printer.png"))); // NOI18N
 
         btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/refresh-cw.png"))); // NOI18N
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefreshActionPerformed(evt);
+            }
+        });
 
         btnLogout.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/log-out.png"))); // NOI18N
         btnLogout.addActionListener(new java.awt.event.ActionListener() {
@@ -135,7 +281,18 @@ public class PnlSMSEmail extends javax.swing.JPanel {
 
         jPanel2.setBackground(new java.awt.Color(247, 247, 247));
 
-        cboSort.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cboSort.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "ASC", "DESC" }));
+        cboSort.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboSortActionPerformed(evt);
+            }
+        });
+
+        txtSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtSearchActionPerformed(evt);
+            }
+        });
 
         pnlTable.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -147,9 +304,17 @@ public class PnlSMSEmail extends javax.swing.JPanel {
                 {null, null, null, null}
             },
             new String [] {
-                "SMS Email", "Title 2", "Title 3", "Title 4"
+                "Send At", "Student Id", "Student  Name", "Subject"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, true, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(table);
 
         javax.swing.GroupLayout pnlTableLayout = new javax.swing.GroupLayout(pnlTable);
@@ -158,7 +323,7 @@ public class PnlSMSEmail extends javax.swing.JPanel {
             pnlTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlTableLayout.createSequentialGroup()
                 .addGap(19, 19, 19)
-                .addComponent(jScrollPane1)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 836, Short.MAX_VALUE)
                 .addGap(24, 24, 24))
         );
         pnlTableLayout.setVerticalGroup(
@@ -169,6 +334,13 @@ public class PnlSMSEmail extends javax.swing.JPanel {
                 .addGap(19, 19, 19))
         );
 
+        cboTime.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All time", "Next 7 days", "Tommorrow", "Today", "Yesterday", "Past 7 days", "Past 14 days", "Past 30 days" }));
+        cboTime.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboTimeActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -178,9 +350,11 @@ public class PnlSMSEmail extends javax.swing.JPanel {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(pnlTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 275, Short.MAX_VALUE)
-                        .addComponent(cboSort, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cboTime, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboSort, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(24, 24, 24))
         );
         jPanel2Layout.setVerticalGroup(
@@ -189,7 +363,8 @@ public class PnlSMSEmail extends javax.swing.JPanel {
                 .addGap(24, 24, 24)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cboSort, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cboTime, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(pnlTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(24, 24, 24))
@@ -204,9 +379,25 @@ public class PnlSMSEmail extends javax.swing.JPanel {
     }//GEN-LAST:event_btnLogoutActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        
+
         new DlgNotices(AppLayout.appLayout, true).setVisible(true);
     }//GEN-LAST:event_btnAddActionPerformed
+
+    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
+        fetchData("");
+    }//GEN-LAST:event_btnRefreshActionPerformed
+
+    private void cboSortActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboSortActionPerformed
+        filterData();
+    }//GEN-LAST:event_cboSortActionPerformed
+
+    private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
+        filterData();
+    }//GEN-LAST:event_txtSearchActionPerformed
+
+    private void cboTimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboTimeActionPerformed
+        filterData();
+    }//GEN-LAST:event_cboTimeActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -217,6 +408,7 @@ public class PnlSMSEmail extends javax.swing.JPanel {
     private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnReport;
     private javax.swing.JComboBox<String> cboSort;
+    private javax.swing.JComboBox<String> cboTime;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
