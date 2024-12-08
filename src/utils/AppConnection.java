@@ -8,7 +8,7 @@ import config.Env;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.SQLException; 
+import java.sql.SQLException;
 import java.util.logging.Level;
 import views.dialogs.DlgError;
 import views.forms.FrmSplashScreen;
@@ -19,7 +19,7 @@ import views.layouts.AppLayout;
  * @author vishv
  */
 public class AppConnection {
-    
+
     private static Connection connection;
 
     private static void setUpConnection() {
@@ -29,8 +29,10 @@ public class AppConnection {
                 Class.forName("com.mysql.cj.jdbc.Driver");
                 connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/school_sync_v1", "root", Env.MYSQL_PASSWORD);
 
+                connection.setAutoCommit(true);
+
             } catch (SQLException | ClassNotFoundException e) {
-                FrmSplashScreen.logger.log(Level.WARNING, e.getMessage() ,e);
+                FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
             }
         }
     }
@@ -48,7 +50,7 @@ public class AppConnection {
         try {
             return connection.createStatement().executeQuery(query);
         } catch (SQLException e) {
-           FrmSplashScreen.logger.log(Level.WARNING, e.getMessage() ,e);
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
             new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
             return null;
         }
@@ -70,10 +72,46 @@ public class AppConnection {
     }
 
     public static void closeConnection() throws SQLException {
-            
-        if(connection != null){
+
+        if (connection != null) {
             connection.close();
         }
-
     }
+
+    public static void disableAutoCommits() throws SQLException {
+
+        if (AppConnection.connection == null) {
+            setUpConnection();
+        }
+
+        AppConnection.connection.setAutoCommit(false);
+    }
+
+    public static void enableAutoCommits() throws SQLException {
+
+        if (AppConnection.connection == null) {
+            setUpConnection();
+        }
+
+        AppConnection.connection.setAutoCommit(true);
+    }
+
+    public static void commitChanges() throws SQLException {
+
+        if (AppConnection.connection == null) {
+            setUpConnection();
+        }
+
+        connection.commit();
+    }
+
+    public static void rollbackCommits() throws SQLException {
+
+        if (AppConnection.connection == null) {
+            setUpConnection();
+        }
+
+        connection.rollback();
+    }
+
 }

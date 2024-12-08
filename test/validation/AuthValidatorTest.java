@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 import utils.ErrorException;
 
 /**
- *
+ *ErrorException
  * @author vishv
  */
 public class AuthValidatorTest {

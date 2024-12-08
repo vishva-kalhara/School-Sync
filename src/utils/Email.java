@@ -44,4 +44,15 @@ public class Email {
 
         Transport.send(email);
     }
+    
+    public void sendAsBCC(String subject, String message, String toEmail) throws MessagingException {
+
+        Message email = new MimeMessage(session);
+        email.setFrom(new InternetAddress(Env.EMAIL_FROM));
+        email.setRecipients(Message.RecipientType.BCC, InternetAddress.parse(toEmail));
+        email.setSubject(subject);
+        email.setText(message);
+
+        Transport.send(email);
+    }
 }
