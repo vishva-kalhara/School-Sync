@@ -198,8 +198,14 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="txtName">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Wishva"/>
+              </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="txtEmail">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="test@exampl.ecom"/>
+              </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel5">
               <Properties>
@@ -224,8 +230,14 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="txtGuardian1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Gard1"/>
+              </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="txtGuardian2">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Gard2"/>
+              </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel7">
               <Properties>
@@ -252,6 +264,9 @@
             <Component class="javax.swing.JTextField" name="txtMobile2">
             </Component>
             <Component class="javax.swing.JTextField" name="txtMobile1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="0766816542"/>
+              </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel9">
               <Properties>
@@ -275,6 +290,9 @@
                   </StringArray>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cboGradeActionPerformed"/>
+              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
               </AuxValues>

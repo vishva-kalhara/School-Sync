@@ -51,6 +51,7 @@ public class PnlStudents extends javax.swing.JPanel {
 
             Vector<String> data = new Vector();
             data.add("All Grades");
+            gradeMap.put("All Grades", 0);
 
             while (rs.next()) {
 
@@ -74,6 +75,7 @@ public class PnlStudents extends javax.swing.JPanel {
 
             Vector<String> data = new Vector();
             data.add("All Classes");
+            classesMap.put("All Classes", "0");
 
             while (rs.next()) {
 
@@ -322,7 +324,7 @@ public class PnlStudents extends javax.swing.JPanel {
 
         jPanel2.setBackground(new java.awt.Color(247, 247, 247));
 
-        cboClass.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cboClass.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Choose Class" }));
         cboClass.setEnabled(false);
         cboClass.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
