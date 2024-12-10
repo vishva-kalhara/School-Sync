@@ -16,6 +16,7 @@ import javax.swing.DefaultComboBoxModel;
 import models.Visitor;
 import utils.AppConnection;
 import utils.ErrorException;
+import validation.VisitorValidator;
 import views.forms.FrmSplashScreen;
 import views.layouts.AppLayout;
 
@@ -45,7 +46,7 @@ public class DlgVisitor extends javax.swing.JDialog {
 
         loadGrades();
         cboStudent.setEnabled(false);
-        
+
         btnEdit.setEnabled(false);
 
     }
@@ -160,33 +161,6 @@ public class DlgVisitor extends javax.swing.JDialog {
     private Visitor getFormData() throws ErrorException {
 
         Visitor visitor = new Visitor();
-
-//        String date = dcDate.getDate();
-        if (cboGrade.getSelectedIndex() == 0) {
-            throw new ErrorException("Please select the grade!");
-        }
-
-        if (cboClass.getSelectedIndex() == 0) {
-            throw new ErrorException("Please select the class!");
-        }
-
-        if (cboStudent.getSelectedIndex() == 0) {
-            throw new ErrorException("Please select the student!");
-        }else if (cboStudent.getSelectedItem() != "Select") {
-            cboStudent.setEnabled(false);
-
-        }
-
-//        if (dcDate.getDate() == null) {
-//            throw new ErrorException("Please select the Date!");
-//
-//        }
-        Date selectedDate = dcDate.getDate();
-        if (selectedDate == null) {
-            throw new ErrorException("Date cannot be empty!");
-        } else if (selectedDate.before(new Date())) {
-            throw new ErrorException("Date must be today or a future date!");
-        }
 
         visitor.setClassId(classMap.get(String.valueOf(cboClass.getSelectedItem())));
         visitor.setStudentId(studentsMap.get(String.valueOf(cboStudent.getSelectedItem())));
@@ -411,11 +385,21 @@ public class DlgVisitor extends javax.swing.JDialog {
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
 
         try {
+
+            if (cboGrade.getSelectedIndex() == 0) {
+                throw new ErrorException("Please select the grade!");
+            }
+
+            if (cboClass.getSelectedIndex() == 0) {
+                throw new ErrorException("Please select the class!");
+            }
+
+            new VisitorValidator().validateVisitor(cboStudent.getSelectedIndex(), dcDate.getDate());
             Visitor visitor = getFormData();
 
             new VisitorController().assignVisitor(visitor);
 
-            new DlgError(AppLayout.appLayout, true, "Assign a visitor", "Success", DialogType.SUCCESS).setVisible(true);
+            new DlgError(AppLayout.appLayout, true, "Visitor Assigned Successful.", "Success", DialogType.SUCCESS).setVisible(true);
             this.dispose();
 
         } catch (ErrorException e) {
@@ -433,7 +417,7 @@ public class DlgVisitor extends javax.swing.JDialog {
     }//GEN-LAST:event_btnCloseActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        
+
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
@@ -468,7 +452,7 @@ public class DlgVisitor extends javax.swing.JDialog {
         if (cboStudent.getSelectedIndex() == 0) {
             return;
         }
-         cboStudent.setEnabled(false);
+        cboStudent.setEnabled(false);
         dcDate.setEnabled(true);
 //        txtTitle.setEnabled(true);
 //        txtDetails.setEnabled(true);
