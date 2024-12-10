@@ -13,6 +13,7 @@ import utils.ErrorException;
 import views.forms.FrmSplashScreen;
 import controllers.StudentContoller;
 import enums.DialogType;
+import validation.StudentValidator;
 import views.layouts.AppLayout;
 
 /**
@@ -81,6 +82,7 @@ public class DlgStudent extends javax.swing.JDialog {
 
             Vector<String> data = new Vector();
             data.add("Select");
+            gendersMap.put("Select", 0);
 
             while (rs.next()) {
                 gendersMap.put(rs.getString("value"), rs.getInt("id"));
@@ -123,6 +125,7 @@ public class DlgStudent extends javax.swing.JDialog {
 
             Vector<String> data = new Vector<>();
             data.add("Select");
+            gradeMap.put("Select", 0);
 
             while (rs.next()) {
                 gradeMap.put(rs.getString("value"), rs.getInt("id"));
@@ -131,16 +134,6 @@ public class DlgStudent extends javax.swing.JDialog {
 
             DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(data);
             cboGrade.setModel(model);
-
-            cboGrade.addActionListener(e -> {
-                String selectedGrade = (String) cboGrade.getSelectedItem();
-                if (selectedGrade != null && !selectedGrade.equals("Select")) {
-                    Integer gradeId = gradeMap.get(selectedGrade);
-                    if (gradeId != null) {
-                        loadClass(gradeId);
-                    }
-                }
-            });
 
         } catch (Exception e) {
             FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
@@ -153,6 +146,7 @@ public class DlgStudent extends javax.swing.JDialog {
 
             Vector<String> data = new Vector<>();
             data.add("Select");
+            classMap.put("Select", 0);
 
             while (rs.next()) {
                 classMap.put(rs.getString("class"), rs.getInt("id"));
@@ -174,7 +168,7 @@ public class DlgStudent extends javax.swing.JDialog {
         txtGuardian2.setText(student.getGuardian2FullName());
         txtMobile1.setText(student.getMobile1());
         txtMobile2.setText(student.getMobile2());
-        
+
         cboGender.setSelectedItem(student.getGenderValue());
         cboGrade.setSelectedItem(student.getGradeValue());
         cboClass.setSelectedItem(student.getClassValue());
@@ -219,55 +213,16 @@ public class DlgStudent extends javax.swing.JDialog {
 
         Student student = new Student();
 
-        if (txtName.getText().isBlank()) {
-            throw new ErrorException("Name cannot be empty!");
-        }
         student.setFullName(txtName.getText());
-
-        if (txtEmail.getText().isBlank()) {
-            throw new ErrorException("Email cannot be Empty!");
-        }
-        if (!txtEmail.getText().matches("^(?=.{1,64}@)[A-Za-z0-9\\+_-]+(\\.[A-Za-z0-9\\+_-]+)*@[^-][A-Za-z0-9\\+-]+(\\.[A-Za-z0-9\\+-]+)*(\\.[A-Za-z]{2,})$")) {
-            throw new ErrorException("Invalid Email Format!");
-        }
         student.setEmail(txtEmail.getText());
-
-        if (txtGuardian1.getText().isBlank()) {
-            throw new ErrorException("Guardian name cannot be empty!");
-        }
         student.setGuardian1FullName(txtGuardian1.getText());
-
-        if (txtGuardian2.getText().isBlank()) {
-            throw new ErrorException("Guardian name cannot be empty!");
-        }
         student.setGuardian2FullName(txtGuardian2.getText());
-
-        if (txtMobile1.getText().isBlank()) {
-            throw new ErrorException("Mobile-1 cannot be empty!");
-        }
-        if (txtMobile1.getText().length() != 10) {
-            throw new ErrorException("Mobile-1 is invalid!");
-        }
         student.setMobile1(txtMobile1.getText());
-
-        if (!txtMobile2.getText().isBlank() && txtMobile2.getText().length() != 10) {
-            throw new ErrorException("Mobile-2 is invalid!");
-        }
         student.setMobile2(txtMobile2.getText());
+        student.setGenderId(gendersMap.get((String) cboGender.getSelectedItem()));
+        student.setGradeId(gradeMap.get((String) cboGrade.getSelectedItem()));
+        student.setClassValue((String) cboClass.getSelectedItem());
 
-        if (cboGender.getSelectedIndex() == 0) {
-            throw new ErrorException("Select a gender!");
-        }
-        student.setGenderId(gendersMap.get(cboGender.getSelectedItem()));
-
-        if (cboGrade.getSelectedIndex() == 0) {
-            throw new ErrorException("Select a Grade!");
-        }
-
-        if (cboClass.getSelectedIndex() == 0) {
-            throw new ErrorException("Select a Class!");
-        }
-        
         return student;
     }
 
@@ -328,6 +283,10 @@ public class DlgStudent extends javax.swing.JDialog {
         jLabel4.setForeground(new java.awt.Color(153, 153, 153));
         jLabel4.setText("Full Name:");
 
+        txtName.setText("Wishva");
+
+        txtEmail.setText("test@exampl.ecom");
+
         jLabel5.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(153, 153, 153));
         jLabel5.setText("Mobile (Optional)");
@@ -335,6 +294,10 @@ public class DlgStudent extends javax.swing.JDialog {
         jLabel6.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(153, 153, 153));
         jLabel6.setText("Guardian 2");
+
+        txtGuardian1.setText("Gard1");
+
+        txtGuardian2.setText("Gard2");
 
         jLabel7.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(153, 153, 153));
@@ -344,11 +307,18 @@ public class DlgStudent extends javax.swing.JDialog {
         jLabel8.setForeground(new java.awt.Color(153, 153, 153));
         jLabel8.setText("Mobile ");
 
+        txtMobile1.setText("0766816542");
+
         jLabel9.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
         jLabel9.setForeground(new java.awt.Color(153, 153, 153));
         jLabel9.setText("Class");
 
         cboGrade.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cboGrade.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboGradeActionPerformed(evt);
+            }
+        });
 
         cboClass.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select" }));
 
@@ -597,13 +567,15 @@ public class DlgStudent extends javax.swing.JDialog {
         try {
             Student student = loadFormData();
 
+            new StudentValidator().validate(student);
+
             if (null == type) {
                 new DlgError(AppLayout.appLayout, true, "Please contact the vendor!").setVisible(true);
                 FrmSplashScreen.logger.log(Level.WARNING, "DlgSystemUser.java --> line 541");
             } else {
                 switch (type) {
                     case CREATE:
-                        int gradeId = cboGrade.getSelectedIndex();
+                        int gradeId = gradeMap.get((String) cboGrade.getSelectedItem());
                         String classValue = (String) cboClass.getSelectedItem();
 
                         new StudentContoller().createStudent(student, gradeId, classValue);
@@ -611,11 +583,11 @@ public class DlgStudent extends javax.swing.JDialog {
                         this.dispose();
                         break;
                     case UPDATE:
-                        int UpdatedgradeId = cboGrade.getSelectedIndex();
+                        int UpdatedgradeId = gradeMap.get((String) cboGrade.getSelectedItem());
                         String UpdatedclassValue = (String) cboClass.getSelectedItem();
                         int UpdatedStatusId = cboStatus.getSelectedIndex();
 
-                        new StudentContoller().updateStudent(student, this.id, UpdatedgradeId, UpdatedclassValue, UpdatedStatusId );
+                        new StudentContoller().updateStudent(student, this.id, UpdatedgradeId, UpdatedclassValue, UpdatedStatusId);
                         new DlgError(AppLayout.appLayout, true, "Student updated!", "Success", DialogType.SUCCESS).setVisible(true);
                         this.dispose();
                         break;
@@ -664,9 +636,30 @@ public class DlgStudent extends javax.swing.JDialog {
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCardActionPerformed
-        
+
         new DlgCard(AppLayout.appLayout, true, txtName.getText(), this.id).setVisible(true);
     }//GEN-LAST:event_btnCardActionPerformed
+
+    private void cboGradeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboGradeActionPerformed
+
+        String selectedGrade = (String) cboGrade.getSelectedItem();
+        if (selectedGrade.equals("Select")) {
+            
+            Vector<String> data = new Vector<>();
+            data.add("Select");
+            classMap.put("Select", 0);
+
+            DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(data);
+            cboClass.setModel(model);
+        }
+
+        if (selectedGrade != null && !selectedGrade.equals("Select")) {
+            Integer gradeId = gradeMap.get(selectedGrade);
+            if (gradeId != null) {
+                loadClass(gradeId);
+            }
+        }
+    }//GEN-LAST:event_cboGradeActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
