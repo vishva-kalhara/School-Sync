@@ -283,10 +283,6 @@ public class DlgStudent extends javax.swing.JDialog {
         jLabel4.setForeground(new java.awt.Color(153, 153, 153));
         jLabel4.setText("Full Name:");
 
-        txtName.setText("Wishva");
-
-        txtEmail.setText("test@exampl.ecom");
-
         jLabel5.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(153, 153, 153));
         jLabel5.setText("Mobile (Optional)");
@@ -295,10 +291,6 @@ public class DlgStudent extends javax.swing.JDialog {
         jLabel6.setForeground(new java.awt.Color(153, 153, 153));
         jLabel6.setText("Guardian 2");
 
-        txtGuardian1.setText("Gard1");
-
-        txtGuardian2.setText("Gard2");
-
         jLabel7.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(153, 153, 153));
         jLabel7.setText("Guardian 1");
@@ -306,8 +298,6 @@ public class DlgStudent extends javax.swing.JDialog {
         jLabel8.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(153, 153, 153));
         jLabel8.setText("Mobile ");
-
-        txtMobile1.setText("0766816542");
 
         jLabel9.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
         jLabel9.setForeground(new java.awt.Color(153, 153, 153));

@@ -58,6 +58,8 @@ public class NoticesController {
 
         ResultSet rs = AppConnection.search("SELECT `email` FROM `student` WHERE `id` = '" + studentId + "'");
 
+        rs.next();
+        
         String studentEmail = rs.getString("email");
 
         if (studentEmail == null || studentEmail.isEmpty()) {
@@ -108,9 +110,6 @@ public class NoticesController {
             }
             
             AppConnection.iud(query.toString());
-            
-            if(1 != 0)
-                throw new ErrorException("new error");
             
             new Email().sendAsBCC(heading, details, emailList.toString());
             

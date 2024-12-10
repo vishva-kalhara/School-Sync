@@ -249,10 +249,13 @@ public class PnlAttendance extends javax.swing.JPanel {
 
         btnAdd.setBackground(new java.awt.Color(35, 34, 50));
         btnAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/plus.png"))); // NOI18N
+        btnAdd.setEnabled(false);
 
         btnReport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/file-text.png"))); // NOI18N
+        btnReport.setEnabled(false);
 
         btnPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/printer.png"))); // NOI18N
+        btnPrint.setEnabled(false);
 
         btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/refresh-cw.png"))); // NOI18N
         btnRefresh.addActionListener(new java.awt.event.ActionListener() {
@@ -272,6 +275,7 @@ public class PnlAttendance extends javax.swing.JPanel {
         btnAccount.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/user.png"))); // NOI18N
 
         btnClearFilter.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/filter-x.png"))); // NOI18N
+        btnClearFilter.setEnabled(false);
         btnClearFilter.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnClearFilterActionPerformed(evt);
