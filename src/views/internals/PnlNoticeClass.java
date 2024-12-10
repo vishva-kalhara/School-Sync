@@ -6,6 +6,7 @@ package views.internals;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import controllers.NoticesController;
+import enums.DialogType;
 import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Vector;
@@ -108,10 +109,6 @@ public class PnlNoticeClass extends javax.swing.JPanel {
         jLabel2.setForeground(new java.awt.Color(153, 153, 153));
         jLabel2.setText("Heading:");
 
-        txtHeading.setText("Heading");
-
-        txtDetails.setText("Email Body");
-
         jLabel5.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(153, 153, 153));
         jLabel5.setText("Details:");
@@ -195,6 +192,9 @@ public class PnlNoticeClass extends javax.swing.JPanel {
             new NoticesValidator().validateEmailData(toRef, subject, body);
 
             new NoticesController().sendToClass(toRef, subject, body);
+            
+            new DlgError(AppLayout.appLayout, true, "Email sent!", "Email Successfully sent", DialogType.SUCCESS).setVisible(true);
+            parent.dispose();
 
         } catch (ErrorException e) {
             new DlgError(AppLayout.appLayout, true, e.getMessage(), "Validation Error").setVisible(true);

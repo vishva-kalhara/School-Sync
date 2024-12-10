@@ -224,8 +224,10 @@ public class PnlSMSEmail extends javax.swing.JPanel {
         });
 
         btnReport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/file-text.png"))); // NOI18N
+        btnReport.setEnabled(false);
 
         btnPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/printer.png"))); // NOI18N
+        btnPrint.setEnabled(false);
 
         btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/refresh-cw.png"))); // NOI18N
         btnRefresh.addActionListener(new java.awt.event.ActionListener() {
@@ -335,6 +337,7 @@ public class PnlSMSEmail extends javax.swing.JPanel {
         );
 
         cboTime.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All time", "Next 7 days", "Tommorrow", "Today", "Yesterday", "Past 7 days", "Past 14 days", "Past 30 days" }));
+        cboTime.setEnabled(false);
         cboTime.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cboTimeActionPerformed(evt);

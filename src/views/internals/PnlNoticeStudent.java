@@ -224,7 +224,7 @@ public class PnlNoticeStudent extends javax.swing.JPanel {
         try {
             String studentId = studentMap.get((String) cboStudent.getSelectedItem());
             String heading = txtHeading.getText().trim();
-            String details = txtDetails.getText().trim();
+            String details = txtDetails.getText();
 
             if (studentId == null || heading.isEmpty() || details.isEmpty()) {
                 throw new ErrorException("All fields are required.");
