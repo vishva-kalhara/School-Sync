@@ -34,9 +34,10 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
                   <EmptySpace pref="24" max="32767" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="103" groupAlignment="1" attributes="0">
+                      <Component id="btnPayment" min="-2" pref="54" max="-2" attributes="0"/>
                       <Component id="btnAdd" alignment="1" min="-2" pref="54" max="-2" attributes="0"/>
                       <Component id="btnReport" alignment="1" min="-2" pref="54" max="-2" attributes="0"/>
                       <Component id="btnPrint" alignment="1" min="-2" pref="54" max="-2" attributes="0"/>
@@ -57,9 +58,11 @@
                   <Component id="btnReport" min="-2" pref="54" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="btnPrint" min="-2" pref="54" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="btnPayment" min="-2" pref="54" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="btnRefresh" min="-2" pref="54" max="-2" attributes="0"/>
-                  <EmptySpace pref="411" max="32767" attributes="0"/>
+                  <EmptySpace pref="351" max="32767" attributes="0"/>
                   <Component id="btnLogout" min="-2" pref="54" max="-2" attributes="0"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Component id="btnAccount" min="-2" pref="54" max="-2" attributes="0"/>
@@ -122,6 +125,16 @@
               <Image iconType="3" name="/assets/icons/user.png"/>
             </Property>
           </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnPayment">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/assets/icons/payment.png"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnPaymentActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
