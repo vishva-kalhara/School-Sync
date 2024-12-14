@@ -9,6 +9,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
 import views.dialogs.DlgAdditionalFee;
+import views.dialogs.DlgPayment;
 import views.layouts.AppLayout;
 
 /**
@@ -32,6 +33,7 @@ public class PnlAdditionalFees extends javax.swing.JPanel {
         btnRefresh.putClientProperty("JButton.buttonType", "borderless");
         btnLogout.putClientProperty("JButton.buttonType", "borderless");
         btnAccount.putClientProperty("JButton.buttonType", "borderless");
+        btnPayment.putClientProperty("JButton.buttonType", "borderless");
         
         txtSearch.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
         txtSearch.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search by Name");
@@ -62,6 +64,7 @@ public class PnlAdditionalFees extends javax.swing.JPanel {
         btnRefresh = new javax.swing.JButton();
         btnLogout = new javax.swing.JButton();
         btnAccount = new javax.swing.JButton();
+        btnPayment = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         cboSort = new javax.swing.JComboBox<>();
         txtSearch = new javax.swing.JTextField();
@@ -98,19 +101,27 @@ public class PnlAdditionalFees extends javax.swing.JPanel {
         btnAccount.setBackground(new java.awt.Color(244, 244, 244));
         btnAccount.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/user.png"))); // NOI18N
 
+        btnPayment.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/payment.png"))); // NOI18N
+        btnPayment.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPaymentActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(24, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnAdd, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnReport, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnPrint, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnRefresh, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnLogout, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAccount, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnPayment, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnReport, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAccount, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(24, 24, 24))
         );
         jPanel1Layout.setVerticalGroup(
@@ -123,8 +134,10 @@ public class PnlAdditionalFees extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnPayment, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 411, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 351, Short.MAX_VALUE)
                 .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnAccount, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -208,11 +221,16 @@ public class PnlAdditionalFees extends javax.swing.JPanel {
         new DlgAdditionalFee(AppLayout.appLayout, true).setVisible(true);
     }//GEN-LAST:event_btnAddActionPerformed
 
+    private void btnPaymentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPaymentActionPerformed
+        new DlgPayment(AppLayout.appLayout, true).setVisible(true);
+    }//GEN-LAST:event_btnPaymentActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAccount;
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnLogout;
+    private javax.swing.JButton btnPayment;
     private javax.swing.JButton btnPrint;
     private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnReport;
