@@ -5,11 +5,17 @@
 package views.layouts;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import enums.DialogAction;
 import enums.LayoutPage;
 import java.awt.Color;
+import java.util.logging.Level;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import models.User;
+import utils.AppConnection;
+import views.dialogs.DlgConfirm;
+import views.forms.FrmSplashScreen;
 import views.internals.PnlAdditionalFees;
 import views.internals.PnlAppointments;
 import views.internals.PnlAttendance;
@@ -140,6 +146,24 @@ public class AppLayout extends javax.swing.JFrame {
         pnlPlaceholder.add(form, java.awt.BorderLayout.CENTER);
         pnlPlaceholder.repaint();
         pnlPlaceholder.revalidate();
+    }
+    
+    public void closeApp(){
+        try {
+
+            DlgConfirm dialog = new DlgConfirm(AppLayout.appLayout, true, "Confirm Exit!", "Sure you want to sign out.");
+            dialog.setVisible(true);
+            DialogAction action = dialog.getAction();
+
+            if (action == DialogAction.CONFIRM) {
+
+                AppConnection.closeConnection();
+                System.exit(0);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage() ,e);
+        }
     }
     
     /**

@@ -5,9 +5,15 @@
 package views.internals;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import enums.DialogAction;
 import enums.LayoutPage;
 import java.awt.Dimension;
+import java.util.logging.Level;
 import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
+import utils.AppConnection;
+import views.dialogs.DlgConfirm;
+import views.forms.FrmSplashScreen;
 import views.layouts.AppLayout;
 
 /**
@@ -424,7 +430,7 @@ public class PnlDashboard extends javax.swing.JPanel {
 
     private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
 
-        AppLayout.appLayout.dispose();
+        AppLayout.appLayout.closeApp();
     }//GEN-LAST:event_btnLogoutActionPerformed
 
     private void btnToDiscipleRecordsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnToDiscipleRecordsActionPerformed
