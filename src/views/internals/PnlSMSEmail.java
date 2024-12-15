@@ -5,17 +5,21 @@
 package views.internals;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import java.io.InputStream;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Vector;
 import java.util.logging.Level;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import utils.AppConnection;
+import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.view.JasperViewer;
 import views.dialogs.DlgError;
 import views.dialogs.DlgNotices;
 import views.forms.FrmSplashScreen;
@@ -26,6 +30,11 @@ import views.layouts.AppLayout;
  * @author vishv
  */
 public class PnlSMSEmail extends javax.swing.JPanel {
+
+//    JasperReportsContext context = DefaultJasperReportsContext.getInstance();
+//JRPropertiesUtil propertiesUtil = JRPropertiesUtil.getInstance(context);
+//JasperReportsConfiguration config = new JasperReportsConfiguration(context, propertiesUtil);
+//    private JasperReportsConfiguration jrConfig = new JasperReportsConfiguration();
 
     /**
      * Creates new form PnlSMSEmail
@@ -224,7 +233,11 @@ public class PnlSMSEmail extends javax.swing.JPanel {
         });
 
         btnReport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/file-text.png"))); // NOI18N
-        btnReport.setEnabled(false);
+        btnReport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReportActionPerformed(evt);
+            }
+        });
 
         btnPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/printer.png"))); // NOI18N
         btnPrint.setEnabled(false);
@@ -378,7 +391,7 @@ public class PnlSMSEmail extends javax.swing.JPanel {
 
     private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
 
-        AppLayout.appLayout.dispose();
+        AppLayout.appLayout.closeApp();
     }//GEN-LAST:event_btnLogoutActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
@@ -401,6 +414,63 @@ public class PnlSMSEmail extends javax.swing.JPanel {
     private void cboTimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboTimeActionPerformed
         filterData();
     }//GEN-LAST:event_cboTimeActionPerformed
+
+    private void btnReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReportActionPerformed
+
+        try {
+
+            JREmptyDataSource source = new JREmptyDataSource();
+            HashMap<String, Object> params = new HashMap<>();
+            InputStream stream = this.getClass().getResourceAsStream("/reports/notices_1101.jasper");
+
+            var report = JasperFillManager.fillReport("src/reports/demo_2.jasper", params, source);
+
+            JasperViewer.viewReport(report, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+//        try {
+//
+//            HashMap<String, Object> parametes = new HashMap<>();
+//            parametes.put("Parameter1", "Hansana");
+//            parametes.put("Parameter2", "0740259085");
+//            parametes.put("Parameter3", "Hasi@gmail.com");
+//
+//            //JREmptyDataSource dataSource = new JREmptyDataSource();
+//            Product product1 = new Product();
+//            product1.setX("1");
+//            product1.setY("iphone 15 Pro Max");
+//            product1.setZ("385000.00");
+//
+//            Product product2 = new Product();
+//            product2.setX("1");
+//            product2.setY("iphone 13 Pro Max");
+//            product2.setZ("325000.00");
+//
+//            Product product3 = new Product();
+//            product3.setX("1");
+//            product3.setY("iphone 11 Pro Max");
+//            product3.setZ("285000.00");
+//
+//            Vector<Product> vector = new Vector<>();
+//            vector.add(product1);
+//            vector.add(product2);
+//            vector.add(product3);
+//
+//            JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(vector);
+//            InputStream stream = this.getClass().getResourceAsStream("/reports/report12.jasper");
+//            JasperPrint report = JasperFillManager.fillReport(stream, parametes, dataSource);
+//
+//            JasperViewer.viewReport(report, false);
+//
+//            //JasperPrintManager.printReport(report, false);
+////            JasperExportManager.exportReportToHtmlFile(report, "Report.html");
+////            JasperExportManager.exportReportToPdfFile(report, "Report.pdf");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+    }//GEN-LAST:event_btnReportActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
