@@ -7,6 +7,7 @@ package views.layouts;
 import com.formdev.flatlaf.FlatClientProperties;
 import enums.DialogAction;
 import enums.LayoutPage;
+import enums.UserRole;
 import java.awt.Color;
 import java.util.logging.Level;
 import javax.swing.JButton;
@@ -27,79 +28,127 @@ import views.internals.PnlSMSEmail;
 import views.internals.PnlSettings;
 import views.internals.PnlStudents;
 import views.internals.PnlVisitors;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.HashMap;
+import views.internals.PnlNoAccess;
 
 /**
  *
  * @author vishv
  */
 public class AppLayout extends javax.swing.JFrame {
-    
+
     public static AppLayout appLayout;
     private JButton selectedButton;
     public static String loggedUserId;
+    private UserRole loggedUserRole;
 
     /**
      * Creates new form AppLayout
+     *
      * @param userId
      */
     public AppLayout(String userId) {
         initComponents();
-        
+
         loggedUserId = userId;
-                
+        loadUserRole();
+
         appLayout = this;
         this.selectedButton = btnDashboard;
-        
+
         formDesign();
-        
+
         changeForm(LayoutPage.DASHBOARD);
     }
-    
-    public void changeForm(LayoutPage page){
-        
-        switch (page) {
+
+    private void loadUserRole() {
+        try {
+
+            ResultSet rs = AppConnection.search("SELECT `value` AS `role` FROM school_sync_v1.user_roles WHERE id IN (SELECT `user_roles_id` FROM `users` WHERE `id` = '" + loggedUserId + "');");
+            rs.next();
+
+            String role = rs.getString("role");
+            switch (role) {
+                case "Super Admin":
+                    loggedUserRole = UserRole.SUPER_ADMIN;
+                    break;
+                case "Principal":
+                    loggedUserRole = UserRole.PRINCIPAL;
+                    break;
+                case "Vice Principal":
+                    loggedUserRole = UserRole.VICE_PRINCIPAL;
+                    break;
+                case "Sectional Head":
+                    loggedUserRole = UserRole.SECTIONAL_HEAD;
+                    break;
+                case "Teacher":
+                    loggedUserRole = UserRole.TEACHER;
+                    break;
+                case "ITU":
+                    loggedUserRole = UserRole.ITU;
+                    break;
+                case "Securty Guard":
+                    loggedUserRole = UserRole.SECURITY_GUARD;
+                    break;
+                case "Account dept.":
+                    loggedUserRole = UserRole.ACCOUNT_DEPT;
+                    break;
+                default:
+                    throw new AssertionError();
+            }
+
+        } catch (Exception e) {
+
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+        }
+    }
+
+    public void changeForm(LayoutPage page) {
+                switch (page) {
             case DASHBOARD:
                 showForm(new PnlDashboard());
                 changeSideButton(btnDashboard);
                 break;
             case VISITORS:
-                showForm(new PnlVisitors());
+                filterForm(new PnlVisitors(), new UserRole[]{UserRole.SUPER_ADMIN, UserRole.PRINCIPAL, UserRole.VICE_PRINCIPAL, UserRole.SECTIONAL_HEAD, UserRole.TEACHER});
                 changeSideButton(btnVisitors);
                 break;
             case ATTENDANCE:
-                showForm(new PnlAttendance());
+                filterForm(new PnlAttendance(), new UserRole[]{UserRole.SUPER_ADMIN, UserRole.PRINCIPAL, UserRole.VICE_PRINCIPAL, UserRole.SECTIONAL_HEAD, UserRole.TEACHER});
                 changeSideButton(btnAttendance);
                 break;
             case SMS_EMAIL:
-                showForm(new PnlSMSEmail());
+                filterForm(new PnlSMSEmail(), new UserRole[]{UserRole.SUPER_ADMIN, UserRole.PRINCIPAL, UserRole.VICE_PRINCIPAL, UserRole.SECTIONAL_HEAD, UserRole.TEACHER, UserRole.ITU, UserRole.ACCOUNT_DEPT});
                 changeSideButton(btnSmsEmail);
                 break;
             case ADDITIONAL_FEES:
-                showForm(new PnlAdditionalFees());
+                filterForm(new PnlAdditionalFees(), new UserRole[]{UserRole.SUPER_ADMIN, UserRole.PRINCIPAL, UserRole.ACCOUNT_DEPT});
                 changeSideButton(btnAdditionalFees);
                 break;
             case STUDENTS:
-                showForm(new PnlStudents());
+                filterForm(new PnlStudents(), new UserRole[]{UserRole.SUPER_ADMIN, UserRole.PRINCIPAL, UserRole.VICE_PRINCIPAL, UserRole.SECTIONAL_HEAD});
                 changeSideButton(btnStudents);
                 break;
             case RESOURCES:
-                showForm(new PnlResources());
+                filterForm(new PnlResources(), new UserRole[]{UserRole.SUPER_ADMIN, UserRole.PRINCIPAL, UserRole.VICE_PRINCIPAL});
                 changeSideButton(btnResources);
                 break;
             case AUTHENTICATION:
-                showForm(new PnlAuthentication());
+                filterForm(new PnlAuthentication(), new UserRole[]{UserRole.SUPER_ADMIN, UserRole.PRINCIPAL, UserRole.VICE_PRINCIPAL});
                 changeSideButton(btnAuth);
                 break;
             case SETTINGS:
-                showForm(new PnlSettings());
+                filterForm(new PnlSettings(), new UserRole[]{UserRole.SUPER_ADMIN, UserRole.PRINCIPAL});
                 changeSideButton(btnSettings);
                 break;
             case DISCIPLINE_RECORDS:
-                showForm(new PnlDisciplineRecords());
+                filterForm(new PnlDisciplineRecords(), new UserRole[]{UserRole.SUPER_ADMIN, UserRole.PRINCIPAL, UserRole.VICE_PRINCIPAL});
                 changeSideButton(btnDisciplineRecords);
                 break;
             case APPOINTMENTS:
-                showForm(new PnlAppointments());
+                filterForm(new PnlAppointments(), new UserRole[]{UserRole.SUPER_ADMIN, UserRole.PRINCIPAL, UserRole.VICE_PRINCIPAL});
                 changeSideButton(btnAppointments);
                 break;
             default:
@@ -107,7 +156,7 @@ public class AppLayout extends javax.swing.JFrame {
         }
     }
 
-    private void formDesign(){
+    private void formDesign() {
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_BACKGROUND, new Color(0, 0, 0));
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_FOREGROUND, new Color(0, 0, 0));
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_SHOW_CLOSE, false);
@@ -115,7 +164,7 @@ public class AppLayout extends javax.swing.JFrame {
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_SHOW_ICONIFFY, false);
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_SHOW_ICON, false);
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_SHOW_TITLE, false);
-        
+
         btnDashboard.putClientProperty("JButton.buttonType", "borderless");
         btnVisitors.putClientProperty("JButton.buttonType", "borderless");
         btnAttendance.putClientProperty("JButton.buttonType", "borderless");
@@ -128,27 +177,40 @@ public class AppLayout extends javax.swing.JFrame {
         btnDisciplineRecords.putClientProperty("JButton.buttonType", "borderless");
         btnAppointments.putClientProperty("JButton.buttonType", "borderless");
     }
-    
-    private void changeSideButton(JButton newButton){
-        
-        selectedButton.setBackground(new Color(255, 255, 255));
-        selectedButton.setForeground(new Color(142,142,142));
 
-        newButton.setBackground(new Color(229,29,84));
+    private void changeSideButton(JButton newButton) {
+
+        selectedButton.setBackground(new Color(255, 255, 255));
+        selectedButton.setForeground(new Color(142, 142, 142));
+
+        newButton.setBackground(new Color(229, 29, 84));
         newButton.setForeground(new Color(255, 255, 255));
 
         selectedButton = newButton;
         selectedButton.grabFocus();
     }
     
+    private void filterForm(JPanel form, UserRole[] hasAccessRoles){
+        
+        for(UserRole role : hasAccessRoles){
+        
+            if(role == loggedUserRole) {
+                showForm(form);
+                return;
+            }
+        }
+        
+        showForm(new PnlNoAccess());
+    }
+
     private void showForm(JPanel form) {
         pnlPlaceholder.removeAll();
         pnlPlaceholder.add(form, java.awt.BorderLayout.CENTER);
         pnlPlaceholder.repaint();
         pnlPlaceholder.revalidate();
     }
-    
-    public void closeApp(){
+
+    public void closeApp() {
         try {
 
             DlgConfirm dialog = new DlgConfirm(AppLayout.appLayout, true, "Confirm Exit!", "Sure you want to sign out.");
@@ -162,10 +224,10 @@ public class AppLayout extends javax.swing.JFrame {
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
-            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage() ,e);
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
         }
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -399,7 +461,7 @@ public class AppLayout extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAttendanceActionPerformed
 
     private void btnSmsEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSmsEmailActionPerformed
-       changeForm(LayoutPage.SMS_EMAIL);
+        changeForm(LayoutPage.SMS_EMAIL);
     }//GEN-LAST:event_btnSmsEmailActionPerformed
 
     private void btnAdditionalFeesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdditionalFeesActionPerformed
@@ -423,12 +485,12 @@ public class AppLayout extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSettingsActionPerformed
 
     private void btnDisciplineRecordsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDisciplineRecordsActionPerformed
-        
+
         changeForm(LayoutPage.DISCIPLINE_RECORDS);
     }//GEN-LAST:event_btnDisciplineRecordsActionPerformed
 
     private void btnAppointmentsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAppointmentsActionPerformed
-        
+
         changeForm(LayoutPage.APPOINTMENTS);
     }//GEN-LAST:event_btnAppointmentsActionPerformed
 

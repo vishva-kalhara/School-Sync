@@ -69,7 +69,7 @@ public class FrmSplashScreen extends javax.swing.JFrame {
             public void run() {
                 try{
 
-                    Thread.sleep(5000);
+                    Thread.sleep(10);
                 }catch (InterruptedException e){
                     FrmSplashScreen.logger.log(Level.WARNING, e.getMessage() ,e);
                 }

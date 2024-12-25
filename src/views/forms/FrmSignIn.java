@@ -28,10 +28,10 @@ public class FrmSignIn extends javax.swing.JFrame {
         
         setDesign();
         
-        txtUsername.setText("");
-        txtPassword.setText("");
+        txtUsername.setText("wishva");
+        txtPassword.setText("123456789");
     }
-
+    
     private void setDesign() {
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_BACKGROUND, new Color(0, 0, 0));
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_FOREGROUND, new Color(0, 0, 0));
