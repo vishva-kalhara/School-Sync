@@ -5,7 +5,6 @@
 package views.internals;
 
 import com.formdev.flatlaf.FlatClientProperties;
-import enums.DialogAction;
 import enums.LayoutPage;
 import java.awt.Dimension;
 import java.util.logging.Level;
@@ -15,6 +14,7 @@ import utils.AppConnection;
 import views.dialogs.DlgConfirm;
 import views.forms.FrmSplashScreen;
 import views.layouts.AppLayout;
+import java.sql.ResultSet;
 
 /**
  *
@@ -29,8 +29,90 @@ public class PnlDashboard extends javax.swing.JPanel {
         initComponents();
         setDsign();
 
-        pnlAttended.setPreferredSize(new Dimension(getProgressWidth(61), 20));
-        pnlVisitors.setPreferredSize(new Dimension(getProgressWidth(80), 20));
+        setUserName();
+        setDisciplineRecordCount();
+        setStudentAttendanceCount();
+        setVisitortAttendanceCount();
+
+    }
+
+    private void setUserName() {
+
+        try {
+
+            ResultSet rs = AppConnection.search("SELECT `full_name` FROM users WHERE `id` = '" + AppLayout.loggedUserId + "'");
+            rs.next();
+
+            lblLoggedUserName.setText("<HTML>" + rs.getString("full_name") + "</HTML>");
+
+        } catch (Exception e) {
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+        }
+    }
+
+    private void setDisciplineRecordCount() {
+
+        try {
+
+            ResultSet rs = AppConnection.search("SELECT COUNT(*) AS row_count FROM decipline_records WHERE MONTH(issued_at) = MONTH(CURRENT_DATE()) AND YEAR(issued_at) = YEAR(CURRENT_DATE());");
+            rs.next();
+
+            lblDisciplineRecordCount.setText("<HTML>" + rs.getString("row_count") + " Records </HTML>");
+
+        } catch (Exception e) {
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+        }
+    }
+
+    private void setStudentAttendanceCount() {
+
+        try {
+
+            ResultSet rsAttended = AppConnection.search("SELECT COUNT(*) AS row_count FROM attendance WHERE DAY(makrd_at) = DAY(CURRENT_DATE()) AND MONTH(makrd_at) = MONTH(CURRENT_DATE()) AND YEAR(makrd_at) = YEAR(CURRENT_DATE());");
+            rsAttended.next();
+
+            ResultSet rsTotal = AppConnection.search("SELECT COUNT(`id`) AS `total` FROM school_sync_v1.student WHERE `status_id` = 1;");
+            rsTotal.next();
+
+            int percentage = (rsAttended.getInt("row_count") * 100) / (rsTotal.getInt("total"));
+
+            lblStudentAttendance.setText("<HTML>" + percentage + "% Attended </HTML>");
+
+            pnlAttended.setPreferredSize(new Dimension(getProgressWidth(percentage), 20));
+
+        } catch (Exception e) {
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+        }
+    }
+
+    private void setVisitortAttendanceCount() {
+
+        try {
+
+            ResultSet rsTotal = AppConnection.search("SELECT COUNT(`id`) AS `total` FROM school_sync_v1.visitor_details WHERE DAY(date) = DAY(CURRENT_DATE()) AND MONTH(date) = MONTH(CURRENT_DATE()) AND YEAR(date) = YEAR(CURRENT_DATE());");
+            rsTotal.next();
+
+            if (rsTotal.getInt("total") == 0) {
+
+                lblVisitorsPercentage.setText("<HTML>Not Assigned</HTML>");
+
+                pnlVisitors.setPreferredSize(new Dimension(getProgressWidth(100), 20));
+                
+                return;
+            }
+
+            ResultSet rsAttended = AppConnection.search("SELECT COUNT(`id`) AS `total` FROM school_sync_v1.visitor_details WHERE DAY(date) = DAY(CURRENT_DATE()) AND MONTH(date) = MONTH(CURRENT_DATE()) AND YEAR(date) = YEAR(CURRENT_DATE()) WHERE `has_attended` = 1;");
+            rsAttended.next();
+
+            int percentage = (rsAttended.getInt("total") * 100) / (rsTotal.getInt("total"));
+
+            lblVisitorsPercentage.setText("<HTML>" + percentage + "% Attended </HTML>");
+
+            pnlVisitors.setPreferredSize(new Dimension(getProgressWidth(percentage), 20));
+
+        } catch (Exception e) {
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+        }
     }
 
     private void setDsign() {
@@ -45,17 +127,15 @@ public class PnlDashboard extends javax.swing.JPanel {
         pnlCard2.putClientProperty(FlatClientProperties.STYLE, "arc: 15");
         pnlCard3.putClientProperty(FlatClientProperties.STYLE, "arc: 15");
         pnlCard4.putClientProperty(FlatClientProperties.STYLE, "arc: 15");
-        
-        javax.swing.JScrollPane scroll = (javax.swing.JScrollPane) table.getParent().getParent();
-        scroll.setBorder(BorderFactory.createEmptyBorder());
-        
+        pnlMarkVisitors.putClientProperty(FlatClientProperties.STYLE, "arc: 15");
+
     }
-    
-    private int getProgressWidth(int percentage){
-              
+
+    private int getProgressWidth(int percentage) {
+
         int output = (int) (3.76 * percentage);
         return output;
-    } 
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -73,26 +153,25 @@ public class PnlDashboard extends javax.swing.JPanel {
         jPanel3 = new javax.swing.JPanel();
         pnlCard1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        lblLoggedUserName = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         pnlCard2 = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
+        lblDisciplineRecordCount = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         btnToDiscipleRecords = new javax.swing.JButton();
         pnlCard3 = new javax.swing.JPanel();
-        jLabel5 = new javax.swing.JLabel();
+        lblStudentAttendance = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         pnlAttendanceOuter = new javax.swing.JPanel();
         pnlAttended = new javax.swing.JPanel();
         pnlCard4 = new javax.swing.JPanel();
         pnlVisitorsOuter = new javax.swing.JPanel();
         pnlVisitors = new javax.swing.JPanel();
-        jLabel7 = new javax.swing.JLabel();
+        lblVisitorsPercentage = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        jPanel8 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        table = new javax.swing.JTable();
-        jLabel9 = new javax.swing.JLabel();
+        pnlMarkVisitors = new javax.swing.JPanel();
+        jLabel10 = new javax.swing.JLabel();
+        jButton2 = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -143,10 +222,9 @@ public class PnlDashboard extends javax.swing.JPanel {
         jLabel1.setForeground(new java.awt.Color(102, 102, 102));
         jLabel1.setText("Hello,");
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI Semibold", 0, 28)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel2.setText("<HTML>Wishva Chandrasekara</HTML>");
-        jLabel2.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        lblLoggedUserName.setFont(new java.awt.Font("Segoe UI Semibold", 0, 28)); // NOI18N
+        lblLoggedUserName.setText("<HTML>Wishva Chandrasekara</HTML>");
+        lblLoggedUserName.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         jButton1.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
         jButton1.setText("View Profile");
@@ -164,7 +242,7 @@ public class PnlDashboard extends javax.swing.JPanel {
                     .addGroup(pnlCard1Layout.createSequentialGroup()
                         .addGroup(pnlCard1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE))
+                            .addComponent(lblLoggedUserName, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE))
                         .addGap(31, 31, 31))))
         );
         pnlCard1Layout.setVerticalGroup(
@@ -173,7 +251,7 @@ public class PnlDashboard extends javax.swing.JPanel {
                 .addGap(27, 27, 27)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblLoggedUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(32, Short.MAX_VALUE))
@@ -183,10 +261,9 @@ public class PnlDashboard extends javax.swing.JPanel {
 
         pnlCard2.setBackground(new java.awt.Color(255, 255, 255));
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI Semibold", 0, 28)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel3.setText("03 records");
-        jLabel3.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        lblDisciplineRecordCount.setFont(new java.awt.Font("Segoe UI Semibold", 0, 28)); // NOI18N
+        lblDisciplineRecordCount.setText("03 records");
+        lblDisciplineRecordCount.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         jLabel4.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(102, 102, 102));
@@ -213,7 +290,7 @@ public class PnlDashboard extends javax.swing.JPanel {
                     .addGroup(pnlCard2Layout.createSequentialGroup()
                         .addGroup(pnlCard2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE))
+                            .addComponent(lblDisciplineRecordCount, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE))
                         .addGap(32, 32, 32))))
         );
         pnlCard2Layout.setVerticalGroup(
@@ -222,7 +299,7 @@ public class PnlDashboard extends javax.swing.JPanel {
                 .addGap(27, 27, 27)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblDisciplineRecordCount, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
                 .addComponent(btnToDiscipleRecords, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(32, Short.MAX_VALUE))
@@ -232,10 +309,9 @@ public class PnlDashboard extends javax.swing.JPanel {
 
         pnlCard3.setBackground(new java.awt.Color(255, 255, 255));
 
-        jLabel5.setFont(new java.awt.Font("Segoe UI Semibold", 0, 36)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel5.setText("61% Attended");
-        jLabel5.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        lblStudentAttendance.setFont(new java.awt.Font("Segoe UI Semibold", 0, 36)); // NOI18N
+        lblStudentAttendance.setText("61% Attended");
+        lblStudentAttendance.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         jLabel6.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(102, 102, 102));
@@ -272,7 +348,7 @@ public class PnlDashboard extends javax.swing.JPanel {
                         .addGap(38, 38, 38))
                     .addGroup(pnlCard3Layout.createSequentialGroup()
                         .addGroup(pnlCard3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)
+                            .addComponent(lblStudentAttendance, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)
                             .addGroup(pnlCard3Layout.createSequentialGroup()
                                 .addComponent(jLabel6)
                                 .addGap(0, 0, Short.MAX_VALUE)))
@@ -284,9 +360,9 @@ public class PnlDashboard extends javax.swing.JPanel {
                 .addGap(29, 29, 29)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
-                .addComponent(pnlAttendanceOuter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblStudentAttendance, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 54, Short.MAX_VALUE)
+                .addComponent(pnlAttendanceOuter, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(38, 38, 38))
         );
 
@@ -313,10 +389,9 @@ public class PnlDashboard extends javax.swing.JPanel {
 
         pnlVisitorsOuter.add(pnlVisitors, java.awt.BorderLayout.WEST);
 
-        jLabel7.setFont(new java.awt.Font("Segoe UI Semibold", 0, 36)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel7.setText("80% Attended");
-        jLabel7.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        lblVisitorsPercentage.setFont(new java.awt.Font("Segoe UI Semibold", 0, 36)); // NOI18N
+        lblVisitorsPercentage.setText("80% Attended");
+        lblVisitorsPercentage.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         jLabel8.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(102, 102, 102));
@@ -334,7 +409,7 @@ public class PnlDashboard extends javax.swing.JPanel {
                         .addGap(38, 38, 38))
                     .addGroup(pnlCard4Layout.createSequentialGroup()
                         .addGroup(pnlCard4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)
+                            .addComponent(lblVisitorsPercentage, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)
                             .addGroup(pnlCard4Layout.createSequentialGroup()
                                 .addComponent(jLabel8)
                                 .addGap(0, 0, Short.MAX_VALUE)))
@@ -346,56 +421,43 @@ public class PnlDashboard extends javax.swing.JPanel {
                 .addGap(29, 29, 29)
                 .addComponent(jLabel8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
-                .addComponent(pnlVisitorsOuter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblVisitorsPercentage, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 54, Short.MAX_VALUE)
+                .addComponent(pnlVisitorsOuter, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(38, 38, 38))
         );
 
         jPanel3.add(pnlCard4);
 
-        jPanel8.setBackground(new java.awt.Color(255, 255, 255));
+        pnlMarkVisitors.setBackground(new java.awt.Color(255, 255, 255));
 
-        table.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
-            },
-            new String [] {
-                "Date", "Student Name", "Mobile ", "Class", "Has Attented"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
-            };
+        jLabel10.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
+        jLabel10.setForeground(new java.awt.Color(102, 102, 102));
+        jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel10.setText("Mark Visitor's Attendance");
 
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jScrollPane1.setViewportView(table);
+        jButton2.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
+        jButton2.setText("Mark Now");
 
-        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
-        jPanel8Layout.setHorizontalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addComponent(jScrollPane1)
-                .addContainerGap())
+        javax.swing.GroupLayout pnlMarkVisitorsLayout = new javax.swing.GroupLayout(pnlMarkVisitors);
+        pnlMarkVisitors.setLayout(pnlMarkVisitorsLayout);
+        pnlMarkVisitorsLayout.setHorizontalGroup(
+            pnlMarkVisitorsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(pnlMarkVisitorsLayout.createSequentialGroup()
+                .addGap(390, 390, 390)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel8Layout.setVerticalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(16, Short.MAX_VALUE))
+        pnlMarkVisitorsLayout.setVerticalGroup(
+            pnlMarkVisitorsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlMarkVisitorsLayout.createSequentialGroup()
+                .addGap(89, 89, 89)
+                .addComponent(jLabel10)
+                .addGap(18, 18, 18)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(99, Short.MAX_VALUE))
         );
-
-        jLabel9.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
-        jLabel9.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel9.setText("Visitors today");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -403,26 +465,19 @@ public class PnlDashboard extends javax.swing.JPanel {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(36, 36, 36)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel9)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(40, 40, 40))))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(pnlMarkVisitors, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(40, 40, 40))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(35, 35, 35)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(45, 45, 45)
-                .addComponent(jLabel9)
-                .addGap(18, 18, 18)
-                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addGap(23, 23, 23)
+                .addComponent(pnlMarkVisitors, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(31, Short.MAX_VALUE))
         );
 
         add(jPanel2, java.awt.BorderLayout.CENTER);
@@ -443,28 +498,27 @@ public class PnlDashboard extends javax.swing.JPanel {
     private javax.swing.JButton btnLogout;
     private javax.swing.JButton btnToDiscipleRecords;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel8;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblDisciplineRecordCount;
+    private javax.swing.JLabel lblLoggedUserName;
+    private javax.swing.JLabel lblStudentAttendance;
+    private javax.swing.JLabel lblVisitorsPercentage;
     private javax.swing.JPanel pnlAttendanceOuter;
     private javax.swing.JPanel pnlAttended;
     private javax.swing.JPanel pnlCard1;
     private javax.swing.JPanel pnlCard2;
     private javax.swing.JPanel pnlCard3;
     private javax.swing.JPanel pnlCard4;
+    private javax.swing.JPanel pnlMarkVisitors;
     private javax.swing.JPanel pnlVisitors;
     private javax.swing.JPanel pnlVisitorsOuter;
-    private javax.swing.JTable table;
     // End of variables declaration//GEN-END:variables
 }
