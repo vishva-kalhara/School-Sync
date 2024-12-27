@@ -27,7 +27,7 @@ public class AppConnection {
         if (connection == null) {
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver");
-                connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/school_sync_v1", "root", Env.MYSQL_PASSWORD);
+                connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + Env.MYSQL_DB, Env.MYSQL_USERNAME, Env.MYSQL_PASSWORD);
 
                 connection.setAutoCommit(true);
 
