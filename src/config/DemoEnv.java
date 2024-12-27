@@ -9,11 +9,13 @@ package config;
  * @author vishv
  */
 public class DemoEnv {
-    
+
+    public static final String MYSQL_DB = "";
+    public static final String MYSQL_USERNAME = "";
     public static final String MYSQL_PASSWORD = "";
-    
+
     public static final boolean IS_PRODUCTION = false;
-    
+
     public static final String EMAIL_FROM = "";
     public static final String EMAIL_PASSWORD = "";
     public static final String EMAIL_HOST = "";
