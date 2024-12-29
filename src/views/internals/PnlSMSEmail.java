@@ -421,9 +421,9 @@ public class PnlSMSEmail extends javax.swing.JPanel {
 
             JREmptyDataSource source = new JREmptyDataSource();
             HashMap<String, Object> params = new HashMap<>();
-            InputStream stream = this.getClass().getResourceAsStream("/reports/notices_1101.jasper");
+//            InputStream stream = this.getClass().getResourceAsStream("/reports/notices_1101.jasper");
 
-            var report = JasperFillManager.fillReport("src/reports/demo_2.jasper", params, source);
+            var report = JasperFillManager.fillReport("src/reports/school_sync_notices.jasper", params, source);
 
             JasperViewer.viewReport(report, false);
         } catch (Exception e) {
