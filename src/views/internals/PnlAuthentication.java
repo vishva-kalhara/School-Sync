@@ -6,6 +6,7 @@ package views.internals;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import controllers.UserController;
+import java.io.InputStream;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -16,6 +17,12 @@ import java.util.Vector;
 import java.util.logging.Level;
 import javax.swing.DefaultComboBoxModel;
 import models.User;
+import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRTableModelDataSource;
+import net.sf.jasperreports.view.JasperViewer;
 import utils.AppConnection;
 import views.dialogs.DlgError;
 import views.dialogs.DlgSystemUser;
@@ -253,6 +260,11 @@ public class PnlAuthentication extends javax.swing.JPanel {
         });
 
         btnReport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/file-text.png"))); // NOI18N
+        btnReport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReportActionPerformed(evt);
+            }
+        });
 
         btnPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/printer.png"))); // NOI18N
 
@@ -480,6 +492,32 @@ public class PnlAuthentication extends javax.swing.JPanel {
         filterData();
     }//GEN-LAST:event_txtSearchActionPerformed
 
+    private void btnReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReportActionPerformed
+
+        try {
+
+            JasperViewer.viewReport(generateReport(), false);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_btnReportActionPerformed
+
+    private JasperPrint generateReport() throws JRException {
+
+        InputStream inputStream = this.getClass().getResourceAsStream("/reports/school_sync_users.jasper");
+
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("PARAM_SEARCH", txtSearch.getText().isBlank() ? "All Users" : "\"" + txtSearch.getText() + "\"");
+        params.put("PARAM_ROLE", "All Roles");
+        params.put("PARAM_STATUS", "All Statuses");
+        params.put("PARAM_GENERATED_BY", "Generated y usr-0052");
+        params.put("PARAM_DATE_TIME", "12/12/2024 15:20:56");
+
+        JRTableModelDataSource dataSource = new JRTableModelDataSource(table.getModel());
+
+        return JasperFillManager.fillReport(inputStream, params, dataSource);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAccount;
