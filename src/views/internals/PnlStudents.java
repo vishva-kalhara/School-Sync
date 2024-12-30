@@ -6,6 +6,8 @@ package views.internals;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import controllers.StudentContoller;
+import enums.DialogAction;
+import java.io.InputStream;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -14,11 +16,20 @@ import utils.AppConnection;
 import views.dialogs.DlgStudent;
 import views.layouts.AppLayout;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Vector;
 import java.util.logging.Level;
 import javax.swing.DefaultComboBoxModel;
 import models.Student;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperPrintManager;
+import net.sf.jasperreports.engine.data.JRTableModelDataSource;
+import net.sf.jasperreports.view.JasperViewer;
+import views.dialogs.DlgConfirm;
 import views.dialogs.DlgError;
 import views.forms.FrmSplashScreen;
 
@@ -27,7 +38,7 @@ import views.forms.FrmSplashScreen;
  * @author vishv
  */
 public class PnlStudents extends javax.swing.JPanel {
-    
+
     private HashMap<String, Integer> gradeMap = new HashMap();
     private HashMap<String, String> classesMap = new HashMap();
 
@@ -37,12 +48,12 @@ public class PnlStudents extends javax.swing.JPanel {
     public PnlStudents() {
         initComponents();
         setDsign();
-        
+
         loadGrades();
 
         fetchData("");
     }
-    
+
     private void loadGrades() {
 
         try {
@@ -106,15 +117,15 @@ public class PnlStudents extends javax.swing.JPanel {
         jScrollPane1.setViewportView(new PnlFetching());
         btnPrint.setEnabled(false);
         btnReport.setEnabled(false);
-        
-        new Thread(new Runnable() { 
+
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 loadTableData(constraints);
             }
         }).start();
     }
-    
+
     private void filterData() {
 
         StringBuilder constraints = new StringBuilder("");
@@ -168,17 +179,17 @@ public class PnlStudents extends javax.swing.JPanel {
 
             ResultSet rs = AppConnection.search(
                     "SELECT "
-                            + "`student`.`id` AS `student_id`, "
-                            + "`student`.`full_name` AS `student_name`, "
-                            + "`student`.`mobile1` AS `mobile1`, "
-                            + "`genders`.`value` AS `gender`, "
-                            + "CONCAT(`grades`.`value`, ' - ', `grades_has_classes`.`class`) AS `class` "
-                            + "FROM school_sync_v1.student "
-                            + "INNER JOIN `grades_has_classes` ON `student`.`grades_has_classes_id` = `grades_has_classes`.`id` "
-                            + "INNER JOIN `grades` ON `grades_has_classes`.`grades_id` = `grades`.`id` "
-                            + "INNER JOIN `genders` ON `student`.`genders_id` = `genders`.`id` "
-                            + constraints
-                            + " ORDER BY CAST(SUBSTRING(student.id, 5) AS UNSIGNED);"
+                    + "`student`.`id` AS `student_id`, "
+                    + "`student`.`full_name` AS `student_name`, "
+                    + "`student`.`mobile1` AS `mobile1`, "
+                    + "`genders`.`value` AS `gender`, "
+                    + "CONCAT(`grades`.`value`, ' - ', `grades_has_classes`.`class`) AS `class` "
+                    + "FROM school_sync_v1.student "
+                    + "INNER JOIN `grades_has_classes` ON `student`.`grades_has_classes_id` = `grades_has_classes`.`id` "
+                    + "INNER JOIN `grades` ON `grades_has_classes`.`grades_id` = `grades`.`id` "
+                    + "INNER JOIN `genders` ON `student`.`genders_id` = `genders`.`id` "
+                    + constraints
+                    + " ORDER BY CAST(SUBSTRING(student.id, 5) AS UNSIGNED);"
             );
 
             while (rs.next()) {
@@ -191,7 +202,7 @@ public class PnlStudents extends javax.swing.JPanel {
 
                 model.addRow(data);
             }
-            
+
             if (model.getRowCount() == 0) {
                 jScrollPane1.setViewportView(new PnlNotFound());
             } else {
@@ -267,8 +278,18 @@ public class PnlStudents extends javax.swing.JPanel {
         });
 
         btnReport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/file-text.png"))); // NOI18N
+        btnReport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReportActionPerformed(evt);
+            }
+        });
 
         btnPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/printer.png"))); // NOI18N
+        btnPrint.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrintActionPerformed(evt);
+            }
+        });
 
         btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/refresh-cw.png"))); // NOI18N
         btnRefresh.addActionListener(new java.awt.event.ActionListener() {
@@ -348,7 +369,7 @@ public class PnlStudents extends javax.swing.JPanel {
                 {null, null, null, null, null}
             },
             new String [] {
-                "Id", "Full Name", "Mobile ", "Gender", "Class"
+                "Id", "Full Name", "Mobile", "Gender", "Class"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -454,8 +475,8 @@ public class PnlStudents extends javax.swing.JPanel {
                 new DlgError(AppLayout.appLayout, true, "Please refresh the table!", "Not Found").setVisible(true);
                 return;
             }
-            
-            new DlgStudent(AppLayout.appLayout, true,student, stuId).setVisible(true);
+
+            new DlgStudent(AppLayout.appLayout, true, student, stuId).setVisible(true);
             fetchData("");
 
         } catch (Exception e) {
@@ -466,25 +487,70 @@ public class PnlStudents extends javax.swing.JPanel {
     }//GEN-LAST:event_tableMouseClicked
 
     private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
-        
+
         filterData();
     }//GEN-LAST:event_txtSearchActionPerformed
 
     private void cboGradeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboGradeActionPerformed
-        
-        if(cboGrade.getSelectedIndex() == 0) {
+
+        if (cboGrade.getSelectedIndex() == 0) {
             cboClass.setSelectedIndex(0);
             cboClass.setEnabled(false);
         }
-        
+
         loadClasses(gradeMap.get(String.valueOf(cboGrade.getSelectedItem())));
         filterData();
     }//GEN-LAST:event_cboGradeActionPerformed
 
     private void cboClassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboClassActionPerformed
-        
+
         filterData();
     }//GEN-LAST:event_cboClassActionPerformed
+
+    private void btnReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReportActionPerformed
+        try {
+
+            JasperViewer.viewReport(generateReport(), false);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_btnReportActionPerformed
+
+    private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
+        try {
+            DlgConfirm dialog = new DlgConfirm(AppLayout.appLayout, true, "Confirm Print", "Are you sure to print report");
+            dialog.setVisible(true);
+            DialogAction action = dialog.getAction();
+
+            if (action == DialogAction.CONFIRM) {
+                JasperPrintManager.printReport(generateReport(), false);
+            }
+ 
+        } catch (Exception e) {
+            new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
+            FrmSplashScreen.logger.log(java.util.logging.Level.WARNING, e.getMessage(), e);
+        }
+    }//GEN-LAST:event_btnPrintActionPerformed
+
+    private JasperPrint generateReport() throws JRException {
+        InputStream inputStream = this.getClass().getResourceAsStream("/reports/school_sync_students.jasper");
+
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("PARAM_SEARCH", txtSearch.getText().isBlank() ? "All Students" : "\"" + txtSearch.getText() + "\"");
+        
+        params.put("PARAM_GRADE", cboGrade.getSelectedIndex() == 0 ? " All Classes"
+                : cboClass.getSelectedIndex() == 0 ? String.valueOf(cboGrade.getSelectedItem()) + " All Classes"
+                : String.valueOf(cboGrade.getSelectedItem()) + " - " + String.valueOf(cboClass.getSelectedItem()));
+        
+        params.put("PARAM_GENERATED_BY", "Generated By: " + AppLayout.loggedUserId);
+        params.put("PARAM_DATE_TIME", "Generated At: " + new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date()));
+
+        JRTableModelDataSource dataSource = new JRTableModelDataSource(table.getModel());
+
+        return JasperFillManager.fillReport(inputStream, params, dataSource);
+
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAccount;
