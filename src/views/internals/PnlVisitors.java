@@ -5,6 +5,10 @@
 package views.internals;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import enums.DialogAction;
+import enums.LayoutPage;
+import java.io.InputStream;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -17,7 +21,14 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperPrintManager;
+import net.sf.jasperreports.engine.data.JRTableModelDataSource;
+import net.sf.jasperreports.view.JasperViewer;
 import utils.AppConnection;
+import views.dialogs.DlgConfirm;
 import views.dialogs.DlgError;
 import views.dialogs.DlgStudent;
 import views.dialogs.DlgVisitor;
@@ -29,7 +40,7 @@ import views.layouts.AppLayout;
  * @author vishv
  */
 public class PnlVisitors extends javax.swing.JPanel {
-    
+
     private HashMap<String, Integer> classMap = new HashMap();
 
     /**
@@ -38,14 +49,14 @@ public class PnlVisitors extends javax.swing.JPanel {
     public PnlVisitors() {
         initComponents();
         setDsign();
-        
+
         loadClasses();
 
         fetchData("");
     }
-    
-    private void loadClasses(){
-        
+
+    private void loadClasses() {
+
         try {
 
             ResultSet rs = AppConnection.search(""
@@ -161,19 +172,19 @@ public class PnlVisitors extends javax.swing.JPanel {
             }
             constraints.append(value);
         }
-        
-        if(hasClass){
-            
-            if ( hasTime || hasSearch || hasSort ) {
+
+        if (hasClass) {
+
+            if (hasTime || hasSearch || hasSort) {
                 constraints.append(" AND ");
             }
-            
+
             constraints
                     .append(" `student`.`grades_has_classes_id` = '")
                     .append(classMap.get(String.valueOf(cboClass.getSelectedItem())))
                     .append("' ");
         }
-        
+
         fetchData(constraints.toString());
     }
 
@@ -282,8 +293,18 @@ public class PnlVisitors extends javax.swing.JPanel {
         });
 
         btnReport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/file-text.png"))); // NOI18N
+        btnReport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReportActionPerformed(evt);
+            }
+        });
 
         btnPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/printer.png"))); // NOI18N
+        btnPrint.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrintActionPerformed(evt);
+            }
+        });
 
         btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/refresh-cw.png"))); // NOI18N
         btnRefresh.addActionListener(new java.awt.event.ActionListener() {
@@ -463,19 +484,64 @@ public class PnlVisitors extends javax.swing.JPanel {
     }//GEN-LAST:event_cboTimeActionPerformed
 
     private void cboStatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboStatusActionPerformed
-        
+
         filterData();
     }//GEN-LAST:event_cboStatusActionPerformed
 
     private void cboClassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboClassActionPerformed
-        
+
         filterData();
     }//GEN-LAST:event_cboClassActionPerformed
 
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
         fetchData("");
+                AppLayout.appLayout.changeForm(LayoutPage.VISITORS);
+
     }//GEN-LAST:event_btnRefreshActionPerformed
 
+    private void btnReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReportActionPerformed
+        try {
+
+            JasperViewer.viewReport(generateReport(), false);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }//GEN-LAST:event_btnReportActionPerformed
+
+    private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
+
+        try {
+            DlgConfirm dialog = new DlgConfirm(AppLayout.appLayout, true, "Confirm Print", "Are you sure to print report");
+            dialog.setVisible(true);
+            DialogAction action = dialog.getAction();
+
+            if (action == DialogAction.CONFIRM) {
+                JasperPrintManager.printReport(generateReport(), false);
+            }
+        } catch (Exception e) {
+            new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+
+        }
+    }//GEN-LAST:event_btnPrintActionPerformed
+
+    private JasperPrint generateReport() throws JRException {
+        InputStream inputStream = this.getClass().getResourceAsStream("/reports/school_sync_visitors.jasper");
+
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("PARAM_SEARCH", txtSearch.getText().isBlank() ? "All Students" : "\"" + txtSearch.getText() + "\"");
+        params.put("PARAM_CLASS", cboClass.getSelectedIndex() == -1 ? "All Classes" : "\"" + cboClass.getSelectedItem().toString() + "\"");
+        params.put("PARAM_TPERIOD", cboTime.getSelectedIndex() == -1 ? "All time" : "\"" + cboTime.getSelectedItem().toString() + "\"");
+        params.put("PARAM_STATUS", cboStatus.getSelectedIndex() == -1 ? "All Statuses" : "\"" + cboStatus.getSelectedItem().toString() + "\"");
+        params.put("PARAM_GENERATED_BY", "Generated By: " + AppLayout.loggedUserId);
+        params.put("PARAM_DATE_TIME", "Generated At: " + new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date()));
+
+        JRTableModelDataSource dataSource = new JRTableModelDataSource(table.getModel());
+        return JasperFillManager.fillReport(inputStream, params, dataSource);
+
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAccount;
