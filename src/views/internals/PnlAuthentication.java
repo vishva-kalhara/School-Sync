@@ -6,24 +6,29 @@ package views.internals;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import controllers.UserController;
+import enums.DialogAction;
+import enums.LayoutPage;
 import java.io.InputStream;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Vector;
 import java.util.logging.Level;
 import javax.swing.DefaultComboBoxModel;
 import models.User;
-import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperPrintManager;
 import net.sf.jasperreports.engine.data.JRTableModelDataSource;
 import net.sf.jasperreports.view.JasperViewer;
 import utils.AppConnection;
+import views.dialogs.DlgConfirm;
 import views.dialogs.DlgError;
 import views.dialogs.DlgSystemUser;
 import views.forms.FrmSplashScreen;
@@ -116,6 +121,7 @@ public class PnlAuthentication extends javax.swing.JPanel {
         btnRefresh.putClientProperty("JButton.buttonType", "borderless");
         btnLogout.putClientProperty("JButton.buttonType", "borderless");
         btnAccount.putClientProperty("JButton.buttonType", "borderless");
+        btnClearFilter.putClientProperty("JButton.buttonType", "borderless");
 
         txtSearch.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
         txtSearch.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search by Name");
@@ -136,7 +142,7 @@ public class PnlAuthentication extends javax.swing.JPanel {
 
             ResultSet rs = AppConnection.search("SELECT * FROM `user_roles`");
 
-            Vector<String> data = new Vector();
+            Vector<String> data = new Vector<>();
             data.add("All Roles");
 
             while (rs.next()) {
@@ -238,6 +244,7 @@ public class PnlAuthentication extends javax.swing.JPanel {
         btnRefresh = new javax.swing.JButton();
         btnLogout = new javax.swing.JButton();
         btnAccount = new javax.swing.JButton();
+        btnClearFilter = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         cboStatus = new javax.swing.JComboBox<>();
         txtSearch = new javax.swing.JTextField();
@@ -267,6 +274,11 @@ public class PnlAuthentication extends javax.swing.JPanel {
         });
 
         btnPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/printer.png"))); // NOI18N
+        btnPrint.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrintActionPerformed(evt);
+            }
+        });
 
         btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/refresh-cw.png"))); // NOI18N
         btnRefresh.addActionListener(new java.awt.event.ActionListener() {
@@ -285,19 +297,27 @@ public class PnlAuthentication extends javax.swing.JPanel {
         btnAccount.setBackground(new java.awt.Color(244, 244, 244));
         btnAccount.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/user.png"))); // NOI18N
 
+        btnClearFilter.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/filter-x.png"))); // NOI18N
+        btnClearFilter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClearFilterActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(24, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnAdd, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnReport, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnPrint, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnRefresh, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnLogout, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAccount, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnClearFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnReport, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAccount, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(24, 24, 24))
         );
         jPanel1Layout.setVerticalGroup(
@@ -311,7 +331,9 @@ public class PnlAuthentication extends javax.swing.JPanel {
                 .addComponent(btnPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 449, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnClearFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 389, Short.MAX_VALUE)
                 .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnAccount, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -498,21 +520,45 @@ public class PnlAuthentication extends javax.swing.JPanel {
 
             JasperViewer.viewReport(generateReport(), false);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (JRException e) {
+            new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
+            FrmSplashScreen.logger.log(java.util.logging.Level.WARNING, e.getMessage(), e);
         }
     }//GEN-LAST:event_btnReportActionPerformed
+
+    private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
+
+        try {
+
+            DlgConfirm dialog = new DlgConfirm(AppLayout.appLayout, true, "Confirm Print!", "Sure you want to print the report.");
+            dialog.setVisible(true);
+            DialogAction action = dialog.getAction();
+
+            if (action == DialogAction.CONFIRM) {
+                JasperPrintManager.printReport(generateReport(), false);
+            }
+
+        } catch (JRException e) {
+            new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
+            FrmSplashScreen.logger.log(java.util.logging.Level.WARNING, e.getMessage(), e);
+        }
+    }//GEN-LAST:event_btnPrintActionPerformed
+
+    private void btnClearFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearFilterActionPerformed
+
+        AppLayout.appLayout.changeForm(LayoutPage.AUTHENTICATION);
+    }//GEN-LAST:event_btnClearFilterActionPerformed
 
     private JasperPrint generateReport() throws JRException {
 
         InputStream inputStream = this.getClass().getResourceAsStream("/reports/school_sync_users.jasper");
-
+        
         HashMap<String, Object> params = new HashMap<>();
         params.put("PARAM_SEARCH", txtSearch.getText().isBlank() ? "All Users" : "\"" + txtSearch.getText() + "\"");
-        params.put("PARAM_ROLE", "All Roles");
-        params.put("PARAM_STATUS", "All Statuses");
-        params.put("PARAM_GENERATED_BY", "Generated y usr-0052");
-        params.put("PARAM_DATE_TIME", "12/12/2024 15:20:56");
+        params.put("PARAM_ROLE", cboRole.getSelectedIndex() == 0 ? "All Roles" : cboRole.getSelectedItem());
+        params.put("PARAM_STATUS", cboStatus.getSelectedIndex() == 0 ? "All Statuses" : cboStatus.getSelectedItem());
+        params.put("PARAM_GENERATED_BY", "Generated by " + AppLayout.loggedUserId);
+        params.put("PARAM_DATE_TIME", "Generated at " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
 
         JRTableModelDataSource dataSource = new JRTableModelDataSource(table.getModel());
 
@@ -522,6 +568,7 @@ public class PnlAuthentication extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAccount;
     private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnClearFilter;
     private javax.swing.JButton btnLogout;
     private javax.swing.JButton btnPrint;
     private javax.swing.JButton btnRefresh;

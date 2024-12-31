@@ -14,7 +14,7 @@ public class NoticesValidator {
     
     public void validateEmailData(String toRef, String emailSubject, String emailBody) throws ErrorException {
         
-        if(toRef == null || toRef.isBlank()) throw new ErrorException("Select the to address!");
+        if(toRef == null || toRef.isBlank() || toRef.equals("0")) throw new ErrorException("Select the to address!");
         
         if(emailSubject == null || emailSubject.isBlank()) throw new ErrorException("Email subject is required!");
         

@@ -7,6 +7,7 @@ package views.internals;
 import com.formdev.flatlaf.FlatClientProperties;
 import controllers.NoticesController;
 import enums.DialogType;
+import enums.LayoutPage;
 import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Vector;
@@ -181,7 +182,6 @@ public class PnlNoticeClass extends javax.swing.JPanel {
 
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
 
-        System.out.println(cboClass.getSelectedItem());
 
         String toRef = classesMap.get((String) cboClass.getSelectedItem());
         String subject = txtHeading.getText();
@@ -195,6 +195,8 @@ public class PnlNoticeClass extends javax.swing.JPanel {
             
             new DlgError(AppLayout.appLayout, true, "Email sent!", "Email Successfully sent", DialogType.SUCCESS).setVisible(true);
             parent.dispose();
+            
+            AppLayout.appLayout.changeForm(LayoutPage.SMS_EMAIL);
 
         } catch (ErrorException e) {
             new DlgError(AppLayout.appLayout, true, e.getMessage(), "Validation Error").setVisible(true);

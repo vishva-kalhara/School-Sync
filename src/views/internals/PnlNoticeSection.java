@@ -5,13 +5,21 @@
 package views.internals;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import controllers.NoticesController;
+import enums.DialogType;
+import enums.LayoutPage;
 import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Vector;
 import java.util.logging.Level;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JDialog;
 import utils.AppConnection;
+import utils.ErrorException;
+import validation.NoticesValidator;
+import views.dialogs.DlgError;
 import views.forms.FrmSplashScreen;
+import views.layouts.AppLayout;
 
 /**
  *
@@ -19,13 +27,18 @@ import views.forms.FrmSplashScreen;
  */
 public class PnlNoticeSection extends javax.swing.JPanel {
 
-    private HashMap<String, Integer> gradesMap = new HashMap<>();
+    private HashMap<String, String> gradesMap = new HashMap<>();
+    private JDialog parent;
 
     /**
      * Creates new form PnlNoticeSection
+     * @param parent
      */
-    public PnlNoticeSection() {
+    public PnlNoticeSection(JDialog parent) {
         initComponents();
+        
+        this.parent = parent; 
+        
         setDesign();
         loadGrades();
     }
@@ -48,12 +61,12 @@ public class PnlNoticeSection extends javax.swing.JPanel {
             data.add("Select");
 
             while (rs.next()) {
-                gradesMap.put(rs.getString("grade_name"), rs.getInt("id"));
+                gradesMap.put(rs.getString("grade_name"), rs.getString("id"));
                 data.add(rs.getString("grade_name"));
             }
 
             DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(data);
-            cboClass.setModel(model);
+            cboSection.setModel(model);
         } catch (Exception e) {
             FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
         }
@@ -69,7 +82,7 @@ public class PnlNoticeSection extends javax.swing.JPanel {
     private void initComponents() {
 
         jPanel3 = new javax.swing.JPanel();
-        cboClass = new javax.swing.JComboBox<>();
+        cboSection = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         txtHeading = new javax.swing.JTextField();
@@ -80,7 +93,7 @@ public class PnlNoticeSection extends javax.swing.JPanel {
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
 
-        cboClass.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1 - E" }));
+        cboSection.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1 - E" }));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(153, 153, 153));
@@ -109,31 +122,32 @@ public class PnlNoticeSection extends javax.swing.JPanel {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addGap(31, 31, 31)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jSeparator2)
-                    .addComponent(txtHeading)
-                    .addComponent(txtDetails, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(31, 31, 31)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(cboClass, javax.swing.GroupLayout.Alignment.LEADING, 0, 337, Short.MAX_VALUE))
+                            .addComponent(jSeparator2)
+                            .addComponent(txtHeading)
+                            .addComponent(txtDetails, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(cboSection, javax.swing.GroupLayout.Alignment.LEADING, 0, 337, Short.MAX_VALUE))))
                 .addGap(32, 32, 32))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(9, 9, 9)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cboClass, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cboSection, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(24, 24, 24)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -146,7 +160,7 @@ public class PnlNoticeSection extends javax.swing.JPanel {
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(29, 29, 29)
                 .addComponent(btnSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -163,13 +177,33 @@ public class PnlNoticeSection extends javax.swing.JPanel {
 
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
 
-        //        new AppointmentController().createAppointment(classId, studentId, appointment);
+        String toRef = gradesMap.get((String) cboSection.getSelectedItem());
+        String subject = txtHeading.getText();
+        String body = txtDetails.getText();
+
+        try {
+            
+            new NoticesValidator().validateEmailData(toRef, subject, body);
+
+            new NoticesController().sendToSection(toRef, subject, body);
+            
+            new DlgError(AppLayout.appLayout, true, "Email sent!", "Email Successfully sent", DialogType.SUCCESS).setVisible(true);
+            parent.dispose();
+            
+            AppLayout.appLayout.changeForm(LayoutPage.SMS_EMAIL);
+
+        } catch (ErrorException e) {
+            new DlgError(AppLayout.appLayout, true, e.getMessage(), "Validation Error").setVisible(true);
+        } catch (Exception e) {
+            new DlgError(AppLayout.appLayout, true, "Couldn't send notices").setVisible(true);
+            FrmSplashScreen.logger.log(Level.SEVERE, e.getMessage(), e);
+        }
     }//GEN-LAST:event_btnSubmitActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSubmit;
-    private javax.swing.JComboBox<String> cboClass;
+    private javax.swing.JComboBox<String> cboSection;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;

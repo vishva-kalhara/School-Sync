@@ -7,6 +7,7 @@ package views.internals;
 import com.formdev.flatlaf.FlatClientProperties;
 import controllers.NoticesController;
 import enums.DialogType;
+import enums.LayoutPage;
 import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Vector;
@@ -233,8 +234,11 @@ public class PnlNoticeStudent extends javax.swing.JPanel {
             NoticesController emailController = new NoticesController();
             emailController.sendNoticeToStudent(studentId, heading, details);
 
-            new DlgError(AppLayout.appLayout, true, "Email sent!", "Email Successfully sent", DialogType.SUCCESS).setVisible(true);
+            new DlgError(AppLayout.appLayout, true, "Emailil sent!", "Email Successfully sent", DialogType.SUCCESS).setVisible(true);
             parent.dispose();
+            
+            AppLayout.appLayout.changeForm(LayoutPage.SMS_EMAIL);
+            
         } catch (ErrorException e) {
             new DlgError(AppLayout.appLayout, true, e.getMessage(), "Validation Error").setVisible(true);
         } catch (Exception e) {
