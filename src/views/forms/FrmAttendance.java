@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.util.logging.Level;
 import utils.AppConnection;
 import views.dialogs.DlgError;
+import views.dialogs.DlgVisitorsAttendance;
 import views.layouts.AppLayout;
 
 /**
@@ -42,6 +43,7 @@ public class FrmAttendance extends javax.swing.JFrame {
 
         btnSignIn.putClientProperty("JButton.buttonType", "borderless");
         btnClose.putClientProperty("JButton.buttonType", "borderless");
+        btnVisitorsAttendance.putClientProperty("JButton.buttonType", "borderless");
     }
 
     /**
@@ -63,6 +65,7 @@ public class FrmAttendance extends javax.swing.JFrame {
         btnSignIn = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
+        btnVisitorsAttendance = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -96,7 +99,7 @@ public class FrmAttendance extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 738, Short.MAX_VALUE)
+                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 732, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(283, 283, 283)
@@ -156,6 +159,15 @@ public class FrmAttendance extends javax.swing.JFrame {
             }
         });
 
+        btnVisitorsAttendance.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
+        btnVisitorsAttendance.setForeground(new java.awt.Color(117, 117, 117));
+        btnVisitorsAttendance.setText("Visitor's Attendance");
+        btnVisitorsAttendance.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVisitorsAttendanceActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -163,7 +175,9 @@ public class FrmAttendance extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(23, 23, 23)
                 .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 472, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 283, Short.MAX_VALUE)
+                .addComponent(btnVisitorsAttendance)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSignIn, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(23, 23, 23))
             .addComponent(jSeparator1)
@@ -175,7 +189,8 @@ public class FrmAttendance extends javax.swing.JFrame {
                 .addGap(20, 20, 20)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSignIn, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnVisitorsAttendance, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(23, Short.MAX_VALUE))
         );
 
@@ -185,7 +200,7 @@ public class FrmAttendance extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 744, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -249,10 +264,16 @@ public class FrmAttendance extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCardIdKeyReleased
 
+    private void btnVisitorsAttendanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVisitorsAttendanceActionPerformed
+        
+        new DlgVisitorsAttendance(this, true).setVisible(true);
+    }//GEN-LAST:event_btnVisitorsAttendanceActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClose;
     private javax.swing.JButton btnSignIn;
+    private javax.swing.JButton btnVisitorsAttendance;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;

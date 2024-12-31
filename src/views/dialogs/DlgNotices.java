@@ -72,7 +72,7 @@ public class DlgNotices extends javax.swing.JDialog {
                 break;
             case SECTION:
                 buttonSelect(btnSection, true);
-                pnlContent.add(new PnlNoticeSection(), java.awt.BorderLayout.CENTER);
+                pnlContent.add(new PnlNoticeSection(this), java.awt.BorderLayout.CENTER);
                 break;
         }
 
