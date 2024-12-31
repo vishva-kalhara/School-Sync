@@ -17,13 +17,13 @@
 			<text><![CDATA[System Users Report]]></text>
 		</element>
 		<element kind="staticText" uuid="0abd5c1a-bd54-4259-982d-be7de808f4de" x="20" y="98" width="50" height="22" markup="styled" fontSize="12.0" bold="false" hTextAlign="Left" vTextAlign="Middle">
-			<text><![CDATA[(Search):]]></text>
+			<text><![CDATA[Search:]]></text>
 		</element>
 		<element kind="staticText" uuid="048dee4a-0ad3-4083-abd6-689468d10918" x="20" y="120" width="50" height="22" markup="styled" fontSize="12.0" bold="false" hTextAlign="Left" vTextAlign="Middle">
-			<text><![CDATA[(Filter):]]></text>
+			<text><![CDATA[Role:]]></text>
 		</element>
 		<element kind="staticText" uuid="baef1c93-9401-484a-8e22-97d7d9143a49" x="20" y="142" width="50" height="22" markup="styled" fontSize="12.0" bold="false" hTextAlign="Left" vTextAlign="Middle">
-			<text><![CDATA[(Filter):]]></text>
+			<text><![CDATA[Status:]]></text>
 		</element>
 		<element kind="textField" uuid="9295c2a0-90de-4997-8a2a-9829e14da633" x="75" y="98" width="210" height="22" fontSize="12.0" hTextAlign="Left" vTextAlign="Middle">
 			<expression><![CDATA[$P{PARAM_SEARCH}]]></expression>
