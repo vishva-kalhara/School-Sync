@@ -5,7 +5,16 @@
 package views.dialogs;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import controllers.VisitorAttendanceController;
+import enums.DialogType;
 import java.awt.Color;
+import utils.AppConnection;
+import views.layouts.AppLayout;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import views.forms.FrmSplashScreen;
 
 /**
  *
@@ -19,7 +28,7 @@ public class DlgVisitorsAttendance extends javax.swing.JDialog {
     public DlgVisitorsAttendance(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-            formDesign();
+        formDesign();
     }
 
     private void formDesign() {
@@ -34,7 +43,7 @@ public class DlgVisitorsAttendance extends javax.swing.JDialog {
         txtStuId.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
 
         btnClose.putClientProperty("JButton.buttonType", "borderless");
-        
+
         txtStuId.grabFocus();
     }
 
@@ -70,6 +79,11 @@ public class DlgVisitorsAttendance extends javax.swing.JDialog {
         jLabel2.setText("Scan student card or enter your ID.");
 
         txtStuId.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtStuId.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtStuIdActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -155,47 +169,68 @@ public class DlgVisitorsAttendance extends javax.swing.JDialog {
         this.dispose();
     }//GEN-LAST:event_btnCloseActionPerformed
 
+    private void txtStuIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtStuIdActionPerformed
+
+        if (!txtStuId.getText().startsWith("stu-")) {
+            txtStuId.setText("stu-" + txtStuId.getText());
+        }
+        String stuid = txtStuId.getText().trim();
+
+        if (stuid.isEmpty() || !stuid.matches("stu-\\d+")) {
+            new DlgError(AppLayout.appLayout, true, "Please enter a valid student ID", "Validation Error").setVisible(true);
+            txtStuId.setText("");
+            return;
+
+        } else {
+
+            try {
+                String todayDate = java.time.LocalDate.now().toString(); // Get today's date
+
+                ResultSet resultSet = AppConnection.search("SELECT * FROM `visitor_details` WHERE `student_id` = '" + stuid + "' AND `date` = '" + todayDate + "'");
+
+                if (resultSet.next()) {
+                    int id = resultSet.getInt("id");
+                    new VisitorAttendanceController().markVisitorAttendance(id);
+                    txtStuId.setText("");
+                    new DlgError(AppLayout.appLayout, true, "Attendance Marked Succesfully", "Success", DialogType.SUCCESS).setVisible(true);
+
+                } else {
+                    new DlgError(AppLayout.appLayout, true, "No visitor assigned for this student ID today", "Validation Error").setVisible(true);
+                    txtStuId.setText("");
+                }
+            } catch (SQLException e) {
+                FrmSplashScreen.logger.log(Level.WARNING, "Unexpected error: " + e.getMessage(), e);
+            }
+
+        }
+
+
+    }//GEN-LAST:event_txtStuIdActionPerformed
+
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(DlgVisitorsAttendance.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(DlgVisitorsAttendance.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(DlgVisitorsAttendance.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(DlgVisitorsAttendance.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                DlgVisitorsAttendance dialog = new DlgVisitorsAttendance(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
+//    public static void main(String args[]) {
+//        /* Set the Nimbus look and feel */
+//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+//         */
+//      
+//        /* Create and display the dialog */
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                DlgVisitorsAttendance dialog = new DlgVisitorsAttendance(new javax.swing.JFrame(), true);
+//                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+//                    @Override
+//                    public void windowClosing(java.awt.event.WindowEvent e) {
+//                        System.exit(0);
+//                    }
+//                });
+//                dialog.setVisible(true);
+//            }
+//        });
+//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClose;
