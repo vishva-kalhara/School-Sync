@@ -5,6 +5,7 @@
 package views.internals;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import enums.DialogAction;
 import java.io.InputStream;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
@@ -18,8 +19,13 @@ import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperPrintManager;
+import net.sf.jasperreports.engine.data.JRTableModelDataSource;
 import net.sf.jasperreports.view.JasperViewer;
+import views.dialogs.DlgConfirm;
 import views.dialogs.DlgError;
 import views.dialogs.DlgNotices;
 import views.forms.FrmSplashScreen;
@@ -35,7 +41,6 @@ public class PnlSMSEmail extends javax.swing.JPanel {
 //JRPropertiesUtil propertiesUtil = JRPropertiesUtil.getInstance(context);
 //JasperReportsConfiguration config = new JasperReportsConfiguration(context, propertiesUtil);
 //    private JasperReportsConfiguration jrConfig = new JasperReportsConfiguration();
-
     /**
      * Creates new form PnlSMSEmail
      */
@@ -241,6 +246,11 @@ public class PnlSMSEmail extends javax.swing.JPanel {
 
         btnPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/printer.png"))); // NOI18N
         btnPrint.setEnabled(false);
+        btnPrint.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrintActionPerformed(evt);
+            }
+        });
 
         btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/refresh-cw.png"))); // NOI18N
         btnRefresh.addActionListener(new java.awt.event.ActionListener() {
@@ -416,61 +426,46 @@ public class PnlSMSEmail extends javax.swing.JPanel {
     }//GEN-LAST:event_cboTimeActionPerformed
 
     private void btnReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReportActionPerformed
-
         try {
 
-            JREmptyDataSource source = new JREmptyDataSource();
-            HashMap<String, Object> params = new HashMap<>();
-//            InputStream stream = this.getClass().getResourceAsStream("/reports/notices_1101.jasper");
+            JasperViewer.viewReport(generateReport(), false);
 
-            var report = JasperFillManager.fillReport("src/reports/school_sync_notices.jasper", params, source);
-
-            JasperViewer.viewReport(report, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-//        try {
-//
-//            HashMap<String, Object> parametes = new HashMap<>();
-//            parametes.put("Parameter1", "Hansana");
-//            parametes.put("Parameter2", "0740259085");
-//            parametes.put("Parameter3", "Hasi@gmail.com");
-//
-//            //JREmptyDataSource dataSource = new JREmptyDataSource();
-//            Product product1 = new Product();
-//            product1.setX("1");
-//            product1.setY("iphone 15 Pro Max");
-//            product1.setZ("385000.00");
-//
-//            Product product2 = new Product();
-//            product2.setX("1");
-//            product2.setY("iphone 13 Pro Max");
-//            product2.setZ("325000.00");
-//
-//            Product product3 = new Product();
-//            product3.setX("1");
-//            product3.setY("iphone 11 Pro Max");
-//            product3.setZ("285000.00");
-//
-//            Vector<Product> vector = new Vector<>();
-//            vector.add(product1);
-//            vector.add(product2);
-//            vector.add(product3);
-//
-//            JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(vector);
-//            InputStream stream = this.getClass().getResourceAsStream("/reports/report12.jasper");
-//            JasperPrint report = JasperFillManager.fillReport(stream, parametes, dataSource);
-//
-//            JasperViewer.viewReport(report, false);
-//
-//            //JasperPrintManager.printReport(report, false);
-////            JasperExportManager.exportReportToHtmlFile(report, "Report.html");
-////            JasperExportManager.exportReportToPdfFile(report, "Report.pdf");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
     }//GEN-LAST:event_btnReportActionPerformed
+
+    private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
+        try {
+            DlgConfirm dialog = new DlgConfirm(AppLayout.appLayout, true, "Confirm Print", "Are you sure to print report");
+            dialog.setVisible(true);
+            DialogAction action = dialog.getAction();
+
+            if (action == DialogAction.CONFIRM) {
+                JasperPrintManager.printReport(generateReport(), false);
+            }
+
+        } catch (Exception e) {
+            new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
+            FrmSplashScreen.logger.log(java.util.logging.Level.WARNING, e.getMessage(), e);
+        }
+    }//GEN-LAST:event_btnPrintActionPerformed
+
+    private JasperPrint generateReport() throws JRException {
+        InputStream inputStream = this.getClass().getResourceAsStream("/reports/school_sync_notice.jasper");
+
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("PARAM_SEARCH", txtSearch.getText().isBlank() ? "All Students" : "\"" + txtSearch.getText() + "\"");
+        params.put("PARAM_TIME", cboTime.getSelectedIndex() == 0 ? "All Time" : "\"" + cboTime.getSelectedItem().toString() + "\"");
+        params.put("PARAM_ORDER", cboSort.getSelectedIndex() == 0 ? "ASC" : "\"" + cboSort.getSelectedItem().toString() + "\"");
+        params.put("PARAM_GENERATED_BY", "Generated By: " + AppLayout.loggedUserId);
+        params.put("PARAM_DATE_TIME", "Generated At: " + new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date()));
+
+        JRTableModelDataSource dataSource = new JRTableModelDataSource(table.getModel());
+
+        return JasperFillManager.fillReport(inputStream, params, dataSource);
+
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
