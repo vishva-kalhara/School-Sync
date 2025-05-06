@@ -7,6 +7,7 @@ package views.internals;
 import com.formdev.flatlaf.FlatClientProperties;
 import controllers.UserController;
 import enums.DialogAction;
+import enums.LayoutPage;
 import java.io.InputStream;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -305,6 +306,7 @@ public class PnlResources extends javax.swing.JPanel {
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
 
         new DlgClass(AppLayout.appLayout, true).setVisible(true);
+        AppLayout.appLayout.changeForm(LayoutPage.RESOURCES);
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
