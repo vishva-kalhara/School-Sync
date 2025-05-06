@@ -6,6 +6,7 @@ package views.internals;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import enums.DialogAction;
+import enums.LayoutPage;
 import java.io.InputStream;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
@@ -57,6 +58,7 @@ public class PnlSMSEmail extends javax.swing.JPanel {
         btnRefresh.putClientProperty("JButton.buttonType", "borderless");
         btnLogout.putClientProperty("JButton.buttonType", "borderless");
         btnAccount.putClientProperty("JButton.buttonType", "borderless");
+        btnClearFilters.putClientProperty("JButton.buttonType", "borderless");
 
         txtSearch.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
         txtSearch.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search by Name");
@@ -76,8 +78,8 @@ public class PnlSMSEmail extends javax.swing.JPanel {
         jScrollPane1.setViewportView(new PnlFetching());
         btnPrint.setEnabled(false);
         btnReport.setEnabled(false);
-//        btnRefresh.setEnabled(false);
-//        btnClearFilter.setEnabled(false);
+        btnRefresh.setEnabled(false);
+        btnClearFilters.setEnabled(false);
 
         new Thread(new Runnable() {
             @Override
@@ -154,7 +156,7 @@ public class PnlSMSEmail extends javax.swing.JPanel {
             constraints.append(" ORDER BY notices.created_at ").append(" ").append(selectedSortOrder);
         }
 
-        System.out.println("Generated Query: SELECT * FROM notices " + constraints.toString()); // Debugging
+        // System.out.println("Generated Query: SELECT * FROM notices " + constraints.toString()); // Debugging
         fetchData(constraints.toString());
     }
 
@@ -190,8 +192,10 @@ public class PnlSMSEmail extends javax.swing.JPanel {
                 jScrollPane1.setViewportView(this.table);
                 btnPrint.setEnabled(true);
                 btnReport.setEnabled(true);
-                btnRefresh.setEnabled(true);
             }
+            
+            btnRefresh.setEnabled(true);
+            btnClearFilters.setEnabled(true);
 
         } catch (Exception e) {
             new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
@@ -216,6 +220,7 @@ public class PnlSMSEmail extends javax.swing.JPanel {
         btnRefresh = new javax.swing.JButton();
         btnLogout = new javax.swing.JButton();
         btnAccount = new javax.swing.JButton();
+        btnClearFilters = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         cboSort = new javax.swing.JComboBox<>();
         txtSearch = new javax.swing.JTextField();
@@ -269,6 +274,13 @@ public class PnlSMSEmail extends javax.swing.JPanel {
         btnAccount.setBackground(new java.awt.Color(244, 244, 244));
         btnAccount.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/user.png"))); // NOI18N
 
+        btnClearFilters.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/filter-x.png"))); // NOI18N
+        btnClearFilters.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClearFiltersActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -281,7 +293,8 @@ public class PnlSMSEmail extends javax.swing.JPanel {
                     .addComponent(btnPrint, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnRefresh, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnLogout, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAccount, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnAccount, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnClearFilters, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(24, 24, 24))
         );
         jPanel1Layout.setVerticalGroup(
@@ -295,7 +308,9 @@ public class PnlSMSEmail extends javax.swing.JPanel {
                 .addComponent(btnPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 449, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnClearFilters, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 389, Short.MAX_VALUE)
                 .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnAccount, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -360,7 +375,6 @@ public class PnlSMSEmail extends javax.swing.JPanel {
         );
 
         cboTime.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All time", "Next 7 days", "Tommorrow", "Today", "Yesterday", "Past 7 days", "Past 14 days", "Past 30 days" }));
-        cboTime.setEnabled(false);
         cboTime.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cboTimeActionPerformed(evt);
@@ -410,7 +424,7 @@ public class PnlSMSEmail extends javax.swing.JPanel {
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-        fetchData("");
+        filterData();
     }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void cboSortActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboSortActionPerformed
@@ -420,10 +434,6 @@ public class PnlSMSEmail extends javax.swing.JPanel {
     private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
         filterData();
     }//GEN-LAST:event_txtSearchActionPerformed
-
-    private void cboTimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboTimeActionPerformed
-        filterData();
-    }//GEN-LAST:event_cboTimeActionPerformed
 
     private void btnReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReportActionPerformed
         try {
@@ -451,6 +461,15 @@ public class PnlSMSEmail extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btnPrintActionPerformed
 
+    private void btnClearFiltersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearFiltersActionPerformed
+        
+        AppLayout.appLayout.changeForm(LayoutPage.SMS_EMAIL);
+    }//GEN-LAST:event_btnClearFiltersActionPerformed
+
+    private void cboTimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboTimeActionPerformed
+        filterData();
+    }//GEN-LAST:event_cboTimeActionPerformed
+
     private JasperPrint generateReport() throws JRException {
         InputStream inputStream = this.getClass().getResourceAsStream("/reports/school_sync_notice.jasper");
 
@@ -471,6 +490,7 @@ public class PnlSMSEmail extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAccount;
     private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnClearFilters;
     private javax.swing.JButton btnLogout;
     private javax.swing.JButton btnPrint;
     private javax.swing.JButton btnRefresh;
