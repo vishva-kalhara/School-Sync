@@ -217,10 +217,11 @@ public class PnlAttendance extends javax.swing.JPanel {
                 jScrollPane1.setViewportView(this.table);
                 btnPrint.setEnabled(true);
                 btnReport.setEnabled(true);
-                btnRefresh.setEnabled(true);
-                btnClearFilter.setEnabled(true);
             }
 
+            btnRefresh.setEnabled(true);
+            btnClearFilter.setEnabled(true);
+            
         } catch (Exception e) {
             new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
             FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
