@@ -15,6 +15,7 @@ import views.dialogs.DlgConfirm;
 import views.forms.FrmSplashScreen;
 import views.layouts.AppLayout;
 import java.sql.ResultSet;
+import views.dialogs.DlgVisitorsAttendance;
 
 /**
  *
@@ -438,6 +439,11 @@ public class PnlDashboard extends javax.swing.JPanel {
 
         jButton2.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
         jButton2.setText("Mark Now");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnlMarkVisitorsLayout = new javax.swing.GroupLayout(pnlMarkVisitors);
         pnlMarkVisitors.setLayout(pnlMarkVisitorsLayout);
@@ -491,6 +497,11 @@ public class PnlDashboard extends javax.swing.JPanel {
     private void btnToDiscipleRecordsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnToDiscipleRecordsActionPerformed
         AppLayout.appLayout.changeForm(LayoutPage.DISCIPLINE_RECORDS);
     }//GEN-LAST:event_btnToDiscipleRecordsActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        
+        new DlgVisitorsAttendance(AppLayout.appLayout, true).setVisible(true);
+    }//GEN-LAST:event_jButton2ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

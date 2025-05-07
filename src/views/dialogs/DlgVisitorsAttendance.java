@@ -5,7 +5,7 @@
 package views.dialogs;
 
 import com.formdev.flatlaf.FlatClientProperties;
-import controllers.VisitorAttendanceController;
+import controllers.VisitorController;
 import enums.DialogType;
 import java.awt.Color;
 import utils.AppConnection;
@@ -190,7 +190,7 @@ public class DlgVisitorsAttendance extends javax.swing.JDialog {
 
                 if (resultSet.next()) {
                     int id = resultSet.getInt("id");
-                    new VisitorAttendanceController().markVisitorAttendance(id);
+                    new VisitorController().markVisitorAttendance(id);
                     txtStuId.setText("");
                     new DlgError(AppLayout.appLayout, true, "Attendance Marked Succesfully", "Success", DialogType.SUCCESS).setVisible(true);
 
@@ -207,30 +207,6 @@ public class DlgVisitorsAttendance extends javax.swing.JDialog {
 
     }//GEN-LAST:event_txtStuIdActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-//    public static void main(String args[]) {
-//        /* Set the Nimbus look and feel */
-//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-//         */
-//      
-//        /* Create and display the dialog */
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                DlgVisitorsAttendance dialog = new DlgVisitorsAttendance(new javax.swing.JFrame(), true);
-//                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-//                    @Override
-//                    public void windowClosing(java.awt.event.WindowEvent e) {
-//                        System.exit(0);
-//                    }
-//                });
-//                dialog.setVisible(true);
-//            }
-//        });
-//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClose;

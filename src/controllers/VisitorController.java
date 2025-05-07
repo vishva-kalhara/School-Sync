@@ -29,5 +29,9 @@ public class VisitorController {
                 + "`date` ) VALUES('" + 0 + "','" + visitor.getStudentId() + "','" + date + "')");
 
     }
+    
+    public void markVisitorAttendance(int id) throws SQLException {
 
+        AppConnection.iud("UPDATE `visitor_details` SET `has_attended` = '" + 1 + "'  WHERE `id`='" + id + "'");
+    }
 }
