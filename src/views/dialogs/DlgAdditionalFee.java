@@ -38,7 +38,9 @@ public class DlgAdditionalFee extends javax.swing.JDialog {
 //        cboIsActive.setEnabled(false);
 //        cboGrade.setEnabled(false);
         btnEdit.setEnabled(false);
-
+        
+        cboIsActive.setSelectedIndex(0);
+        cboIsActive.setEnabled(false);
     }
 
     private void setDesign() {
@@ -50,6 +52,7 @@ public class DlgAdditionalFee extends javax.swing.JDialog {
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_SHOW_ICON, false);
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_SHOW_TITLE, false);
 
+        txtTitle.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
         FormatPrice.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
 //       txtDetails.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
         btnSubmit.putClientProperty("JButton.buttonType", "borderless");
@@ -111,31 +114,6 @@ public class DlgAdditionalFee extends javax.swing.JDialog {
         }
         additional.setIsActive(cboIsActive.getSelectedIndex() == 0);
 
-//        AdditionalFee additional = new AdditionalFee();
-//
-//        if (txtTitle.getText().isBlank()) {
-//            throw new ErrorException("Title cannot be empty!");
-//        }
-//        if (FormatPrice.getText().isBlank()) {
-//            throw new ErrorException("Price cannot be empty!");
-//        }
-//        if (cboGrade.getSelectedIndex() == 0) {
-//            throw new ErrorException("Please select the grade!");
-//        }
-//        if (cboIsActive.getSelectedIndex() == 0) {
-//            throw new ErrorException("Please select the Active or Inactive");
-//        }
-//        Double price = FormatPrice.getValue();
-//        additional.setTitle(txtTitle.getText());
-//       additional.setPrice(Double.parseDouble((String) FormatPrice.getText()));
-//       additional.setPrice((Double) FormatPrice.);
-//        additional.setGradesId(gradeMap.get(String.valueOf(cboGrade.getSelectedItem())));
-//        String isActiveValue = (String) cboIsActive.getSelectedItem();
-//        additional.setIsActive(isActiveValue.equalsIgnoreCase("Active"));
-//       additional.setIsActive((boolean) cboIsActive.getSelectedItem());
-//        JComboBox<Boolean> cboIsActive = new JComboBox<>(new Boolean[]{true, false});
-//         additional.setIsActive((Boolean) cboIsActive.getSelectedItem());
-//        additional.setIsActive(Boolean.parseBoolean((String) cboIsActive.getSelectedItem()));
         return additional;
     }
 
