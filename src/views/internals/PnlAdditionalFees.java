@@ -5,12 +5,20 @@
 package views.internals;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import enums.LayoutPage;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
+import utils.AppConnection;
 import views.dialogs.DlgAdditionalFee;
 import views.dialogs.DlgPayment;
 import views.layouts.AppLayout;
+import java.sql.ResultSet;
+import java.util.Vector;
+import java.util.logging.Level;
+import javax.swing.table.DefaultTableModel;
+import views.dialogs.DlgError;
+import views.forms.FrmSplashScreen;
 
 /**
  *
@@ -24,9 +32,57 @@ public class PnlAdditionalFees extends javax.swing.JPanel {
     public PnlAdditionalFees() {
         initComponents();
         setDsign();
+
+        fetchData();
     }
     
-    private void setDsign(){
+     private void fetchData() {
+
+        jScrollPane1.setViewportView(new PnlFetching());
+        btnPrint.setEnabled(false);
+        btnReport.setEnabled(false);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                loadTableData();
+            }
+        }).start();
+    }
+
+    private void loadTableData() {
+
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.setRowCount(0);
+
+        try {
+
+            ResultSet rs = AppConnection.search("SELECT * FROM `additional_fees`");
+            while (rs.next()) {
+                Vector<String> row = new Vector<>();
+                row.add(rs.getString("id"));
+                row.add(rs.getString("title"));
+                row.add(rs.getString("price"));
+                row.add(rs.getString("grades_id"));
+                row.add("1".equals(rs.getString("is_active")) ? "Active" : "Not Active");
+                model.addRow(row);
+            }
+            
+            if (model.getRowCount() == 0) {
+                jScrollPane1.setViewportView(new PnlNotFound());
+            } else {
+                jScrollPane1.setViewportView(this.table);
+                btnPrint.setEnabled(true);
+                btnReport.setEnabled(true);
+            }
+            
+        } catch (Exception e) {
+            new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+        }
+    }
+
+    private void setDsign() {
         btnAdd.putClientProperty("JButton.buttonType", "borderless");
         btnReport.putClientProperty("JButton.buttonType", "borderless");
         btnPrint.putClientProperty("JButton.buttonType", "borderless");
@@ -34,12 +90,9 @@ public class PnlAdditionalFees extends javax.swing.JPanel {
         btnLogout.putClientProperty("JButton.buttonType", "borderless");
         btnAccount.putClientProperty("JButton.buttonType", "borderless");
         btnPayment.putClientProperty("JButton.buttonType", "borderless");
-        
-        txtSearch.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
-        txtSearch.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search by Name");
-        
+
         pnlTable.putClientProperty(FlatClientProperties.STYLE, "arc: 13");
-        
+
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         table.setDefaultRenderer(Object.class, centerRenderer);
@@ -66,8 +119,6 @@ public class PnlAdditionalFees extends javax.swing.JPanel {
         btnAccount = new javax.swing.JButton();
         btnPayment = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
-        cboSort = new javax.swing.JComboBox<>();
-        txtSearch = new javax.swing.JTextField();
         pnlTable = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
@@ -90,6 +141,11 @@ public class PnlAdditionalFees extends javax.swing.JPanel {
         btnPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/printer.png"))); // NOI18N
 
         btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/refresh-cw.png"))); // NOI18N
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefreshActionPerformed(evt);
+            }
+        });
 
         btnLogout.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/log-out.png"))); // NOI18N
         btnLogout.addActionListener(new java.awt.event.ActionListener() {
@@ -148,22 +204,31 @@ public class PnlAdditionalFees extends javax.swing.JPanel {
 
         jPanel2.setBackground(new java.awt.Color(247, 247, 247));
 
-        cboSort.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
         pnlTable.setBackground(new java.awt.Color(255, 255, 255));
 
         table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Additional Fees", "Title 2", "Title 3", "Title 4"
+                "Id", "Fee Title", "Price (LKR)", "Grade", "Status"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(table);
+        if (table.getColumnModel().getColumnCount() > 0) {
+            table.getColumnModel().getColumn(0).setMaxWidth(60);
+        }
 
         javax.swing.GroupLayout pnlTableLayout = new javax.swing.GroupLayout(pnlTable);
         pnlTable.setLayout(pnlTableLayout);
@@ -171,14 +236,14 @@ public class PnlAdditionalFees extends javax.swing.JPanel {
             pnlTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlTableLayout.createSequentialGroup()
                 .addGap(19, 19, 19)
-                .addComponent(jScrollPane1)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 781, Short.MAX_VALUE)
                 .addGap(24, 24, 24))
         );
         pnlTableLayout.setVerticalGroup(
             pnlTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlTableLayout.createSequentialGroup()
                 .addGap(15, 15, 15)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 654, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 727, Short.MAX_VALUE)
                 .addGap(17, 17, 17))
         );
 
@@ -188,22 +253,13 @@ public class PnlAdditionalFees extends javax.swing.JPanel {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(26, 26, 26)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(pnlTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 220, Short.MAX_VALUE)
-                        .addComponent(cboSort, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addComponent(pnlTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(24, 24, 24))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cboSort, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(23, 23, 23)
                 .addComponent(pnlTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(25, 25, 25))
         );
@@ -225,6 +281,11 @@ public class PnlAdditionalFees extends javax.swing.JPanel {
         new DlgPayment(AppLayout.appLayout, true).setVisible(true);
     }//GEN-LAST:event_btnPaymentActionPerformed
 
+    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
+        
+        AppLayout.appLayout.changeForm(LayoutPage.ADDITIONAL_FEES);
+    }//GEN-LAST:event_btnRefreshActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAccount;
@@ -234,12 +295,10 @@ public class PnlAdditionalFees extends javax.swing.JPanel {
     private javax.swing.JButton btnPrint;
     private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnReport;
-    private javax.swing.JComboBox<String> cboSort;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel pnlTable;
     private javax.swing.JTable table;
-    private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
 }

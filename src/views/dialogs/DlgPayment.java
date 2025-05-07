@@ -5,13 +5,28 @@
 package views.dialogs;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import controllers.AdditionalFeeController;
+import enums.DialogType;
 import java.awt.Color;
+import java.sql.ResultSet;
+import java.util.HashMap;
+import java.util.Vector;
+import java.util.logging.Level;
+import javax.swing.DefaultComboBoxModel;
+import utils.AppConnection;
+import utils.ErrorException;
+import views.forms.FrmSplashScreen;
+import views.layouts.AppLayout;
 
 /**
  *
  * @author Chamod
  */
 public class DlgPayment extends javax.swing.JDialog {
+
+    private final HashMap<String, Integer> classMap;
+    private final HashMap<String, String> studentsMap;
+    private final HashMap<String, String> additionalFeesMap;
 
     /**
      * Creates new form DlgPayment
@@ -20,10 +35,16 @@ public class DlgPayment extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         setDesign();
+
+        this.classMap = new HashMap<>();
+        this.studentsMap = new HashMap<>();
+        this.additionalFeesMap = new HashMap<>();
+        
+        loadClasses();
+        loadAditionalFees();
     }
-    
-    
-        private void setDesign() {
+
+    private void setDesign() {
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_BACKGROUND, new Color(0, 0, 0));
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_FOREGROUND, new Color(0, 0, 0));
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_SHOW_CLOSE, false);
@@ -34,8 +55,86 @@ public class DlgPayment extends javax.swing.JDialog {
 
         btnSubmit.putClientProperty("JButton.buttonType", "borderless");
         btnClose.putClientProperty("JButton.buttonType", "borderless");
+
+        cboClass.grabFocus();
+    }
+
+    private void loadClasses() {
+
+        try {
+
+            ResultSet rs = AppConnection.search(""
+                    + "SELECT "
+                    + "CONCAT(`grades_id`, ' - ', `class`) AS `class`, "
+                    + "id "
+                    + "FROM school_sync_v1.grades_has_classes "
+                    + "ORDER BY `class` ASC;"
+            );
+
+            Vector<String> data = new Vector<>();
+            data.add("Select Class");
+
+            while (rs.next()) {
+
+                classMap.put(rs.getString("class"), rs.getInt("id"));
+                data.add(rs.getString("class"));
+            }
+
+            DefaultComboBoxModel model = new DefaultComboBoxModel(data);
+            cboClass.setModel(model);
+
+        } catch (Exception e) {
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+        }
+    }
+
+    private void loadStudents(int classId) {
+
+        try {
+
+            ResultSet rs = AppConnection.search("SELECT `id`, CONCAT(`id`, ' - ', `full_name`) AS studentName FROM school_sync_v1.student WHERE `grades_has_classes_id` = " + classId);
+            
+            Vector<String> data = new Vector<>();
+            data.add("Select Student");
+            
+            while (rs.next()) {
+
+                studentsMap.put(rs.getString("studentName"), rs.getString("id"));
+                data.add(rs.getString("studentName"));
+            }
+
+            DefaultComboBoxModel model = new DefaultComboBoxModel(data);
+            cboStudent.setModel(model);
+
+            cboStudent.setEnabled(true);
+            
+        } catch (Exception e) {
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+        }
     }
     
+    private void loadAditionalFees(){
+        
+        try {
+
+            ResultSet rs = AppConnection.search("SELECT `id`, CONCAT('Grade ', `grades_id`, ' - ', `title`, ' (LKR ',  price, ')') AS value FROM school_sync_v1.additional_fees");
+            
+            Vector<String> data = new Vector<>();
+            data.add("Select Fee");
+            
+            while (rs.next()) {
+
+                additionalFeesMap.put(rs.getString("value"), rs.getString("id"));
+                data.add(rs.getString("value"));
+            }
+
+            DefaultComboBoxModel model = new DefaultComboBoxModel(data);
+            cboPayment.setModel(model);
+            
+        } catch (Exception e) {
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -58,8 +157,6 @@ public class DlgPayment extends javax.swing.JDialog {
         jPanel4 = new javax.swing.JPanel();
         jSeparator2 = new javax.swing.JSeparator();
         btnSubmit = new javax.swing.JButton();
-        btnEdit = new javax.swing.JButton();
-        btnReset = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         btnClose = new javax.swing.JButton();
@@ -84,8 +181,14 @@ public class DlgPayment extends javax.swing.JDialog {
         txtStudent.setText("Student");
 
         cboClass.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1 - A" }));
+        cboClass.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboClassActionPerformed(evt);
+            }
+        });
 
         cboStudent.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select" }));
+        cboStudent.setEnabled(false);
 
         txtAditionalFee.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
         txtAditionalFee.setForeground(new java.awt.Color(153, 153, 153));
@@ -116,6 +219,7 @@ public class DlgPayment extends javax.swing.JDialog {
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtClass, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtStudent, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -123,7 +227,7 @@ public class DlgPayment extends javax.swing.JDialog {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cboClass, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cboStudent, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtAditionalFee, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cboPayment, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -141,7 +245,9 @@ public class DlgPayment extends javax.swing.JDialog {
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         jPanel1.add(jPanel2, java.awt.BorderLayout.CENTER);
@@ -153,10 +259,11 @@ public class DlgPayment extends javax.swing.JDialog {
         btnSubmit.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
         btnSubmit.setForeground(new java.awt.Color(255, 255, 255));
         btnSubmit.setText("Pay");
-
-        btnEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/pen-line.png"))); // NOI18N
-
-        btnReset.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/remove-formatting.png"))); // NOI18N
+        btnSubmit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSubmitActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -166,10 +273,7 @@ public class DlgPayment extends javax.swing.JDialog {
                 .addGap(32, 32, 32)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE))
                 .addGap(30, 30, 30))
@@ -180,11 +284,7 @@ public class DlgPayment extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 3, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(btnReset, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addComponent(btnSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(30, Short.MAX_VALUE))
         );
 
@@ -240,7 +340,7 @@ public class DlgPayment extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE)
         );
 
         pack();
@@ -251,15 +351,45 @@ public class DlgPayment extends javax.swing.JDialog {
         this.dispose();
     }//GEN-LAST:event_btnCloseActionPerformed
 
+    private void cboClassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboClassActionPerformed
+        
+        if(cboClass.getSelectedIndex() != 0)
+            loadStudents( Integer.parseInt(classMap.get(cboClass.getSelectedItem()).toString()));
+    }//GEN-LAST:event_cboClassActionPerformed
+
+    private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
+        
+        try {
+            
+            if(cboStudent.getSelectedIndex() == 0) {
+                throw new ErrorException("Select a student!");
+            }
+            String studentId = studentsMap.get(cboStudent.getSelectedItem().toString());
+            
+            if(cboPayment.getSelectedIndex() == 0) {
+                throw new ErrorException("Select an Fee!");
+            }
+            String feeId = additionalFeesMap.get(cboPayment.getSelectedItem().toString());
+            
+            new AdditionalFeeController().addPayment(studentId, feeId);
+            
+            new DlgError(AppLayout.appLayout, true, "Payment Success!", "Success", DialogType.SUCCESS).setVisible(true);
+            this.dispose();
+            
+        } catch (ErrorException e) {
+            new DlgError(AppLayout.appLayout, true, e.getMessage(), "Validation Error").setVisible(true);
+        } catch (Exception e) {
+            new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
+            FrmSplashScreen.logger.log(java.util.logging.Level.WARNING, e.getMessage(), e);
+        }
+    }//GEN-LAST:event_btnSubmitActionPerformed
+
     /**
      * @param args the command line arguments
      */
 
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClose;
-    private javax.swing.JButton btnEdit;
-    private javax.swing.JButton btnReset;
     private javax.swing.JButton btnSubmit;
     private javax.swing.JComboBox<String> cboClass;
     private javax.swing.JComboBox<String> cboPayment;
