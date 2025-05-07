@@ -5,6 +5,8 @@
 package views.dialogs;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import controllers.AdditionalFeeController;
+import enums.DialogType;
 import java.awt.Color;
 import java.sql.ResultSet;
 import java.util.HashMap;
@@ -12,7 +14,9 @@ import java.util.Vector;
 import java.util.logging.Level;
 import javax.swing.DefaultComboBoxModel;
 import utils.AppConnection;
+import utils.ErrorException;
 import views.forms.FrmSplashScreen;
+import views.layouts.AppLayout;
 
 /**
  *
@@ -255,6 +259,11 @@ public class DlgPayment extends javax.swing.JDialog {
         btnSubmit.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
         btnSubmit.setForeground(new java.awt.Color(255, 255, 255));
         btnSubmit.setText("Pay");
+        btnSubmit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSubmitActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -347,6 +356,33 @@ public class DlgPayment extends javax.swing.JDialog {
         if(cboClass.getSelectedIndex() != 0)
             loadStudents( Integer.parseInt(classMap.get(cboClass.getSelectedItem()).toString()));
     }//GEN-LAST:event_cboClassActionPerformed
+
+    private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
+        
+        try {
+            
+            if(cboStudent.getSelectedIndex() == 0) {
+                throw new ErrorException("Select a student!");
+            }
+            String studentId = studentsMap.get(cboStudent.getSelectedItem().toString());
+            
+            if(cboPayment.getSelectedIndex() == 0) {
+                throw new ErrorException("Select an Fee!");
+            }
+            String feeId = additionalFeesMap.get(cboPayment.getSelectedItem().toString());
+            
+            new AdditionalFeeController().addPayment(studentId, feeId);
+            
+            new DlgError(AppLayout.appLayout, true, "Payment Success!", "Success", DialogType.SUCCESS).setVisible(true);
+            this.dispose();
+            
+        } catch (ErrorException e) {
+            new DlgError(AppLayout.appLayout, true, e.getMessage(), "Validation Error").setVisible(true);
+        } catch (Exception e) {
+            new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
+            FrmSplashScreen.logger.log(java.util.logging.Level.WARNING, e.getMessage(), e);
+        }
+    }//GEN-LAST:event_btnSubmitActionPerformed
 
     /**
      * @param args the command line arguments

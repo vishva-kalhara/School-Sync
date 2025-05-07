@@ -7,7 +7,7 @@ package controllers;
 import java.sql.SQLException;
 import models.AdditionalFee;
 import utils.AppConnection;
-import utils.Sanitize;
+import java.sql.ResultSet;
 
 /**
  *
@@ -27,5 +27,14 @@ public class AdditionalFeeController {
                 + "`grades_id`, "
                 + "`is_active` ) VALUES('" + additional.getTitle() + "','" + additional.getPrice() + "','" + additional.getGradesId() + "','" + status + "')");
 
+    }
+    
+    public void addPayment(String studentId, String additionalFeeId) throws SQLException {
+        
+        ResultSet rs = AppConnection.search("SELECT `price` FROM `additional_fees` WHERE `id` = " + additionalFeeId);
+        rs.next();
+        
+        AppConnection.iud("INSERT INTO `payments` (`student_id`, `additional_fees_id`, `paid_amoint`)"
+                          + "VALUES ('"+ studentId +"', '"+ additionalFeeId +"', '"+ rs.getString("price") +"')");
     }
 }
