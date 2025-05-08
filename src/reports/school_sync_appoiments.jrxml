@@ -1,0 +1,99 @@
+<!-- Created with Jaspersoft Studio version 7.0.0.final using JasperReports Library version 7.0.0-b478feaa9aab4375eba71de77b4ca138ad2f62aa  -->
+<jasperReport name="school_sync_appoiments" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b191c5f5-c899-4bc1-a49b-b616073184b3">
+	<parameter name="PARAM_SEARCH" class="java.lang.String"/>
+	<parameter name="PARAM_GRADE" class="java.lang.String"/>
+	<parameter name="PARAM_GENERATED_BY" class="java.lang.String"/>
+	<parameter name="PARAM_DATE_TIME" class="java.lang.String"/>
+	<query language="sql"><![CDATA[]]></query>
+	<field name="Created At" class="java.lang.String"/>
+	<field name="Student Id" class="java.lang.String"/>
+	<field name="Student Name" class="java.lang.String"/>
+	<field name="Class" class="java.lang.String"/>
+	<field name="Appointment" class="java.lang.String"/>
+	<background splitType="Stretch"/>
+	<title height="186" splitType="Stretch">
+		<element kind="staticText" uuid="72234324-9a76-4f9c-808e-83c8e6695688" mode="Opaque" x="18" y="10" width="518" height="70" backcolor="#F4F4F4" markup="styled" fontSize="22.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Appoinments Report]]></text>
+		</element>
+		<element kind="staticText" uuid="aef43696-026d-4e7d-a7ef-5188b1d99b7d" x="20" y="98" width="50" height="22" markup="styled" fontSize="12.0" bold="false" hTextAlign="Left" vTextAlign="Middle">
+			<text><![CDATA[(Student):]]></text>
+		</element>
+		<element kind="staticText" uuid="5dda50b9-af00-4a3e-b39c-9d484f5afc8e" x="20" y="120" width="50" height="22" markup="styled" fontSize="12.0" bold="false" hTextAlign="Left" vTextAlign="Middle">
+			<text><![CDATA[(Class):]]></text>
+		</element>
+		<element kind="textField" uuid="c44e39a1-0878-4699-b638-4becd02a7bb6" x="80" y="101" width="160" height="22" rotation="None" markup="styled" fontSize="12.0">
+			<expression><![CDATA[$P{PARAM_SEARCH}]]></expression>
+		</element>
+		<element kind="textField" uuid="75643a55-3763-4161-929b-14cea2f5a617" x="80" y="124" width="160" height="20" markup="styled" fontSize="12.0">
+			<expression><![CDATA[$P{PARAM_GRADE}]]></expression>
+		</element>
+		<element kind="textField" uuid="05fa9d48-7dd3-4a39-8761-1a134878ba50" x="360" y="98" width="176" height="20" markup="styled" fontSize="12.0" hTextAlign="Right">
+			<expression><![CDATA[$P{PARAM_GENERATED_BY}]]></expression>
+		</element>
+		<element kind="textField" uuid="f93f5f1a-00f0-464c-b840-e6d9134e7ac7" x="360" y="120" width="176" height="20" markup="styled" fontSize="12.0" hTextAlign="Right">
+			<expression><![CDATA[$P{PARAM_DATE_TIME}]]></expression>
+		</element>
+		<element kind="line" uuid="b57443f4-a181-4c4f-acff-790400691bbc" x="18" y="180" width="519" height="1"/>
+	</title>
+	<columnHeader height="36" splitType="Stretch">
+		<element kind="staticText" uuid="8aeefde9-5ee0-4280-90cc-d272b04cc32d" x="20" y="0" width="85" height="30" markup="styled" fontSize="12.0" bold="true">
+			<text><![CDATA[Created At]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7ef0df66-6ac1-4c09-94f8-b717c5ef3ba7"/>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+		</element>
+		<element kind="staticText" uuid="4bf2c14d-366d-4461-86af-544cfc63fb8f" x="108" y="0" width="65" height="30" markup="styled" fontSize="12.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[Student Id]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="948d3333-629a-4114-975c-4f5ce7bc082a"/>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+		</element>
+		<element kind="staticText" uuid="dbeea2d5-9a31-4f03-8e7a-1f4d6131add3" x="176" y="0" width="120" height="30" markup="styled" fontSize="12.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[Student Name]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="32319c94-5d7a-4d9f-8022-dff81ebb418b"/>
+		</element>
+		<element kind="staticText" uuid="44a71269-26ca-403a-b4aa-ee306d21483a" x="299" y="0" width="76" height="30" markup="styled" fontSize="12.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[Class]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="86541c6e-2f93-4407-9e50-c8a5014893ce"/>
+		</element>
+		<element kind="staticText" uuid="776f88b3-5244-43aa-ac0d-37dabfde4df7" x="378" y="0" width="158" height="30" markup="styled" fontSize="12.0" bold="true" hTextAlign="Right">
+			<text><![CDATA[Appointment]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ecd1b7b7-205a-4428-a56b-655df2904947"/>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="48" splitType="Stretch">
+			<element kind="textField" uuid="d6817e11-0a77-468d-85b0-7b075461b829" x="20" y="0" width="85" height="30" markup="styled" fontSize="12.0">
+				<expression><![CDATA[$F{Created At}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7ef0df66-6ac1-4c09-94f8-b717c5ef3ba7"/>
+				<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			</element>
+			<element kind="textField" uuid="c4218f14-383e-4acb-9b6a-be5e4f87dad8" x="108" y="0" width="65" height="30" markup="styled" fontSize="12.0" hTextAlign="Center">
+				<expression><![CDATA[$F{Student Id}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="948d3333-629a-4114-975c-4f5ce7bc082a"/>
+				<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			</element>
+			<element kind="textField" uuid="8da2b844-d0c0-4e0b-b561-66f58beab844" x="176" y="0" width="120" height="30" markup="styled" fontSize="12.0" hTextAlign="Center">
+				<expression><![CDATA[$F{Student Name}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="32319c94-5d7a-4d9f-8022-dff81ebb418b"/>
+			</element>
+			<element kind="textField" uuid="e328b391-eb23-46a0-a43f-afb0a0a8d4f0" x="299" y="0" width="76" height="30" markup="styled" fontSize="12.0" hTextAlign="Center">
+				<expression><![CDATA[$F{Class}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="86541c6e-2f93-4407-9e50-c8a5014893ce"/>
+			</element>
+			<element kind="textField" uuid="c88744fe-47e4-4de2-84ea-421b9d878c03" x="378" y="0" width="158" height="30" markup="styled" fontSize="12.0" hTextAlign="Right">
+				<expression><![CDATA[$F{Appointment}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ecd1b7b7-205a-4428-a56b-655df2904947"/>
+				<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			</element>
+		</band>
+	</detail>
+	<pageFooter height="66" splitType="Stretch">
+		<element kind="line" uuid="868a7178-0268-4308-98ad-2e2c5a761499" x="18" y="4" width="519" height="1"/>
+		<element kind="staticText" uuid="12ebcafa-7539-40c1-a739-373f6efebd5d" x="182" y="30" width="190" height="16" markup="styled" italic="true" hTextAlign="Center">
+			<text><![CDATA[Generated with School Sync]]></text>
+		</element>
+		<element kind="staticText" uuid="fd238f01-14ff-4876-8b2a-30873326b4b2" x="182" y="50" width="190" height="16" markup="styled" italic="true" hTextAlign="Center">
+			<text><![CDATA[Developed by Flexa]]></text>
+		</element>
+	</pageFooter>
+</jasperReport>
