@@ -9,6 +9,7 @@ import models.User;
 import utils.AppConnection;
 import java.sql.ResultSet;
 import utils.ErrorException;
+import views.layouts.AppLayout;
 
 /**
  *
@@ -59,5 +60,10 @@ public class AuthController {
             throw new ErrorException("Username or password is incorrect!");
         }
         
+    }
+    
+    public void resetPassword(String newPassword) throws SQLException {
+        
+        AppConnection.iud("UPDATE `users` SET `sys_password` = '"+ newPassword +"' WHERE `id` = '"+ AppLayout.loggedUserId +"'");
     }
 }

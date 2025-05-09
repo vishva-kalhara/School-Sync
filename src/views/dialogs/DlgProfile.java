@@ -5,7 +5,12 @@
 package views.dialogs;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import controllers.AuthController;
+import enums.DialogType;
 import java.awt.Color;
+import utils.ErrorException;
+import views.forms.FrmSplashScreen;
+import views.layouts.AppLayout;
 
 /**
  *
@@ -19,10 +24,10 @@ public class DlgProfile extends javax.swing.JDialog {
     public DlgProfile(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        
+
         setDesign();
     }
-    
+
     private void setDesign() {
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_BACKGROUND, new Color(0, 0, 0));
         getRootPane().putClientProperty(FlatClientProperties.TITLE_BAR_FOREGROUND, new Color(0, 0, 0));
@@ -34,7 +39,7 @@ public class DlgProfile extends javax.swing.JDialog {
 
         btnSubmit.putClientProperty("JButton.buttonType", "borderless");
         btnClose.putClientProperty("JButton.buttonType", "borderless");
-        
+
         txtConfPassword.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
         txtNewPassword.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
 
@@ -208,28 +213,35 @@ public class DlgProfile extends javax.swing.JDialog {
 
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
 
-//        try {
-//
-//            if (txtDump.getText().isBlank()) {
-//                throw new ErrorException("MySQL dump path cannot be empty!");
-//            }
-//            if (txtSavePath.getText().isBlank()) {
-//                throw new ErrorException("Save path cannot be empty!");
-//            }
-//
-//            boolean isSuccess = new DB().backup(txtDump.getText().trim(), txtSavePath.getText().trim());
-//            if (isSuccess) {
-//                new DlgError(AppLayout.appLayout, true, "Created at: " + txtSavePath.getText().trim(), "Backup Success!", DialogType.SUCCESS).setVisible(true);
-//            } else {
-//                new DlgError(AppLayout.appLayout, true, "Please contact the vendor.", "Backup Failed!", DialogType.ERROR).setVisible(true);
-//            }
-//
-//        } catch (ErrorException e) {
-//            new DlgError(AppLayout.appLayout, true, e.getMessage(), "Validation Error").setVisible(true);
-//        } catch (Exception e) {
-//            new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
-//            FrmSplashScreen.logger.log(java.util.logging.Level.WARNING, e.getMessage(), e);
-//        }
+        try {
+
+            String newPass = String.valueOf(txtNewPassword.getPassword());
+            if (newPass.isBlank()) {
+                throw new ErrorException("New Password cannot be empty!");
+            }
+            if(newPass.length() < 6){
+                throw new ErrorException("New Password must have atlest 6 characters!");
+            }
+
+            String confPass = String.valueOf(txtConfPassword.getPassword());
+            if (confPass.isBlank()) {
+                throw new ErrorException("Confirm Password cannot be empty!");
+            }
+
+            if (!newPass.equals(confPass)) {
+                throw new ErrorException("Passwords does not match!");
+            }
+
+            new AuthController().resetPassword(newPass);
+            new DlgError(AppLayout.appLayout, true, "The changes will take effect after your next login.", "Password Update Success!", DialogType.SUCCESS).setVisible(true);
+            this.dispose();
+            
+        } catch (ErrorException e) {
+            new DlgError(AppLayout.appLayout, true, e.getMessage(), "Validation Error").setVisible(true);
+        } catch (Exception e) {
+            new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
+            FrmSplashScreen.logger.log(java.util.logging.Level.WARNING, e.getMessage(), e);
+        }
     }//GEN-LAST:event_btnSubmitActionPerformed
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
