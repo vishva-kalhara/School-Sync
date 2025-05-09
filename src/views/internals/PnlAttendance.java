@@ -28,6 +28,7 @@ import net.sf.jasperreports.view.JasperViewer;
 import utils.AppConnection;
 import views.dialogs.DlgConfirm;
 import views.dialogs.DlgError;
+import views.dialogs.DlgProfile;
 import views.forms.FrmSplashScreen;
 import views.layouts.AppLayout;
 
@@ -221,7 +222,7 @@ public class PnlAttendance extends javax.swing.JPanel {
 
             btnRefresh.setEnabled(true);
             btnClearFilter.setEnabled(true);
-            
+
         } catch (Exception e) {
             new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
             FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
@@ -295,6 +296,11 @@ public class PnlAttendance extends javax.swing.JPanel {
 
         btnAccount.setBackground(new java.awt.Color(244, 244, 244));
         btnAccount.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/user.png"))); // NOI18N
+        btnAccount.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAccountActionPerformed(evt);
+            }
+        });
 
         btnClearFilter.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/filter-x.png"))); // NOI18N
         btnClearFilter.setEnabled(false);
@@ -530,6 +536,9 @@ public class PnlAttendance extends javax.swing.JPanel {
 
         }
     }//GEN-LAST:event_btnPrintActionPerformed
+
+    private void btnAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAccountActionPerformed
+        new DlgProfile(AppLayout.appLayout, true).setVisible(true);    }//GEN-LAST:event_btnAccountActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

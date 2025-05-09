@@ -30,6 +30,7 @@ import net.sf.jasperreports.engine.data.JRTableModelDataSource;
 import net.sf.jasperreports.view.JasperViewer;
 import views.dialogs.DlgConfirm;
 import views.dialogs.DlgError;
+import views.dialogs.DlgProfile;
 import views.forms.FrmSplashScreen;
 
 /**
@@ -178,6 +179,11 @@ public class PnlAdditionalFees extends javax.swing.JPanel {
 
         btnAccount.setBackground(new java.awt.Color(244, 244, 244));
         btnAccount.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/user.png"))); // NOI18N
+        btnAccount.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAccountActionPerformed(evt);
+            }
+        });
 
         btnPayment.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/payment.png"))); // NOI18N
         btnPayment.addActionListener(new java.awt.event.ActionListener() {
@@ -333,6 +339,10 @@ public class PnlAdditionalFees extends javax.swing.JPanel {
 
         }
     }//GEN-LAST:event_btnPrintActionPerformed
+
+    private void btnAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAccountActionPerformed
+        new DlgProfile(AppLayout.appLayout, true).setVisible(true);
+    }//GEN-LAST:event_btnAccountActionPerformed
 
     private JasperPrint generateReport() throws JRException {
         InputStream inputStream = this.getClass().getResourceAsStream("/reports/school_sync_additionalFees.jasper");

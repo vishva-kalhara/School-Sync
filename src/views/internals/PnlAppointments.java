@@ -29,6 +29,7 @@ import utils.AppConnection;
 import views.dialogs.DlgAppointment;
 import views.dialogs.DlgConfirm;
 import views.dialogs.DlgError;
+import views.dialogs.DlgProfile;
 import views.forms.FrmSplashScreen;
 import views.layouts.AppLayout;
 
@@ -46,8 +47,8 @@ public class PnlAppointments extends javax.swing.JPanel {
     public PnlAppointments() {
         initComponents();
         loadClasses();
-        loadTableData("");
         setDsign();
+        loadTableData("");
     }
 
     private void setDsign() {
@@ -81,7 +82,7 @@ public class PnlAppointments extends javax.swing.JPanel {
                     + "ORDER BY grades.value ASC, grades_has_classes.class ASC");
 
             Vector<String> data = new Vector();
-            data.add("Select");
+            data.add("Class");
 
             while (rs.next()) {
                 classesMap.put(rs.getString("grade_class"), rs.getInt("id"));
@@ -131,10 +132,10 @@ public class PnlAppointments extends javax.swing.JPanel {
 
             if (model.getRowCount() == 0) {
                 jScrollPane1.setViewportView(new PnlNotFound());
+                btnPrint.setEnabled(false);
+                btnReport.setEnabled(false);
             } else {
                 jScrollPane1.setViewportView(this.table);
-                btnPrint.setEnabled(true);
-                btnReport.setEnabled(true);
             }
 
             btnRefresh.setEnabled(true);
@@ -260,6 +261,11 @@ public class PnlAppointments extends javax.swing.JPanel {
 
         btnAccount.setBackground(new java.awt.Color(244, 244, 244));
         btnAccount.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/user.png"))); // NOI18N
+        btnAccount.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAccountActionPerformed(evt);
+            }
+        });
 
         btnClearFilters.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/filter-x.png"))); // NOI18N
         btnClearFilters.addActionListener(new java.awt.event.ActionListener() {
@@ -365,16 +371,15 @@ public class PnlAppointments extends javax.swing.JPanel {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(26, 26, 26)
-                .addComponent(pnlTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cboClass, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(pnlTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(24, 24, 24))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(38, 38, 38)
-                .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(cboClass, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(32, 32, 32))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -394,6 +399,7 @@ public class PnlAppointments extends javax.swing.JPanel {
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
 
         new DlgAppointment(AppLayout.appLayout, true).setVisible(true);
+        filterData();
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
@@ -415,7 +421,7 @@ public class PnlAppointments extends javax.swing.JPanel {
     }//GEN-LAST:event_btnClearFiltersActionPerformed
 
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-        loadTableData("");
+        filterData();
     }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void btnReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReportActionPerformed
@@ -443,6 +449,10 @@ public class PnlAppointments extends javax.swing.JPanel {
 
         }
     }//GEN-LAST:event_btnPrintActionPerformed
+
+    private void btnAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAccountActionPerformed
+        new DlgProfile(AppLayout.appLayout, true).setVisible(true);
+    }//GEN-LAST:event_btnAccountActionPerformed
 
     private JasperPrint generateReport() throws JRException {
         InputStream inputStream = this.getClass().getResourceAsStream("/reports/school_sync_appoiments.jasper");
