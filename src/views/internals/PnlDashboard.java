@@ -15,6 +15,7 @@ import views.dialogs.DlgConfirm;
 import views.forms.FrmSplashScreen;
 import views.layouts.AppLayout;
 import java.sql.ResultSet;
+import views.dialogs.DlgProfile;
 import views.dialogs.DlgVisitorsAttendance;
 
 /**
@@ -188,6 +189,11 @@ public class PnlDashboard extends javax.swing.JPanel {
 
         btnAccount.setBackground(new java.awt.Color(244, 244, 244));
         btnAccount.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/user.png"))); // NOI18N
+        btnAccount.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAccountActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -502,6 +508,10 @@ public class PnlDashboard extends javax.swing.JPanel {
         
         new DlgVisitorsAttendance(AppLayout.appLayout, true).setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void btnAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAccountActionPerformed
+        new DlgProfile(AppLayout.appLayout, true).setVisible(true);
+    }//GEN-LAST:event_btnAccountActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

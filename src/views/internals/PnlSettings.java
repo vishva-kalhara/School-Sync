@@ -6,6 +6,7 @@ package views.internals;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import views.dialogs.DlgBackup;
+import views.dialogs.DlgProfile;
 import views.dialogs.DlgRestore;
 import views.layouts.AppLayout;
 
@@ -20,14 +21,14 @@ public class PnlSettings extends javax.swing.JPanel {
      */
     public PnlSettings() {
         initComponents();
-        
+
         setDsign();
     }
-    
-    private void setDsign(){
+
+    private void setDsign() {
         btnLogout.putClientProperty("JButton.buttonType", "borderless");
         btnAccount.putClientProperty("JButton.buttonType", "borderless");
-        
+
         pnlBackup.putClientProperty(FlatClientProperties.STYLE, "arc: 20");
         pnlRestore.putClientProperty(FlatClientProperties.STYLE, "arc: 20");
     }
@@ -68,6 +69,11 @@ public class PnlSettings extends javax.swing.JPanel {
 
         btnAccount.setBackground(new java.awt.Color(244, 244, 244));
         btnAccount.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/icons/user.png"))); // NOI18N
+        btnAccount.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAccountActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -206,15 +212,18 @@ public class PnlSettings extends javax.swing.JPanel {
     }//GEN-LAST:event_btnLogoutActionPerformed
 
     private void btnBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackupActionPerformed
-        
+
         new DlgBackup(AppLayout.appLayout, true).setVisible(true);
     }//GEN-LAST:event_btnBackupActionPerformed
 
     private void btnRestoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestoreActionPerformed
-        
+
         new DlgRestore(AppLayout.appLayout, true).setVisible(true);
     }//GEN-LAST:event_btnRestoreActionPerformed
 
+    private void btnAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAccountActionPerformed
+        new DlgProfile(AppLayout.appLayout, true).setVisible(true);
+    }//GEN-LAST:event_btnAccountActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAccount;
