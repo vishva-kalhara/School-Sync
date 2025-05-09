@@ -82,7 +82,7 @@ public class PnlAppointments extends javax.swing.JPanel {
                     + "ORDER BY grades.value ASC, grades_has_classes.class ASC");
 
             Vector<String> data = new Vector();
-            data.add("Select");
+            data.add("Class");
 
             while (rs.next()) {
                 classesMap.put(rs.getString("grade_class"), rs.getInt("id"));
@@ -399,6 +399,7 @@ public class PnlAppointments extends javax.swing.JPanel {
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
 
         new DlgAppointment(AppLayout.appLayout, true).setVisible(true);
+        filterData();
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
@@ -420,7 +421,7 @@ public class PnlAppointments extends javax.swing.JPanel {
     }//GEN-LAST:event_btnClearFiltersActionPerformed
 
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-        loadTableData("");
+        filterData();
     }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void btnReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReportActionPerformed
