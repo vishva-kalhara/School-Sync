@@ -427,9 +427,9 @@ public class DlgUpdateClass extends javax.swing.JDialog {
             return;
         }
 
-        String className = txtClassName.getText(); 
+        String className = txtClassName.getText();
         if (!className.matches("[a-zA-Z]+")) {
-                    new DlgError(AppLayout.appLayout, true, "Class name should contain only letters.", "Validation Error", DialogType.WARNING).setVisible(true);
+            new DlgError(AppLayout.appLayout, true, "Class name should contain only letters.", "Validation Error", DialogType.WARNING).setVisible(true);
             return;
         }
 
@@ -449,6 +449,16 @@ public class DlgUpdateClass extends javax.swing.JDialog {
     }//GEN-LAST:event_RdoActiveActionPerformed
 
     private void cboClassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboClassActionPerformed
+
+        if (cboClass.getSelectedIndex() == 0) {
+            txtClassName.setText("");
+            RdoActive.setEnabled(false);
+            RdoDeleted.setEnabled(false);
+            RdoInactive.setEnabled(false);
+            txtClassName.setEnabled(false);
+            return ;
+        }
+
         RdoActive.setEnabled(true);
         RdoDeleted.setEnabled(true);
         RdoInactive.setEnabled(true);

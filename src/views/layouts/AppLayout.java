@@ -106,7 +106,7 @@ public class AppLayout extends javax.swing.JFrame {
     }
 
     public void changeForm(LayoutPage page) {
-                switch (page) {
+        switch (page) {
             case DASHBOARD:
                 showForm(new PnlDashboard());
                 changeSideButton(btnDashboard);
@@ -189,17 +189,17 @@ public class AppLayout extends javax.swing.JFrame {
         selectedButton = newButton;
         selectedButton.grabFocus();
     }
-    
-    private void filterForm(JPanel form, UserRole[] hasAccessRoles){
-        
-        for(UserRole role : hasAccessRoles){
-        
-            if(role == loggedUserRole) {
+
+    private void filterForm(JPanel form, UserRole[] hasAccessRoles) {
+
+        for (UserRole role : hasAccessRoles) {
+
+            if (role == loggedUserRole) {
                 showForm(form);
                 return;
             }
         }
-        
+
         showForm(new PnlNoAccess());
     }
 

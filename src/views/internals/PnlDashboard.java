@@ -156,7 +156,6 @@ public class PnlDashboard extends javax.swing.JPanel {
         pnlCard1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         lblLoggedUserName = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
         pnlCard2 = new javax.swing.JPanel();
         lblDisciplineRecordCount = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -233,9 +232,6 @@ public class PnlDashboard extends javax.swing.JPanel {
         lblLoggedUserName.setText("<HTML>Wishva Chandrasekara</HTML>");
         lblLoggedUserName.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
-        jButton1.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
-        jButton1.setText("View Profile");
-
         javax.swing.GroupLayout pnlCard1Layout = new javax.swing.GroupLayout(pnlCard1);
         pnlCard1.setLayout(pnlCard1Layout);
         pnlCard1Layout.setHorizontalGroup(
@@ -243,14 +239,9 @@ public class PnlDashboard extends javax.swing.JPanel {
             .addGroup(pnlCard1Layout.createSequentialGroup()
                 .addGap(32, 32, 32)
                 .addGroup(pnlCard1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlCard1Layout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(pnlCard1Layout.createSequentialGroup()
-                        .addGroup(pnlCard1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(lblLoggedUserName, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE))
-                        .addGap(31, 31, 31))))
+                    .addComponent(jLabel1)
+                    .addComponent(lblLoggedUserName, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE))
+                .addGap(31, 31, 31))
         );
         pnlCard1Layout.setVerticalGroup(
             pnlCard1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -259,9 +250,7 @@ public class PnlDashboard extends javax.swing.JPanel {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblLoggedUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(32, Short.MAX_VALUE))
+                .addContainerGap(81, Short.MAX_VALUE))
         );
 
         jPanel3.add(pnlCard1);
@@ -518,7 +507,6 @@ public class PnlDashboard extends javax.swing.JPanel {
     private javax.swing.JButton btnAccount;
     private javax.swing.JButton btnLogout;
     private javax.swing.JButton btnToDiscipleRecords;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
