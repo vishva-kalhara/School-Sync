@@ -103,7 +103,7 @@ public class PnlDashboard extends javax.swing.JPanel {
                 return;
             }
 
-            ResultSet rsAttended = AppConnection.search("SELECT COUNT(`id`) AS `total` FROM school_sync_v1.visitor_details WHERE DAY(date) = DAY(CURRENT_DATE()) AND MONTH(date) = MONTH(CURRENT_DATE()) AND YEAR(date) = YEAR(CURRENT_DATE()) WHERE `has_attended` = 1;");
+            ResultSet rsAttended = AppConnection.search("SELECT COUNT(`id`) AS `total` FROM school_sync_v1.visitor_details WHERE DATE(`date`) = CURRENT_DATE() AND `has_attended` = 1;");
             rsAttended.next();
 
             int percentage = (rsAttended.getInt("total") * 100) / (rsTotal.getInt("total"));
