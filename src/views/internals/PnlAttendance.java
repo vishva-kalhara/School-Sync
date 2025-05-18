@@ -468,7 +468,9 @@ public class PnlAttendance extends javax.swing.JPanel {
 
     private void cboClassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboClassActionPerformed
 
-        filterData();
+        if (cboGrade.getSelectedIndex() != 0) {
+            filterData();
+        }
     }//GEN-LAST:event_cboClassActionPerformed
 
     private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
