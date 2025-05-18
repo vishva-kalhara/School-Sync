@@ -195,6 +195,7 @@ public class DlgVisitor extends javax.swing.JDialog {
         jSeparator1 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setResizable(false);
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 

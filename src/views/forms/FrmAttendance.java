@@ -11,6 +11,7 @@ import java.awt.Color;
 import java.sql.ResultSet;
 import java.util.logging.Level;
 import utils.AppConnection;
+import utils.ErrorException;
 import views.dialogs.DlgError;
 import views.dialogs.DlgVisitorsAttendance;
 import views.layouts.AppLayout;
@@ -252,7 +253,11 @@ public class FrmAttendance extends javax.swing.JFrame {
 
             }
 
-        } catch (Exception e) {
+        } catch (ErrorException e){
+            
+            new DlgError(AppLayout.appLayout, true, e.getMessage(), "Warning", DialogType.WARNING).setVisible(true);
+        
+        }catch (Exception e) {
             FrmSplashScreen.logger.log(Level.WARNING, "Unexpected error: " + e.getMessage(), e);
 
         }
