@@ -113,7 +113,7 @@ public class DlgAppointment extends javax.swing.JDialog {
         appoinment.setStudentId(studentMap.get((String) cboStudent.getSelectedItem()));
         appoinment.setTitle(txtAppointment.getText());
         appoinment.setUserId(AppLayout.loggedUserId);
-        
+
         return appoinment;
     }
 
@@ -316,8 +316,12 @@ public class DlgAppointment extends javax.swing.JDialog {
             new DlgError(AppLayout.appLayout, true, "New appoinment created!", "Success", DialogType.SUCCESS).setVisible(true);
             this.dispose();
 
+        } catch (ErrorException e) {
+            new DlgError(AppLayout.appLayout, true, e.getMessage(), "Validation Error").setVisible(true);
+
         } catch (Exception e) {
-            System.out.println(e);
+            new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
+            FrmSplashScreen.logger.log(java.util.logging.Level.WARNING, e.getMessage(), e);
         }
     }//GEN-LAST:event_btnSubmitActionPerformed
 
