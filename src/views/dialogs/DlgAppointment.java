@@ -95,18 +95,15 @@ public class DlgAppointment extends javax.swing.JDialog {
         Appoinment appoinment = new Appoinment();
 
         if (cboClass.getSelectedIndex() == 0) {
-            new DlgError(AppLayout.appLayout, true, "Please select the Grade!", "Error", DialogType.ERROR).setVisible(true);
-            return null;
+            throw new ErrorException("Please select the Grade!");
         }
 
         if (cboStudent.getSelectedIndex() == 0) {
-            new DlgError(AppLayout.appLayout, true, "Please Select a Stduent!", "Error", DialogType.ERROR).setVisible(true);
-            return null;
+            throw new ErrorException("Please Select a Stduent!");
         }
 
         if (txtAppointment.getText().isBlank()) {
-            new DlgError(AppLayout.appLayout, true, "Please enter the appoinment!", "Error", DialogType.ERROR).setVisible(true);
-            return null;
+            throw new ErrorException("Please enter the appoinment!");
         }
 
         appoinment.setGrade(classesMap.get((String) cboClass.getSelectedItem()));
