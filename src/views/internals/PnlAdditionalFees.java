@@ -5,6 +5,7 @@
 package views.internals;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import controllers.AdditionalFeeController;
 import enums.DialogAction;
 import enums.LayoutPage;
 import java.io.InputStream;
@@ -22,6 +23,7 @@ import java.util.HashMap;
 import java.util.Vector;
 import java.util.logging.Level;
 import javax.swing.table.DefaultTableModel;
+import models.AdditionalFee;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -253,6 +255,11 @@ public class PnlAdditionalFees extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        table.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(table);
         if (table.getColumnModel().getColumnCount() > 0) {
             table.getColumnModel().getColumn(0).setMaxWidth(60);
@@ -319,7 +326,7 @@ public class PnlAdditionalFees extends javax.swing.JPanel {
 
             JasperViewer.viewReport(generateReport(), false);
 
-        } catch (Exception e) { 
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }//GEN-LAST:event_btnReportActionPerformed
@@ -343,6 +350,28 @@ public class PnlAdditionalFees extends javax.swing.JPanel {
     private void btnAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAccountActionPerformed
         new DlgProfile(AppLayout.appLayout, true).setVisible(true);
     }//GEN-LAST:event_btnAccountActionPerformed
+
+    private void tableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableMouseClicked
+        if (evt.getClickCount() != 2) {
+            return;
+        }
+        int selectedRaw = table.getSelectedRow();
+
+        try {
+            int id = Integer.parseInt(table.getValueAt(selectedRaw, 0).toString());
+            AdditionalFee additionalFee = new AdditionalFeeController().getRecord(id);
+
+            if (additionalFee == null) {
+                new DlgError(AppLayout.appLayout, true, "Please refresh the table!", "Not Found").setVisible(true);
+                return;
+            }
+            new DlgAdditionalFee(AppLayout.appLayout, true, additionalFee, id).setVisible(true);
+            fetchData();
+        } catch (Exception e) {
+            new DlgError(AppLayout.appLayout, true, e.getMessage()).setVisible(true);
+            FrmSplashScreen.logger.log(Level.WARNING, e.getMessage(), e);
+        }
+    }//GEN-LAST:event_tableMouseClicked
 
     private JasperPrint generateReport() throws JRException {
         InputStream inputStream = this.getClass().getResourceAsStream("/reports/school_sync_additionalFees.jasper");

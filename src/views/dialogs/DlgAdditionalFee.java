@@ -11,8 +11,8 @@ import java.awt.Color;
 import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.logging.Level;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import models.AdditionalFee;
 import utils.AppConnection;
 import utils.ErrorException;
@@ -21,26 +21,48 @@ import views.layouts.AppLayout;
 
 /**
  *
- * @author Dini
+ * @author Chamod
  */
 public class DlgAdditionalFee extends javax.swing.JDialog {
 
     private HashMap<String, Integer> gradeMap = new HashMap();
+    private DialogType type = DialogType.CREATE;
+    private int id;
 
     public DlgAdditionalFee(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         setDesign();
         txtTitle.grabFocus();
-//        FormatPrice.setEnabled(false);
-//        cboGrade.setEnabled(false);
         loadGrades();
-//        cboIsActive.setEnabled(false);
-//        cboGrade.setEnabled(false);
         btnEdit.setEnabled(false);
-        
+
         cboIsActive.setSelectedIndex(0);
         cboIsActive.setEnabled(false);
+    }
+
+    public DlgAdditionalFee(java.awt.Frame parent, boolean modal, AdditionalFee additionalFee, int id) {
+        this(parent, modal);
+        type = DialogType.UPDATE;
+        loadRecord(additionalFee);
+        this.id = id;
+
+        btnEdit.setEnabled(true);
+        btnEdit.grabFocus();
+        btnSubmit.setText("Save Changes");
+
+        txtTitle.setEnabled(false);
+        FormatPrice.setEnabled(false);
+        cboGrade.setEnabled(false);
+        cboIsActive.setEnabled(false);
+
+    }
+
+    private void loadRecord(AdditionalFee additionalFee) {
+        txtTitle.setText(additionalFee.getTitle());
+        FormatPrice.setText(String.valueOf(additionalFee.getPrice()));
+        cboGrade.setSelectedIndex(additionalFee.getGradesId());
+        cboIsActive.setSelectedItem(additionalFee.getIsActive() ? "Active" : "Not Active");
     }
 
     private void setDesign() {
@@ -54,7 +76,6 @@ public class DlgAdditionalFee extends javax.swing.JDialog {
 
         txtTitle.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
         FormatPrice.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
-//       txtDetails.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
         btnSubmit.putClientProperty("JButton.buttonType", "borderless");
         btnClose.putClientProperty("JButton.buttonType", "borderless");
     }
@@ -94,20 +115,16 @@ public class DlgAdditionalFee extends javax.swing.JDialog {
             throw new ErrorException("Please select the grade!");
         }
 
-        // Set the title
         additional.setTitle(txtTitle.getText());
 
-        // Parse and set the price
         try {
             additional.setPrice(Double.parseDouble(FormatPrice.getText()));
         } catch (NumberFormatException e) {
             throw new ErrorException("Invalid price format!");
         }
 
-        // Set the grade ID
         additional.setGradesId(gradeMap.get(String.valueOf(cboGrade.getSelectedItem())));
 
-        // Get the selected value from cboIsActive and set the isActive field
         String isActiveValue = (String) cboIsActive.getSelectedItem();
         if (isActiveValue == null || isActiveValue.isBlank()) {
             throw new ErrorException("Please select Active or Inactive!");
@@ -161,12 +178,7 @@ public class DlgAdditionalFee extends javax.swing.JDialog {
         jLabel3.setForeground(new java.awt.Color(153, 153, 153));
         jLabel3.setText("Price:");
 
-        cboIsActive.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Active", "Inactive" }));
-        cboIsActive.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cboIsActiveActionPerformed(evt);
-            }
-        });
+        cboIsActive.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Active", "Not Active" }));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI Semibold", 0, 16)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(153, 153, 153));
@@ -177,11 +189,6 @@ public class DlgAdditionalFee extends javax.swing.JDialog {
         jLabel7.setText("Grade:");
 
         cboGrade.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select" }));
-        cboGrade.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cboGradeActionPerformed(evt);
-            }
-        });
 
         FormatPrice.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
 
@@ -365,17 +372,33 @@ public class DlgAdditionalFee extends javax.swing.JDialog {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void cboIsActiveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboIsActiveActionPerformed
-    }//GEN-LAST:event_cboIsActiveActionPerformed
-
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
         try {
             AdditionalFee additionalFee = getFormData();
 
-            new AdditionalFeeController().issueAdditionalFee(additionalFee);
+            if (null == type) {
+                new DlgError(AppLayout.appLayout, true, "Please contact the vendor!").setVisible(true);
+                FrmSplashScreen.logger.log(Level.WARNING, "DlgAdditionalFee --> line 396");
+            } else {
 
-            new DlgError(AppLayout.appLayout, true, "Issued an additional fee", "Success", DialogType.SUCCESS).setVisible(true);
-            this.dispose();
+                switch (type) {
+                    case CREATE:
+                        new AdditionalFeeController().issueAdditionalFee(additionalFee);
+                        new DlgError(AppLayout.appLayout, true, "Issued an additional fee", "Success", DialogType.SUCCESS).setVisible(true);
+                        this.dispose();
+                        break;
+                    case UPDATE:
+                        new AdditionalFeeController().updateAdditionalFee(additionalFee, id);
+                        new DlgError(AppLayout.appLayout, true, "Updated additional fee successfully", "Success", DialogType.SUCCESS).setVisible(true);
+                        this.dispose();
+                        break;
+                    default:
+                        new DlgError(AppLayout.appLayout, true, "Please contact the vendor!").setVisible(true);
+                        FrmSplashScreen.logger.log(Level.WARNING, "DlgAdditionalFee.java --> line 405");
+                        break;
+                }
+
+            }
 
         } catch (ErrorException e) {
             new DlgError(AppLayout.appLayout, true, e.getMessage(), "Validation Error").setVisible(true);
@@ -387,7 +410,10 @@ public class DlgAdditionalFee extends javax.swing.JDialog {
     }//GEN-LAST:event_btnSubmitActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-
+        txtTitle.setEnabled(true);
+        FormatPrice.setEnabled(true);
+        cboGrade.setEnabled(true);
+        cboIsActive.setEnabled(true);
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
@@ -397,40 +423,15 @@ public class DlgAdditionalFee extends javax.swing.JDialog {
         txtTitle.setText("");
         FormatPrice.setText("");
 
-
     }//GEN-LAST:event_btnResetActionPerformed
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
-
         this.dispose();
     }//GEN-LAST:event_btnCloseActionPerformed
-
-    private void cboGradeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboGradeActionPerformed
-
-
-    }//GEN-LAST:event_cboGradeActionPerformed
 
     /**
      * @param args the command line arguments
      */
-//    public static void main(String args[]) {
-//        /* Set the Nimbus look and feel */
-//       
-//
-//        /* Create and display the dialog */
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                DlgAdditionalFee dialog = new DlgAdditionalFee(new javax.swing.JFrame(), true);
-//                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-//                    @Override
-//                    public void windowClosing(java.awt.event.WindowEvent e) {
-//                        System.exit(0);
-//                    }
-//                });
-//                dialog.setVisible(true);
-//            }
-//        });
-//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFormattedTextField FormatPrice;

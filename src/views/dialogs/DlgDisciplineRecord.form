@@ -292,16 +292,19 @@
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Group type="102" attributes="0">
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="jSeparator2" pref="371" max="32767" attributes="0"/>
+                              <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="1" attributes="0">
                               <Component id="btnReset" min="-2" pref="54" max="-2" attributes="0"/>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Component id="btnEdit" min="-2" pref="54" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
                               <Component id="btnSubmit" min="-2" pref="172" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jSeparator2" pref="371" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -312,7 +315,7 @@
                       <Component id="jSeparator2" min="-2" pref="3" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="btnSubmit" min="-2" pref="54" max="-2" attributes="0"/>
+                          <Component id="btnSubmit" alignment="0" min="-2" pref="54" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Component id="btnReset" alignment="0" max="32767" attributes="0"/>
                               <Component id="btnEdit" alignment="0" min="-2" pref="54" max="-2" attributes="0"/>
